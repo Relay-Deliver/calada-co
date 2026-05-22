@@ -1,0 +1,44 @@
+.product-page { padding: 32px 0 80px; }
+.breadcrumb { font-size: 13px; color: var(--gray-500); margin-bottom: 32px; }
+.breadcrumb a { color: var(--gray-500); transition: color var(--transition); }
+.breadcrumb a:hover { color: var(--pink); }
+.product-layout {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start;
+}
+.main-image {
+  aspect-ratio: 3/4; border-radius: var(--radius-lg);
+  overflow: hidden; background: var(--gray-100);
+}
+.main-image img { width: 100%; height: 100%; object-fit: cover; }
+.thumb-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.thumb {
+  width: 72px; height: 72px; border-radius: var(--radius-md);
+  overflow: hidden; border: 2px solid transparent;
+  transition: border-color var(--transition);
+}
+.thumb.active { border-color: var(--pink); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.product-title { font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+.product-price-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.product-price { font-size: 22px; font-weight: 700; color: var(--pink); }
+.product-compare { font-size: 16px; color: var(--gray-500); text-decoration: line-through; }
+.option-group { margin-bottom: 20px; }
+.option-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+.option-values { display: flex; flex-wrap: wrap; gap: 8px; }
+.option-btn {
+  padding: 8px 18px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--gray-200);
+  font-size: 13px; transition: var(--transition);
+}
+.option-btn:hover { border-color: var(--pink); color: var(--pink); }
+.option-btn.selected { border-color: var(--pink); background: var(--pink); color: white; }
+.add-to-cart { margin: 24px 0; font-size: 15px; padding: 14px 24px; }
+.add-to-cart.added { background: #2d6a4f; }
+.product-description { margin: 24px 0; }
+.product-description h3 { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.product-description p { font-size: 14px; color: var(--gray-800); line-height: 1.7; }
+.product-meta { display: flex; flex-direction: column; gap: 6px; }
+.product-meta p { font-size: 13px; color: var(--gray-500); }
+@media (max-width: 768px) {
+  .product-layout { grid-template-columns: 1fr; gap: 32px; }
+}
