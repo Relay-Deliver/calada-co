@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { formatPrice, isBestSeller, isNew } from '../../services/shopify';
+import { formatPrice, isBestSeller, isNew } from '../services/shopify';
 import './ProductCard.css';
 
 export default function ProductCard({ product }) {
