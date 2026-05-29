@@ -1,34 +1,23 @@
+@import "./globals.css";
+@import "../components/cart/CartDrawer.css";
+@import "../pages/AboutPage.css";
+@import "../pages/AccountPage.css";
+@import "../pages/ContactPage.css";
+@import "../pages/ProductPage.css";
+@import "../pages/ShopPage.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
     color: #1a2744;
     background: #fff;
   }
-  h1, h2, h3, h4, h5 { font-weight: 500; }
-}
-
-@layer components {
-  .btn-primary {
-    @apply bg-pink text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-pink-dark transition-colors;
-  }
-  .btn-outline {
-    @apply border border-white text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-white hover:text-navy transition-colors;
-  }
-  .btn-navy {
-    @apply bg-navy text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-navy-mid transition-colors;
-  }
-  .badge {
-    @apply inline-block text-xs bg-pink-light text-pink-dark px-2 py-0.5 rounded-full;
-  }
-  .section-title {
-    @apply text-xl font-medium text-navy mb-1;
-  }
-  .section-sub {
-    @apply text-sm text-gray-500 mb-6;
-  }
+  img { display: block; max-width: 100%; }
+  a { text-decoration: none; color: inherit; }
 }

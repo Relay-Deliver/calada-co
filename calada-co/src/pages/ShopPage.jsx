@@ -1,64 +1,146 @@
-import { useEffect, useState } from 'react'
-import { getProducts } from '../services/shopify'
-import ProductCard from '../components/product/ProductCard'
+import { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { getCollectionByHandle, getProducts } from '../services/shopify';
+import ProductCard from '../components/product/ProductCard';
+import { DUMMY_PRODUCTS } from '../data/dummyProducts';
 
-const FILTERS = ['all', 'new', 'best-seller', 'women', 'children', 'family-sets']
+const SORT_OPTIONS = [
+  { label: 'Featured',     value: '' },
+  { label: 'Price: Low',   value: 'price asc' },
+  { label: 'Price: High',  value: 'price desc' },
+  { label: 'Newest',       value: 'created_at desc' },
+];
+
+function getFallbackProducts(handle, query) {
+  let products = [...DUMMY_PRODUCTS];
+
+  if (handle) {
+    products = products.filter((product) => {
+      if (handle === 'new-arrivals') return product.tags?.includes('new');
+      if (handle === 'best-sellers') return product.tags?.includes('best-seller');
+      if (handle === 'sale') return product.compareAtPriceRange?.minVariantPrice;
+      return product.tags?.includes(handle) || product.handle?.includes(handle);
+    });
+  }
+
+  if (query) {
+    const search = query.toLowerCase();
+    products = products.filter((product) =>
+      [product.title, product.handle, ...(product.tags || [])]
+        .join(' ')
+        .toLowerCase()
+        .includes(search)
+    );
+  }
+
+  return products.length > 0 ? products : DUMMY_PRODUCTS;
+}
 
 export default function ShopPage() {
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState('all')
+  const { handle } = useParams();
+  const [products, setProducts] = useState([]);
+  const [pageTitle, setPageTitle] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
+  const [cursor, setCursor] = useState(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get('q') || '');
+  const sort = searchParams.get('sort') || '';
 
   useEffect(() => {
-    setLoading(true)
-    const query = filter === 'all' ? '' : `tag:${filter}`
-    getProducts({ first: 24, query })
-      .then(data => setProducts(data.edges.map(e => e.node)))
-      .catch(() => setProducts([]))
-      .finally(() => setLoading(false))
-  }, [filter])
+    setLoading(true);
+    setProducts([]);
+    setCursor(null);
+    const q = searchParams.get('q') || '';
+    const request = handle
+      ? getCollectionByHandle(handle, 12).then((collection) => {
+          if (!collection) throw new Error('Collection not found');
+          setPageTitle(collection.title);
+          return collection.products;
+        })
+      : getProducts({ first: 12, query: q }).then((data) => {
+          setPageTitle('Shop All');
+          return data;
+        });
+
+    request
+      .then(data => {
+        const fetchedProducts = data.edges.map(e => e.node);
+        setProducts(fetchedProducts);
+        setHasMore(!handle && data.pageInfo.hasNextPage);
+        setCursor(data.pageInfo.endCursor);
+      })
+      .catch(() => {
+        setPageTitle(handle ? handle.replaceAll('-', ' ') : 'Shop All');
+        setProducts(getFallbackProducts(handle, q));
+        setHasMore(false);
+      })
+      .finally(() => setLoading(false));
+  }, [handle, searchParams]);
+
+  const loadMore = () => {
+    const q = searchParams.get('q') || '';
+    getProducts({ first: 12, after: cursor, query: q })
+      .then(data => {
+        setProducts(prev => [...prev, ...data.edges.map(e => e.node)]);
+        setHasMore(data.pageInfo.hasNextPage);
+        setCursor(data.pageInfo.endCursor);
+      })
+      .catch(() => setHasMore(false));
+  };
+
+  const handleSearch = e => {
+    e.preventDefault();
+    setSearchParams(search ? { q: search } : {});
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-medium text-navy mb-2">shop all</h1>
-      <p className="text-sm text-gray-400 mb-8">handcrafted pieces for every occasion</p>
+    <div className="shop-page">
+      <div className="container">
+        <div className="shop-header">
+          <h1>{pageTitle || (handle ? handle.replaceAll('-', ' ') : 'Shop All')}</h1>
+          <form onSubmit={handleSearch} className="shop-search">
+            <input
+              type="text" placeholder="Search products..."
+              value={search} onChange={e => setSearch(e.target.value)}
+              className="form-input"
+            />
+            <button type="submit" className="btn btn-primary">Search</button>
+          </form>
+        </div>
 
-      {/* Filters */}
-      <div className="flex gap-2 flex-wrap mb-8">
-        {FILTERS.map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm border transition-colors ${
-              filter === f
-                ? 'bg-navy text-white border-navy'
-                : 'border-gray-200 text-gray-500 hover:border-pink hover:text-pink'
-            }`}
-          >
-            {f.replace('-', ' ')}
-          </button>
-        ))}
+        <div className="shop-toolbar">
+          <p className="shop-count">{products.length} products</p>
+          <select className="sort-select" value={sort} onChange={e => setSearchParams({ sort: e.target.value })}>
+            {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
+
+        {loading ? (
+          <div className="page-loader"><div className="spinner" /></div>
+        ) : products.length > 0 ? (
+          <>
+            <motion.div
+              className="products-grid"
+              initial="hidden"
+              animate="visible"
+              transition={{ staggerChildren: 0.08 }}
+            >
+              {products.map(p => <ProductCard key={p.id} product={p} />)}
+            </motion.div>
+            {hasMore && (
+              <div className="load-more">
+                <button className="btn btn-outline" onClick={loadMore}>Load More</button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="empty-shop">
+            <p>No products found. <button onClick={() => { setSearch(''); setSearchParams({}); }}>Clear search</button></p>
+          </div>
+        )}
       </div>
-
-      {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-100 rounded-xl aspect-[3/4] mb-3" />
-              <div className="h-4 bg-gray-100 rounded w-3/4 mb-2" />
-              <div className="h-4 bg-gray-100 rounded w-1/4" />
-            </div>
-          ))}
-        </div>
-      ) : products.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map(p => <ProductCard key={p.id} product={p} />)}
-        </div>
-      ) : (
-        <div className="text-center py-20 text-gray-400">
-          <p className="text-sm">no products found — check back soon!</p>
-        </div>
-      )}
     </div>
-  )
+  );
 }
