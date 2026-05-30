@@ -12,7 +12,6 @@ import ContactPage from './pages/ContactPage';
 import AccountLoginPage from './pages/AccountLoginPage';
 import AccountRegisterPage from './pages/AccountRegisterPage';
 import AccountDashboardPage from './pages/AccountDashboardPage';
-import './styles/globals.css';
 
 export default function App() {
   return (

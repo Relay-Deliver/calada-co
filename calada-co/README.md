@@ -7,17 +7,26 @@ Custom React frontend for CalAda & Co, connected to Shopify via the Storefront A
 1. Clone the repo
 2. Copy `.env.example` to `.env` and fill in your credentials:
    ```
-   REACT_APP_SHOPIFY_STORE_DOMAIN=calada-co.myshopify.com
-   REACT_APP_SHOPIFY_STOREFRONT_TOKEN=your-token-here
-   REACT_APP_SHOPIFY_API_VERSION=2026-04
+   VITE_SHOPIFY_STORE_DOMAIN=calada-co.myshopify.com
+   VITE_SHOPIFY_STOREFRONT_TOKEN=your-token-here
+   VITE_SHOPIFY_API_VERSION=2026-04
    ```
+   Use a Storefront API access token here. Do not put Shopify app secrets or Admin API tokens in Vite env vars.
 3. Install dependencies:
    ```bash
    npm install
    ```
 4. Start the dev server:
    ```bash
-   npm start
+   npm run dev
+   ```
+5. Check that Shopify products are visible to the storefront:
+   ```bash
+   npm run shopify:check
+   ```
+6. Check that a product can be added to a Shopify cart and produce a checkout URL:
+   ```bash
+   npm run shopify:cart-check
    ```
 
 ## Project Structure
