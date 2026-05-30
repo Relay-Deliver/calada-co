@@ -1,15 +1,29 @@
 // ─── CalAda & Co — Shopify Storefront API Service ───────────────────────────
-const DOMAIN = process.env.REACT_APP_SHOPIFY_STORE_DOMAIN;
-const TOKEN  = process.env.REACT_APP_SHOPIFY_STOREFRONT_TOKEN;
-const API_VERSION = process.env.REACT_APP_SHOPIFY_API_VERSION;
-const API_URL = `https://${DOMAIN}/api/${API_VERSION}/graphql.json`;
+const env = import.meta.env;
+const DOMAIN = env.VITE_SHOPIFY_STORE_DOMAIN || env.REACT_APP_SHOPIFY_STORE_DOMAIN;
+const TOKEN = env.VITE_SHOPIFY_STOREFRONT_TOKEN || env.REACT_APP_SHOPIFY_STOREFRONT_TOKEN;
+const API_VERSION = env.VITE_SHOPIFY_API_VERSION || env.REACT_APP_SHOPIFY_API_VERSION || '2026-04';
+
+function getShopifyConfig() {
+  if (!DOMAIN || !TOKEN) {
+    throw new Error(
+      'Missing Shopify Storefront env vars. Add VITE_SHOPIFY_STORE_DOMAIN and VITE_SHOPIFY_STOREFRONT_TOKEN to .env, then restart Vite.'
+    );
+  }
+
+  return {
+    apiUrl: `https://${DOMAIN}/api/${API_VERSION}/graphql.json`,
+    token: TOKEN,
+  };
+}
 
 async function shopifyFetch(query, variables = {}) {
-  const res = await fetch(API_URL, {
+  const { apiUrl, token } = getShopifyConfig();
+  const res = await fetch(apiUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': TOKEN,
+      'X-Shopify-Storefront-Access-Token': token,
     },
     body: JSON.stringify({ query, variables }),
   });
@@ -17,6 +31,13 @@ async function shopifyFetch(query, variables = {}) {
   const { data, errors } = await res.json();
   if (errors) throw new Error(errors[0].message);
   return data;
+}
+
+function throwOnUserErrors(result, label = 'Shopify request') {
+  const errors = result?.userErrors || result?.customerUserErrors || [];
+  if (errors.length > 0) {
+    throw new Error(errors.map((error) => error.message).join(', ') || `${label} failed`);
+  }
 }
 
 // ─── Products ────────────────────────────────────────────────────────────────
@@ -34,6 +55,15 @@ export async function getProducts({ first = 12, after = null, query = '' } = {})
             tags
             images(first: 2) {
               edges { node { url altText } }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id title availableForSale
+                  selectedOptions { name value }
+                  price { amount currencyCode }
+                }
+              }
             }
           }
         }
@@ -106,6 +136,15 @@ export async function getCollectionByHandle(handle, first = 12) {
               images(first: 2) {
                 edges { node { url altText } }
               }
+              variants(first: 1) {
+                edges {
+                  node {
+                    id title availableForSale
+                    selectedOptions { name value }
+                    price { amount currencyCode }
+                  }
+                }
+              }
             }
           }
         }
@@ -138,6 +177,7 @@ export async function createCart() {
       }
     }
   `);
+  throwOnUserErrors(data.cartCreate, 'Create cart');
   return data.cartCreate.cart;
 }
 
@@ -162,6 +202,7 @@ export async function addToCart(cartId, variantId, quantity = 1) {
       }
     }
   `, { cartId, lines: [{ merchandiseId: variantId, quantity }] });
+  throwOnUserErrors(data.cartLinesAdd, 'Add to cart');
   return data.cartLinesAdd.cart;
 }
 
@@ -186,6 +227,7 @@ export async function updateCartLine(cartId, lineId, quantity) {
       }
     }
   `, { cartId, lines: [{ id: lineId, quantity }] });
+  throwOnUserErrors(data.cartLinesUpdate, 'Update cart');
   return data.cartLinesUpdate.cart;
 }
 
@@ -210,6 +252,7 @@ export async function removeFromCart(cartId, lineIds) {
       }
     }
   `, { cartId, lineIds });
+  throwOnUserErrors(data.cartLinesRemove, 'Remove from cart');
   return data.cartLinesRemove.cart;
 }
 

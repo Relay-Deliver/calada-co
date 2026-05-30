@@ -1,68 +1,101 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { createCart, getCart, addToCart, updateCartLine, removeFromCart } from '../services/shopify'
+import { createContext, useContext, useEffect, useState } from 'react';
+import { createCart, addToCart, updateCartLine, removeFromCart, getCart } from '../services/shopify';
 
-const CartContext = createContext(null)
+const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState(null)
-  const [isOpen, setIsOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [cart, setCart] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const savedCartId = localStorage.getItem('calada_cart_id')
+    const savedCartId = localStorage.getItem('calada_cart_id');
     if (savedCartId) {
-      getCart(savedCartId).then(setCart).catch(() => initCart())
-    } else {
-      initCart()
+      getCart(savedCartId).then((savedCart) => {
+        if (savedCart?.id) {
+          setCart(savedCart);
+        } else {
+          localStorage.removeItem('calada_cart_id');
+        }
+      }).catch(() => localStorage.removeItem('calada_cart_id'));
     }
-  }, [])
+  }, []);
 
-  async function initCart() {
-    const newCart = await createCart()
-    setCart(newCart)
-    localStorage.setItem('calada_cart_id', newCart.id)
-  }
+  const getOrCreateCart = async () => {
+    if (cart) return cart;
+    const newCart = await createCart();
+    localStorage.setItem('calada_cart_id', newCart.id);
+    setCart(newCart);
+    return newCart;
+  };
 
-  async function addItem(variantId, quantity = 1) {
-    setLoading(true)
+  const addItem = async (variantId, quantity = 1) => {
+    setLoading(true);
+    setError('');
     try {
-      const updated = await addToCart(cart.id, [{ merchandiseId: variantId, quantity }])
-      setCart(updated)
-      setIsOpen(true)
+      const currentCart = await getOrCreateCart();
+      const updated = await addToCart(currentCart.id, variantId, quantity);
+      setCart(updated);
+      setIsOpen(true);
+    } catch (err) {
+      const message = err.message || 'Unable to add this item to your bag.';
+      setError(message);
+      setIsOpen(true);
+      throw err;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  async function updateItem(lineId, quantity) {
-    setLoading(true)
+  const updateItem = async (lineId, quantity) => {
+    if (!cart) return;
+    setLoading(true);
+    setError('');
     try {
-      const updated = await updateCartLine(cart.id, [{ id: lineId, quantity }])
-      setCart(updated)
+      const updated = await updateCartLine(cart.id, lineId, quantity);
+      setCart(updated);
+    } catch (err) {
+      setError(err.message || 'Unable to update your bag.');
+      throw err;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  async function removeItem(lineId) {
-    setLoading(true)
+  const removeItem = async (lineId) => {
+    if (!cart) return;
+    setLoading(true);
+    setError('');
     try {
-      const updated = await removeFromCart(cart.id, [lineId])
-      setCart(updated)
+      const updated = await removeFromCart(cart.id, [lineId]);
+      setCart(updated);
+    } catch (err) {
+      setError(err.message || 'Unable to remove this item.');
+      throw err;
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const itemCount = cart?.lines?.edges?.reduce((sum, { node }) => sum + node.quantity, 0) ?? 0
+  const itemCount = cart?.lines?.edges?.reduce((sum, { node }) => sum + node.quantity, 0) || 0;
+  const totalPrice = cart?.cost?.totalAmount?.amount || '0.00';
+  const currencyCode = cart?.cost?.totalAmount?.currencyCode || 'USD';
+  const checkoutUrl = cart?.checkoutUrl || '#';
 
   return (
-    <CartContext.Provider value={{ cart, isOpen, setIsOpen, loading, addItem, updateItem, removeItem, itemCount }}>
+    <CartContext.Provider value={{
+      cart, isOpen, loading, error, itemCount, totalPrice, currencyCode, checkoutUrl,
+      addItem, updateItem, removeItem,
+      openCart: () => setIsOpen(true),
+      closeCart: () => {
+        setIsOpen(false);
+        setError('');
+      },
+    }}>
       {children}
     </CartContext.Provider>
-  )
+  );
 }
 
-export function useCart() {
-  return useContext(CartContext)
-}
+export const useCart = () => useContext(CartContext);

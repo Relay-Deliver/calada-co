@@ -1,117 +1,170 @@
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { getProductByHandle, formatPrice } from '../services/shopify'
-import { useCart } from '../context/CartContext'
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { getProductByHandle, formatPrice } from '../services/shopify';
+import { useCart } from '../context/CartContext';
+import { DUMMY_PRODUCTS } from '../data/dummyProducts';
+import { getFallbackImage } from '../data/visuals';
 
 export default function ProductPage() {
-  const { handle } = useParams()
-  const { addItem, loading: cartLoading } = useCart()
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [selectedOptions, setSelectedOptions] = useState({})
-  const [selectedImg, setSelectedImg] = useState(0)
-  const [added, setAdded] = useState(false)
+  const { handle } = useParams();
+  const { addItem, loading: cartLoading } = useCart();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedOptions, setSelectedOptions] = useState({});
+  const [selectedImg, setSelectedImg] = useState(0);
+  const [imageFailed, setImageFailed] = useState({});
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
+    setImageFailed({});
+    setSelectedImg(0);
     getProductByHandle(handle)
-      .then(p => {
-        setProduct(p)
-        if (p?.options) {
-          const defaults = {}
-          p.options.forEach(opt => { defaults[opt.name] = opt.values[0] })
-          setSelectedOptions(defaults)
-        }
-      })
-      .finally(() => setLoading(false))
-  }, [handle])
+      .then((item) => setProduct(item || DUMMY_PRODUCTS.find((p) => p.handle === handle) || null))
+      .catch(() => setProduct(DUMMY_PRODUCTS.find((p) => p.handle === handle) || null))
+      .finally(() => setLoading(false));
+  }, [handle]);
 
-  if (loading) return (
-    <div className="max-w-7xl mx-auto px-4 py-10 animate-pulse">
-      <div className="grid md:grid-cols-2 gap-10">
-        <div className="bg-gray-100 rounded-2xl aspect-square" />
-        <div className="space-y-4">
-          <div className="h-8 bg-gray-100 rounded w-3/4" />
-          <div className="h-6 bg-gray-100 rounded w-1/4" />
-          <div className="h-4 bg-gray-100 rounded w-full" />
-          <div className="h-4 bg-gray-100 rounded w-2/3" />
-        </div>
-      </div>
-    </div>
-  )
+  useEffect(() => {
+    if (!product?.options) return;
+    const defaults = {};
+    product.options.forEach((option) => {
+      defaults[option.name] = option.values[0];
+    });
+    setSelectedOptions(defaults);
+  }, [product]);
 
-  if (!product) return (
-    <div className="text-center py-20 text-gray-400">
-      <p>product not found.</p>
-    </div>
-  )
+  const images = useMemo(() => product?.images?.edges?.map((e) => e.node) || [], [product]);
+  const fallbackImage = getFallbackImage(product?.handle || handle);
+  const selectedImage = !imageFailed[selectedImg] && images[selectedImg]?.url
+    ? images[selectedImg].url
+    : fallbackImage;
 
-  const images = product.images?.edges?.map(e => e.node) ?? []
+  const variant = useMemo(() => {
+    const variants = product?.variants?.edges?.map((edge) => edge.node) || [];
+    return variants.find((item) =>
+      item.selectedOptions?.every((option) => selectedOptions[option.name] === option.value)
+    ) || variants[0];
+  }, [product, selectedOptions]);
 
-  // Find matching variant
-  const variant = product.variants?.edges?.find(({ node }) =>
-    node.selectedOptions.every(o => selectedOptions[o.name] === o.value)
-  )?.node
+  const price = variant?.price || product?.priceRange?.minVariantPrice;
+  const comparePrice = variant?.compareAtPrice || product?.compareAtPriceRange?.minVariantPrice;
+  const onSale = comparePrice?.amount && price?.amount && parseFloat(comparePrice.amount) > parseFloat(price.amount);
+  const canAdd = variant?.id && !variant.id.startsWith('dummy') && variant.availableForSale !== false;
 
   async function handleAddToCart() {
-    if (!variant) return
-    await addItem(variant.id, 1)
-    setAdded(true)
-    setTimeout(() => setAdded(false), 2000)
+    if (!canAdd) return;
+    await addItem(variant.id, 1);
+    setAdded(true);
+    window.setTimeout(() => setAdded(false), 1800);
+  }
+
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-screen-2xl px-5 py-12 sm:px-8">
+        <div className="grid gap-10 md:grid-cols-2">
+          <div className="aspect-[3/4] animate-pulse rounded-[8px] bg-gray-100" />
+          <div className="space-y-4">
+            <div className="h-8 w-3/4 animate-pulse rounded bg-gray-100" />
+            <div className="h-6 w-1/4 animate-pulse rounded bg-gray-100" />
+            <div className="h-4 w-full animate-pulse rounded bg-gray-100" />
+            <div className="h-4 w-2/3 animate-pulse rounded bg-gray-100" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="mx-auto max-w-screen-2xl px-5 py-24 text-center sm:px-8">
+        <p className="text-sm text-gray-500">Product not found.</p>
+        <Link to="/shop" className="mt-5 inline-flex border-b-2 border-navy pb-1 text-sm font-bold text-navy">
+          Return to shop
+        </Link>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
-      <div className="grid md:grid-cols-2 gap-10">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="mx-auto max-w-screen-2xl px-5 py-10 sm:px-8 lg:py-16"
+    >
+      <div className="mb-8 text-[13px] text-gray-500">
+        <Link to="/shop" className="transition-colors hover:text-pink">Shop</Link>
+        <span className="mx-2">/</span>
+        <span className="text-navy">{product.title}</span>
+      </div>
 
-        {/* Images */}
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
         <div>
-          <div className="rounded-2xl overflow-hidden bg-pink-light aspect-square mb-3">
-            {images[selectedImg] ? (
-              <img src={images[selectedImg].url} alt={images[selectedImg].altText} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-6xl">👗</div>
-            )}
+          <div className="overflow-hidden rounded-[8px] bg-gray-100">
+            <img
+              src={selectedImage}
+              alt={images[selectedImg]?.altText || product.title}
+              onError={() => setImageFailed((failed) => ({ ...failed, [selectedImg]: true }))}
+              className="aspect-[3/4] h-full w-full object-cover"
+            />
           </div>
-          {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImg(i)}
-                  className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${selectedImg === i ? 'border-pink' : 'border-transparent'}`}
-                >
-                  <img src={img.url} alt={img.altText} className="w-full h-full object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
+
+          <div className="mt-3 flex gap-3 overflow-x-auto pb-1">
+            {(images.length ? images : [{ url: fallbackImage, altText: product.title }]).map((image, index) => (
+              <button
+                key={`${image.url}-${index}`}
+                type="button"
+                onClick={() => setSelectedImg(index)}
+                className={`h-20 w-20 shrink-0 overflow-hidden rounded-[8px] border-2 transition-colors ${
+                  selectedImg === index ? 'border-pink' : 'border-transparent'
+                }`}
+                aria-label={`View product image ${index + 1}`}
+              >
+                <img
+                  src={!imageFailed[index] && image.url ? image.url : fallbackImage}
+                  alt=""
+                  onError={() => setImageFailed((failed) => ({ ...failed, [index]: true }))}
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Details */}
-        <div>
-          <h1 className="text-2xl font-medium text-navy mb-2">{product.title}</h1>
-          <p className="text-xl text-pink font-medium mb-6">
-            {variant ? formatPrice(variant.price.amount) : formatPrice(product.priceRange.minVariantPrice.amount)}
-          </p>
+        <div className="lg:pt-6">
+          <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.22em] text-pink">CalAda & Co</p>
+          <h1 className="font-serif text-4xl font-semibold leading-tight text-navy sm:text-5xl">{product.title}</h1>
 
-          {/* Options */}
-          {product.options?.map(option => (
+          {price && (
+            <div className="mt-5 flex items-baseline gap-3">
+              <p className="text-2xl font-bold text-navy">{formatPrice(price.amount, price.currencyCode)}</p>
+              {onSale && (
+                <p className="text-base text-gray-400 line-through">
+                  {formatPrice(comparePrice.amount, comparePrice.currencyCode)}
+                </p>
+              )}
+            </div>
+          )}
+
+          {product.options?.map((option) => (
             option.values.length > 1 && (
-              <div key={option.name} className="mb-5">
-                <p className="text-sm font-medium text-navy mb-2">{option.name}</p>
-                <div className="flex gap-2 flex-wrap">
-                  {option.values.map(val => (
+              <div key={option.name} className="mt-7">
+                <p className="mb-3 text-sm font-bold text-navy">{option.name}</p>
+                <div className="flex flex-wrap gap-2">
+                  {option.values.map((value) => (
                     <button
-                      key={val}
-                      onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: val }))}
-                      className={`px-4 py-1.5 rounded-full text-sm border transition-colors ${
-                        selectedOptions[option.name] === val
-                          ? 'bg-navy text-white border-navy'
+                      key={value}
+                      type="button"
+                      onClick={() => setSelectedOptions((current) => ({ ...current, [option.name]: value }))}
+                      className={`rounded-full border px-5 py-2 text-sm font-semibold transition-colors ${
+                        selectedOptions[option.name] === value
+                          ? 'border-navy bg-navy text-white'
                           : 'border-gray-200 text-gray-600 hover:border-pink hover:text-pink'
                       }`}
                     >
-                      {val}
+                      {value}
                     </button>
                   ))}
                 </div>
@@ -119,34 +172,35 @@ export default function ProductPage() {
             )
           ))}
 
-          {/* Add to cart */}
           <button
+            type="button"
             onClick={handleAddToCart}
-            disabled={!variant?.availableForSale || cartLoading}
-            className={`w-full py-3.5 rounded-full font-medium text-sm transition-colors mb-4 ${
+            disabled={!canAdd || cartLoading}
+            className={`mt-8 w-full rounded-full px-6 py-4 text-sm font-bold uppercase tracking-[0.12em] transition-colors ${
               added
-                ? 'bg-green-500 text-white'
-                : variant?.availableForSale
-                ? 'bg-pink hover:bg-pink-dark text-white'
-                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ? 'bg-emerald-600 text-white'
+                : canAdd
+                  ? 'bg-pink text-white hover:bg-pink-dark'
+                  : 'bg-gray-200 text-gray-500'
             }`}
           >
-            {added ? '✓ added to cart!' : !variant?.availableForSale ? 'sold out' : cartLoading ? 'adding...' : 'add to cart'}
+            {added ? 'Added to cart' : canAdd ? (cartLoading ? 'Adding' : 'Add to cart') : 'Preview only'}
           </button>
 
-          {/* Description */}
-          {product.description && (
-            <div className="border-t border-gray-100 pt-6">
-              <p className="text-sm text-gray-500 leading-relaxed">{product.description}</p>
-            </div>
-          )}
+          <div className="mt-8 border-t border-black/10 pt-8">
+            <h2 className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-navy">Details</h2>
+            <p className="max-w-xl text-sm leading-7 text-gray-600">
+              {product.description || 'A soft, thoughtful boutique piece designed for family days, gifting, and everyday ease.'}
+            </p>
+          </div>
 
-          {/* Made to order note */}
-          <div className="mt-6 bg-pink-light rounded-xl p-4 text-sm text-navy">
-            🤍 <strong>made to order</strong> — this piece is crafted just for you and ships in 3–5 business days.
+          <div className="mt-6 grid gap-3 text-sm text-gray-500 sm:grid-cols-3">
+            <p>Made to order</p>
+            <p>Ships in 3-5 business days</p>
+            <p>Easy 30-day returns</p>
           </div>
         </div>
       </div>
-    </div>
-  )
+    </motion.div>
+  );
 }
