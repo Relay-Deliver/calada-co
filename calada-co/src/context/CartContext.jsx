@@ -37,10 +37,9 @@ export function CartProvider({ children }) {
       const currentCart = await getOrCreateCart();
       const updated = await addToCart(currentCart.id, variantId, quantity);
       setCart(updated);
-      setIsOpen(true);
+      setIsOpen(true); // ← opens the drawer
     } catch (err) {
-      const message = err.message || 'Unable to add this item to your bag.';
-      setError(message);
+      setError(err.message || 'Unable to add this item to your bag.');
       setIsOpen(true);
       throw err;
     } finally {
@@ -84,8 +83,8 @@ export function CartProvider({ children }) {
   const rawCheckoutUrl = cart?.checkoutUrl || '#';
   const checkoutUrl = rawCheckoutUrl !== '#'
     ? rawCheckoutUrl
-        .replace('https://www.caladaco.com', 'https://calada-co.myshopify.com')
-        .replace('https://caladaco.com', 'https://calada-co.myshopify.com')
+        .replace('https://www.caladaco.com', 'https://caladaco.myshopify.com')
+        .replace('https://caladaco.com', 'https://caladaco.myshopify.com')
     : '#';
 
   return (
@@ -93,10 +92,7 @@ export function CartProvider({ children }) {
       cart, isOpen, loading, error, itemCount, totalPrice, currencyCode, checkoutUrl,
       addItem, updateItem, removeItem,
       openCart: () => setIsOpen(true),
-      closeCart: () => {
-        setIsOpen(false);
-        setError('');
-      },
+      closeCart: () => { setIsOpen(false); setError(''); },
     }}>
       {children}
     </CartContext.Provider>

@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { WishlistProvider } from './context/WishlistContext';
 import AnnouncementBar from './components/layout/AnnouncementBar';
+import CountdownBanner from './components/layout/CountdownBanner';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import HomePage from './pages/HomePage';
@@ -12,30 +14,33 @@ import ContactPage from './pages/ContactPage';
 import AccountLoginPage from './pages/AccountLoginPage';
 import AccountRegisterPage from './pages/AccountRegisterPage';
 import AccountDashboardPage from './pages/AccountDashboardPage';
-import CountdownBanner from './components/layout/CountdownBanner';
+import WishlistPage from './pages/WishlistPage';
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <AnnouncementBar />
-          <CountdownBanner />
-          <Navbar />
-          <main>
-            <Routes>
-              <Route path="/"                    element={<HomePage />} />
-              <Route path="/shop"                element={<ShopPage />} />
-              <Route path="/collections/:handle" element={<ShopPage />} />
-              <Route path="/products/:handle"    element={<ProductPage />} />
-              <Route path="/about"               element={<AboutPage />} />
-              <Route path="/contact"             element={<ContactPage />} />
-              <Route path="/account"             element={<AccountDashboardPage />} />
-              <Route path="/account/login"       element={<AccountLoginPage />} />
-              <Route path="/account/register"    element={<AccountRegisterPage />} />
-            </Routes>
-          </main>
-          <Footer />
+          <WishlistProvider>
+            <AnnouncementBar />
+            <CountdownBanner />
+            <Navbar />
+            <main>
+              <Routes>
+                <Route path="/"                     element={<HomePage />} />
+                <Route path="/shop"                 element={<ShopPage />} />
+                <Route path="/collections/:handle"  element={<ShopPage />} />
+                <Route path="/products/:handle"     element={<ProductPage />} />
+                <Route path="/about"                element={<AboutPage />} />
+                <Route path="/contact"              element={<ContactPage />} />
+                <Route path="/account"              element={<AccountDashboardPage />} />
+                <Route path="/account/login"        element={<AccountLoginPage />} />
+                <Route path="/account/register"     element={<AccountRegisterPage />} />
+                <Route path="/account/wishlist"     element={<WishlistPage />} />
+              </Routes>
+            </main>
+            <Footer />
+          </WishlistProvider>
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>

@@ -182,3 +182,100 @@ export function getFallbackImage(seed = '') {
 
   return FALLBACK_IMAGES[value % FALLBACK_IMAGES.length];
 }
+
+export const navMenus = [
+  {
+    label: 'New Arrivals',
+    href: '/collections/new-arrivals',
+  },
+  {
+    label: 'Women',
+    columns: [
+      {
+        heading: 'Tops',
+        links: [
+          { label: 'All Tops', href: '/collections/womens-tops' },
+          { label: 'Tees & Tanks', href: '/collections/tees-tanks' },
+          { label: 'Blouses', href: '/collections/blouses' },
+          { label: 'Sweaters', href: '/collections/sweaters' },
+        ],
+      },
+      {
+        heading: 'Bottoms',
+        links: [
+          { label: 'All Bottoms', href: '/collections/womens-bottoms' },
+          { label: 'Jeans & Pants', href: '/collections/jeans-pants' },
+          { label: 'Shorts', href: '/collections/shorts' },
+          { label: 'Skirts', href: '/collections/skirts' },
+        ],
+      },
+      {
+        heading: 'Dresses',
+        links: [
+          { label: 'All Dresses', href: '/collections/dresses' },
+          { label: 'Midi Dresses', href: '/collections/midi-dresses' },
+          { label: 'Maxi Dresses', href: '/collections/maxi-dresses' },
+          { label: 'Mini Dresses', href: '/collections/mini-dresses' },
+        ],
+      },
+      {
+        heading: 'Sets & More',
+        links: [
+          { label: 'Matching Sets', href: '/collections/matching-sets' },
+          { label: 'Loungewear', href: '/collections/loungewear' },
+          { label: 'Swimwear', href: '/collections/swimwear' },
+          { label: 'Accessories', href: '/collections/accessories' },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Children',
+    columns: [
+      {
+        heading: 'Girls',
+        links: [
+          { label: 'All Girls', href: '/collections/girls' },
+          { label: 'Dresses', href: '/collections/girls-dresses' },
+          { label: 'Tops', href: '/collections/girls-tops' },
+          { label: 'Sets', href: '/collections/girls-sets' },
+        ],
+      },
+      {
+        heading: 'Boys',
+        links: [
+          { label: 'All Boys', href: '/collections/boys' },
+          { label: 'Shirts', href: '/collections/boys-shirts' },
+          { label: 'Shorts & Pants', href: '/collections/boys-bottoms' },
+          { label: 'Sets', href: '/collections/boys-sets' },
+        ],
+      },
+      {
+        heading: 'Baby',
+        links: [
+          { label: 'All Baby', href: '/collections/baby' },
+          { label: 'Onesies', href: '/collections/onesies' },
+          { label: 'Baby Sets', href: '/collections/baby-sets' },
+          { label: 'Gifts', href: '/collections/baby-gifts' },
+        ],
+      },
+      {
+        heading: 'Shop By Age',
+        links: [
+          { label: '0–12 Months', href: '/collections/0-12-months' },
+          { label: '1–3 Years', href: '/collections/1-3-years' },
+          { label: '4–7 Years', href: '/collections/4-7-years' },
+          { label: '8–12 Years', href: '/collections/8-12-years' },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Family Sets',
+    href: '/collections/family-sets',
+  },
+  {
+    label: 'Sale',
+    href: '/collections/sale',
+  },
+];
