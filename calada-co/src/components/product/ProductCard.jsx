@@ -7,8 +7,8 @@ import { useWishlist } from '../../context/WishlistContext';
 import { getFallbackImage } from '../../data/visuals';
 
 const cardMotion = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 34, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1 },
 };
 
 export default function ProductCard({ product }) {
@@ -64,7 +64,8 @@ export default function ProductCard({ product }) {
   return (
     <motion.div
       variants={cardMotion}
-      transition={{ duration: 0.45, ease: 'easeOut' }}
+      whileHover={{ y: -5 }}
+      transition={{ type: 'spring', stiffness: 260, damping: 24 }}
       className="group"
     >
       {/* ── Image container ── */}
@@ -77,7 +78,9 @@ export default function ProductCard({ product }) {
           src={primaryImage}
           alt={images[0]?.altText || product.title}
           onError={() => setPrimaryFailed(true)}
-          className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+          className={`absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-[1.035] ${
+            secondaryImage ? 'group-hover:opacity-35' : 'group-hover:opacity-95'
+          }`}
         />
 
         {/* Secondary image on hover */}
@@ -86,9 +89,13 @@ export default function ProductCard({ product }) {
             src={secondaryImage}
             alt={images[1]?.altText || `${product.title} alternate`}
             onError={() => setSecondaryFailed(true)}
-            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-700 ease-out group-hover:scale-[1.035] group-hover:opacity-95"
           />
         )}
+
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/25 to-transparent" />
+        </div>
 
         {/* Badges — top left */}
         <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1.5">

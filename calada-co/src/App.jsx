@@ -8,6 +8,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
+import CartPage from './pages/CartPage';
 import ProductPage from './pages/ProductPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
@@ -29,6 +30,7 @@ export default function App() {
               <Routes>
                 <Route path="/"                     element={<HomePage />} />
                 <Route path="/shop"                 element={<ShopPage />} />
+                <Route path="/cart"                 element={<CartPage />} />
                 <Route path="/collections/:handle"  element={<ShopPage />} />
                 <Route path="/products/:handle"     element={<ProductPage />} />
                 <Route path="/about"                element={<AboutPage />} />

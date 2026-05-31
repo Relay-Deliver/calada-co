@@ -27,70 +27,32 @@ export default function CountdownBanner() {
   if (!visible) return null;
 
   return (
-    <div style={{
-      position: 'relative',
-      background: 'linear-gradient(135deg, #fdf0f5 0%, #fff8fb 50%, #f8f0fd 100%)',
-      borderBottom: '1px solid #e8b4c8',
-      padding: '1rem 2rem',
-      fontFamily: "'Jost', sans-serif",
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '1.5rem',
-      flexWrap: 'wrap',
-    }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <span style={{
-          fontFamily: 'Georgia, serif',
-          fontSize: '11px',
-          fontWeight: '500',
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: '#993556',
-          marginBottom: '2px',
-        }}>✿ Grand Opening</span>
-        <span style={{
-          fontFamily: 'Georgia, serif',
-          fontSize: '17px',
-          fontWeight: '600',
-          color: '#2d1a24',
-        }}>CalAda & Co is Almost Here</span>
+    <div className="relative flex flex-col items-center justify-center gap-3 border-b border-[#e8b4c8] bg-[linear-gradient(135deg,#fdf0f5_0%,#fff8fb_50%,#f8f0fd_100%)] px-10 py-3 text-center sm:flex-row sm:gap-6 sm:px-8 sm:py-4">
+      <div className="flex flex-col items-center">
+        <span className="font-serif text-[10px] font-semibold uppercase tracking-[0.18em] text-pink-dark sm:text-[11px]">
+          Grand Opening
+        </span>
+        <span className="font-serif text-[15px] font-semibold leading-tight text-[#2d1a24] sm:text-[17px]">
+          CalAda &amp; Co is Almost Here
+        </span>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {[
           { value: time.days, label: 'Days' },
           { value: time.hours, label: 'Hrs' },
           { value: time.mins, label: 'Mins' },
           { value: time.secs, label: 'Secs' },
         ].map(({ value, label }, i) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {i > 0 && <span style={{ color: '#d4537e', fontSize: '20px', fontFamily: 'Georgia, serif', opacity: 0.5 }}>:</span>}
-            <div style={{
-              textAlign: 'center',
-              background: 'white',
-              border: '1px solid #e8b4c8',
-              borderRadius: '10px',
-              padding: '8px 12px',
-              minWidth: '52px',
-              boxShadow: '0 1px 4px rgba(153,53,86,0.08)',
-            }}>
-              <span style={{
-                fontFamily: 'Georgia, serif',
-                fontSize: '22px',
-                fontWeight: '600',
-                color: '#d4537e',
-                display: 'block',
-                lineHeight: 1,
-                marginBottom: '2px',
-              }}>{value}</span>
-              <span style={{
-                fontSize: '9px',
-                fontWeight: '500',
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: '#b07a90',
-              }}>{label}</span>
+          <div key={label} className="flex items-center gap-2">
+            {i > 0 && <span className="hidden font-serif text-xl text-pink/50 sm:inline">:</span>}
+            <div className="min-w-[48px] rounded-lg border border-[#e8b4c8] bg-white px-2.5 py-2 text-center shadow-[0_1px_4px_rgba(153,53,86,0.08)] sm:min-w-[52px] sm:px-3">
+              <span className="block font-serif text-xl font-semibold leading-none text-pink sm:text-[22px]">
+                {value}
+              </span>
+              <span className="mt-1 block text-[8px] font-semibold uppercase tracking-[0.1em] text-[#b07a90] sm:text-[9px]">
+                {label}
+              </span>
             </div>
           </div>
         ))}
@@ -99,24 +61,7 @@ export default function CountdownBanner() {
       <button
         onClick={() => setVisible(false)}
         aria-label="Close banner"
-        style={{
-          position: 'absolute',
-          right: '16px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          background: 'rgba(153,53,86,0.1)',
-          border: 'none',
-          borderRadius: '50%',
-          width: '28px',
-          height: '28px',
-          cursor: 'pointer',
-          color: '#993556',
-          fontSize: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          lineHeight: 1,
-        }}
+        className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-pink-dark/10 text-base leading-none text-pink-dark transition-colors hover:bg-pink-dark hover:text-white sm:right-4 sm:top-1/2 sm:-translate-y-1/2"
       >✕</button>
     </div>
   );

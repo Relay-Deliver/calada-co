@@ -60,7 +60,7 @@ export const CATEGORY_TILES = [
 
 export const NAV_MENUS = {
   bundles: {
-    label: 'Bundles',
+    label: 'Bundles (Up to 30% Off)',
     to: '/collections/family-sets',
     cards: [
       {
