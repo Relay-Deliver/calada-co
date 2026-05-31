@@ -12,6 +12,7 @@ import ContactPage from './pages/ContactPage';
 import AccountLoginPage from './pages/AccountLoginPage';
 import AccountRegisterPage from './pages/AccountRegisterPage';
 import AccountDashboardPage from './pages/AccountDashboardPage';
+import CountdownBanner from './components/layout/CountdownBanner';
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
       <AuthProvider>
         <CartProvider>
           <AnnouncementBar />
+          <CountdownBanner />
           <Navbar />
           <main>
             <Routes>
