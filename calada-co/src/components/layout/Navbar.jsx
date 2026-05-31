@@ -89,85 +89,91 @@ export default function Navbar() {
         ref={menuRef}
         className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
+        {/* ── Main bar ── */}
+        <div className="mx-auto flex h-16 max-w-7xl items-center px-4 lg:px-8">
 
-          {/* Mobile hamburger */}
-          <button
-            className="p-2 text-black lg:hidden"
-            onClick={() => setMobileOpen(o => !o)}
-            aria-label="Menu"
-          >
-            {mobileOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
+          {/* LEFT: hamburger (mobile) or nav links (desktop) */}
+          <div className="flex flex-1 items-center">
+            {/* Mobile hamburger */}
+            <button
+              className="p-2 text-gray-700 lg:hidden"
+              onClick={() => setMobileOpen(o => !o)}
+              aria-label="Menu"
+            >
+              {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
 
-          {/* Logo */}
-          <Link to="/" className="absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0">
-            <span className="font-['Playfair_Display',serif] text-2xl font-bold tracking-wide text-[#c084a0]">
-              CalAda &amp; Co
-            </span>
-          </Link>
+            {/* Desktop nav links */}
+            <ul className="hidden lg:flex lg:items-center lg:gap-1">
+              {navMenus.map((menu) => (
+                <li key={menu.label} className="relative">
+                  <button
+                    className={`px-3 py-2 text-sm font-medium tracking-wide transition-colors hover:text-[#c084a0] ${activeMenu === menu.label ? 'text-[#c084a0]' : 'text-gray-700'}`}
+                    onMouseEnter={() => menu.columns ? setActiveMenu(menu.label) : setActiveMenu(null)}
+                    onClick={() => {
+                      if (!menu.columns) { navigate(menu.href || '/shop'); setActiveMenu(null); }
+                    }}
+                  >
+                    {menu.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-          {/* Desktop nav links */}
-          <ul className="hidden lg:flex lg:items-center lg:gap-1">
-            {navMenus.map((menu) => (
-              <li key={menu.label} className="relative">
-                <button
-                  className={`px-3 py-2 text-sm font-medium tracking-wide transition-colors hover:text-[#c084a0] ${activeMenu === menu.label ? 'text-[#c084a0]' : 'text-gray-700'}`}
-                  onMouseEnter={() => menu.columns ? setActiveMenu(menu.label) : setActiveMenu(null)}
-                  onClick={() => {
-                    if (!menu.columns) { navigate(menu.href || '/shop'); setActiveMenu(null); }
-                  }}
-                >
-                  {menu.label}
-                </button>
-              </li>
-            ))}
-          </ul>
+          {/* CENTER: Logo — always centered */}
+          <div className="flex flex-1 justify-center">
+            <Link to="/">
+              <span className="font-['Playfair_Display',serif] text-xl font-bold tracking-wide text-[#c084a0] sm:text-2xl">
+                CalAda &amp; Co
+              </span>
+            </Link>
+          </div>
 
-          {/* Icon group */}
-          <div className="flex items-center gap-0.5">
+          {/* RIGHT: Icons */}
+          <div className="flex flex-1 items-center justify-end gap-0">
 
             {/* Search */}
             <button
-              className="relative p-2.5 text-gray-700 transition-colors hover:text-[#c084a0]"
+              className="relative p-2 text-gray-700 transition-colors hover:text-[#c084a0]"
               onClick={() => setSearchOpen(o => !o)}
               aria-label="Search"
             >
               <SearchIcon />
             </button>
 
-            {/* Wishlist with live badge */}
+            {/* Wishlist — hidden on smallest screens, show from sm */}
             <Link
               to="/account/wishlist"
-              className="relative p-2.5 text-gray-700 transition-colors hover:text-[#c084a0]"
+              className="relative hidden p-2 text-gray-700 transition-colors hover:text-[#c084a0] sm:block"
               aria-label="Wishlist"
             >
               <HeartIcon />
               {wishlistCount > 0 && (
-                <span className="absolute right-0.5 top-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#c084a0] text-[9px] font-bold leading-none text-white">
+                <span className="absolute right-0.5 top-0.5 flex h-[17px] w-[17px] items-center justify-center rounded-full bg-[#c084a0] text-[9px] font-bold leading-none text-white">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
             </Link>
 
-            {/* Account */}
+            {/* Account — hidden on mobile */}
             <Link
               to={isLoggedIn ? '/account' : '/account/login'}
-              className="relative p-2.5 text-gray-700 transition-colors hover:text-[#c084a0]"
+              className="relative hidden p-2 text-gray-700 transition-colors hover:text-[#c084a0] sm:block"
               aria-label="Account"
             >
               <AccountIcon />
             </Link>
 
-            {/* Cart with live badge */}
+            {/* Cart — always visible */}
             <button
-              className="relative p-2.5 text-gray-700 transition-colors hover:text-[#c084a0]"
+              className="relative p-2 text-gray-700 transition-colors hover:text-[#c084a0]"
               onClick={openCart}
               aria-label="Cart"
             >
               <CartIcon />
               {itemCount > 0 && (
-                <span className="absolute right-0.5 top-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[#c084a0] text-[9px] font-bold leading-none text-white">
+                <span className="absolute right-0.5 top-0.5 flex h-[17px] w-[17px] items-center justify-center rounded-full bg-[#c084a0] text-[9px] font-bold leading-none text-white">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
@@ -176,7 +182,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Search dropdown */}
+        {/* ── Search bar dropdown ── */}
         {searchOpen && (
           <div className="border-t border-gray-100 bg-white px-4 py-3 shadow-md">
             <form onSubmit={handleSearch} className="mx-auto flex max-w-xl items-center gap-2">
@@ -198,7 +204,7 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Mega menu dropdown */}
+        {/* ── Mega menu dropdown (desktop) ── */}
         {activeMenu && (
           <div
             className="absolute left-0 right-0 top-full z-50 border-t border-gray-100 bg-white shadow-xl"
@@ -235,7 +241,7 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* Mobile menu */}
+        {/* ── Mobile menu drawer ── */}
         {mobileOpen && (
           <div className="border-t border-gray-100 bg-white lg:hidden">
             <ul className="divide-y divide-gray-100">
@@ -250,15 +256,25 @@ export default function Navbar() {
                   </Link>
                 </li>
               ))}
+              {/* Show account + wishlist in mobile menu since icons are hidden */}
+              <li>
+                <Link
+                  to={isLoggedIn ? '/account' : '/account/login'}
+                  className="block px-6 py-4 text-sm font-medium text-gray-700 hover:text-[#c084a0]"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  My Account
+                </Link>
+              </li>
               <li>
                 <Link
                   to="/account/wishlist"
-                  className="flex items-center gap-2 px-6 py-4 text-sm font-medium text-gray-700 hover:text-[#c084a0]"
+                  className="flex items-center justify-between px-6 py-4 text-sm font-medium text-gray-700 hover:text-[#c084a0]"
                   onClick={() => setMobileOpen(false)}
                 >
-                  <HeartIcon /> Wishlist
+                  <span>Wishlist</span>
                   {wishlistCount > 0 && (
-                    <span className="ml-1 rounded-full bg-[#c084a0] px-2 py-0.5 text-xs text-white">
+                    <span className="rounded-full bg-[#c084a0] px-2 py-0.5 text-xs font-bold text-white">
                       {wishlistCount}
                     </span>
                   )}
