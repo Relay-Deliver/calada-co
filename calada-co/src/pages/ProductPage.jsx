@@ -51,7 +51,7 @@ export default function ProductPage() {
   const price = variant?.price || product?.priceRange?.minVariantPrice;
   const comparePrice = variant?.compareAtPrice || product?.compareAtPriceRange?.minVariantPrice;
   const onSale = comparePrice?.amount && price?.amount && parseFloat(comparePrice.amount) > parseFloat(price.amount);
-  const canAdd = variant?.id && !variant.id.startsWith('dummy') && variant.availableForSale !== false;
+  const canAdd = variant?.id && !variant.id.startsWith('dummy');
 
   async function handleAddToCart() {
     if (!canAdd) return;

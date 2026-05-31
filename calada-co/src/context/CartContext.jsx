@@ -81,7 +81,12 @@ export function CartProvider({ children }) {
   const itemCount = cart?.lines?.edges?.reduce((sum, { node }) => sum + node.quantity, 0) || 0;
   const totalPrice = cart?.cost?.totalAmount?.amount || '0.00';
   const currencyCode = cart?.cost?.totalAmount?.currencyCode || 'USD';
-  const checkoutUrl = cart?.checkoutUrl || '#';
+  const rawCheckoutUrl = cart?.checkoutUrl || '#';
+  const checkoutUrl = rawCheckoutUrl !== '#'
+    ? rawCheckoutUrl
+        .replace('https://www.caladaco.com', 'https://calada-co.myshopify.com')
+        .replace('https://caladaco.com', 'https://calada-co.myshopify.com')
+    : '#';
 
   return (
     <CartContext.Provider value={{
