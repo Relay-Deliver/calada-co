@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform } from 'framer-motion';
 import { getProducts } from '../services/shopify';
 import ProductCard from '../components/product/ProductCard';
 import { DUMMY_PRODUCTS } from '../data/dummyProducts';
@@ -21,13 +21,27 @@ const PERKS = [
   { icon: '✦', title: 'Real Support', desc: 'From real people who care' },
 ];
 
+const STORY_STATS = [
+  { value: 2000, suffix: '+', label: 'Happy families' },
+  { value: 100, suffix: '%', label: 'Made to order' },
+  { value: 5, suffix: '-star', label: 'Average review' },
+];
+
 const fadeUp = {
-  hidden: { opacity: 0, y: 32 },
-  visible: { opacity: 1, y: 0 },
+  hidden: { opacity: 0, y: 46, scale: 0.96, filter: 'blur(10px)' },
+  visible: { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' },
 };
 
 const stagger = {
-  visible: { transition: { staggerChildren: 0.09 } },
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.14, delayChildren: 0.04 } },
+};
+
+const springReveal = {
+  type: 'spring',
+  stiffness: 120,
+  damping: 18,
+  mass: 0.8,
 };
 
 function Stars({ count = 5 }) {
@@ -39,6 +53,41 @@ function Stars({ count = 5 }) {
         </svg>
       ))}
     </div>
+  );
+}
+
+function AnimatedStat({ value, suffix = '', label, delay = 0 }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const count = useMotionValue(0);
+  const display = useTransform(count, latest => {
+    const rounded = Math.round(latest);
+    return `${rounded.toLocaleString('en-US')}${suffix}`;
+  });
+
+  useEffect(() => {
+    if (!isInView) return undefined;
+    const controls = animate(count, value, {
+      duration: 1.35,
+      delay,
+      ease: [0.16, 1, 0.3, 1],
+    });
+    return controls.stop;
+  }, [count, delay, isInView, value]);
+
+  return (
+    <motion.div
+      ref={ref}
+      variants={fadeUp}
+      transition={{ ...springReveal, delay }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      className="border-t border-white/10 pt-6 sm:pt-8"
+    >
+      <motion.p className="font-serif text-2xl font-semibold text-white sm:text-5xl">
+        {display}
+      </motion.p>
+      <p className="mt-2 text-[9px] uppercase tracking-[0.2em] text-white/40 sm:mt-3 sm:text-[10px]">{label}</p>
+    </motion.div>
   );
 }
 
@@ -94,7 +143,7 @@ export default function HomePage() {
     <div className="overflow-x-hidden bg-white">
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[60vh] overflow-hidden bg-[#f5e9f0] sm:min-h-[calc(100vh-132px)]">
+      <section className="relative min-h-[560px] overflow-hidden bg-[#f5e9f0] sm:min-h-[calc(100vh-132px)]">
         <AnimatePresence mode="wait">
           <motion.img
             key={slide.id}
@@ -109,7 +158,7 @@ export default function HomePage() {
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/50"/>
 
-        <div className="relative z-10 mx-auto flex min-h-[60vh] max-w-screen-2xl items-center justify-center px-5 py-12 text-center sm:min-h-[calc(100vh-132px)] sm:px-8 sm:py-16">
+        <div className="relative z-10 mx-auto flex min-h-[560px] max-w-screen-2xl items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100vh-132px)] sm:px-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={slide.id}
@@ -127,11 +176,11 @@ export default function HomePage() {
               >
                 {slide.eyebrow}
               </motion.p>
-              <h1 className="text-balance font-serif text-[2.2rem] font-black uppercase leading-[0.9] text-black sm:text-[5.8rem] lg:text-[7.5rem]">
+              <h1 className="text-balance break-words font-serif text-[2.35rem] font-black uppercase leading-[0.92] text-black sm:text-[5.8rem] lg:text-[7.5rem]">
                 {slide.title.split(' ').slice(0, -1).join(' ')}{' '}
                 <span className="relative inline-block text-white">
                   {slide.title.split(' ').slice(-1)}
-                  <svg className="pointer-events-none absolute -inset-x-4 -inset-y-3" viewBox="0 0 220 88" fill="none" aria-hidden="true">
+                  <svg className="pointer-events-none absolute -inset-x-2 -inset-y-2 sm:-inset-x-4 sm:-inset-y-3" viewBox="0 0 220 88" fill="none" aria-hidden="true">
                     <ellipse cx="110" cy="44" rx="100" ry="34" stroke="black" strokeWidth="4" strokeLinecap="round" transform="rotate(-7 110 44)"/>
                   </svg>
                 </span>
@@ -142,7 +191,7 @@ export default function HomePage() {
               <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:mt-9 sm:flex-row sm:gap-4">
                 <Link
                   to={slide.to}
-                  className="border-2 border-black bg-white/90 px-8 py-3.5 text-[11px] font-black uppercase tracking-[0.2em] text-black transition-all hover:bg-black hover:text-white sm:px-10 sm:py-4 sm:text-[12px]"
+                  className="w-full max-w-[320px] border-2 border-black bg-white/90 px-4 py-3.5 text-center text-[11px] font-black uppercase tracking-[0.14em] text-black transition-all hover:bg-black hover:text-white sm:w-auto sm:px-10 sm:py-4 sm:text-[12px] sm:tracking-[0.2em]"
                 >
                   {slide.cta}
                 </Link>
@@ -183,7 +232,7 @@ export default function HomePage() {
           className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-4 px-5 sm:px-8 lg:grid-cols-4 lg:gap-6"
         >
           {PERKS.map((perk) => (
-            <motion.div key={perk.title} variants={fadeUp} transition={{ duration: 0.45 }} className="flex items-start gap-3">
+            <motion.div key={perk.title} variants={fadeUp} transition={springReveal} whileHover={{ y: -3 }} className="flex items-start gap-3">
               <span className="mt-0.5 text-lg leading-none text-pink">✦</span>
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.1em] text-navy sm:text-[12px]">{perk.title}</p>
@@ -202,7 +251,7 @@ export default function HomePage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.55 }}
+            transition={springReveal}
             className="mb-8 text-center sm:mb-12"
           >
             <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Shop by category</p>
@@ -218,7 +267,7 @@ export default function HomePage() {
             className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
           >
             {CATEGORY_TILES.map((cat, i) => (
-              <motion.div key={cat.to} variants={fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }}>
+              <motion.div key={cat.to} variants={fadeUp} transition={{ ...springReveal, delay: i * 0.04 }} whileHover={{ y: -8, scale: 1.015 }}>
                 <Link to={cat.to} className="group relative block overflow-hidden rounded-xl bg-gray-100 sm:rounded-2xl" style={{ aspectRatio: '3/4' }}>
                   <img src={cat.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"/>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent"/>
@@ -287,7 +336,7 @@ export default function HomePage() {
           viewport={{ once: true, amount: 0.2 }}
           className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16"
         >
-          <motion.div variants={fadeUp} transition={{ duration: 0.6 }}>
+          <motion.div variants={fadeUp} transition={springReveal}>
             <p className="mb-4 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-5">Our Story</p>
             <h2 className="font-serif text-3xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
               Born from a<br/>mother's love<br/>
@@ -301,16 +350,15 @@ export default function HomePage() {
             </Link>
           </motion.div>
 
-          <motion.div variants={fadeUp} transition={{ duration: 0.6, delay: 0.15 }} className="grid grid-cols-3 gap-4 text-center sm:gap-8">
-            {[
-              { stat: '2,000+', label: 'Happy families' },
-              { stat: '100%', label: 'Made to order' },
-              { stat: '5-star', label: 'Average review' },
-            ].map((item) => (
-              <div key={item.label} className="border-t border-white/10 pt-6 sm:pt-8">
-                <p className="font-serif text-2xl font-semibold text-white sm:text-5xl">{item.stat}</p>
-                <p className="mt-2 text-[9px] uppercase tracking-[0.2em] text-white/40 sm:mt-3 sm:text-[10px]">{item.label}</p>
-              </div>
+          <motion.div variants={stagger} className="grid grid-cols-3 gap-4 text-center sm:gap-8">
+            {STORY_STATS.map((item, i) => (
+              <AnimatedStat
+                key={item.label}
+                value={item.value}
+                suffix={item.suffix}
+                label={item.label}
+                delay={i * 0.12}
+              />
             ))}
           </motion.div>
         </motion.div>
@@ -324,7 +372,7 @@ export default function HomePage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
+            transition={springReveal}
             className="mb-10 text-center sm:mb-14"
           >
             <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Why CalAda & Co</p>
@@ -343,7 +391,7 @@ export default function HomePage() {
               { num: '03', title: 'New Styles Always', desc: 'Fresh drops every season — curated with real families in mind, from newborns to mamas.' },
               { num: '04', title: 'Quality You Feel', desc: 'Softer fabrics, elevated details, and care that shows in every single stitch.' },
             ].map((item, i) => (
-              <motion.div key={item.num} variants={fadeUp} transition={{ duration: 0.5, delay: i * 0.08 }} className="group border-t-2 border-pink/30 pt-6 transition-colors hover:border-pink sm:pt-7">
+              <motion.div key={item.num} variants={fadeUp} transition={{ ...springReveal, delay: i * 0.04 }} whileHover={{ y: -6 }} className="group border-t-2 border-pink/30 pt-6 transition-colors hover:border-pink sm:pt-7">
                 <p className="font-serif text-4xl font-semibold text-pink/20 transition-colors group-hover:text-pink/40 sm:text-5xl">{item.num}</p>
                 <h3 className="mt-3 text-[13px] font-black uppercase tracking-[0.1em] text-navy sm:mt-4">{item.title}</h3>
                 <p className="mt-2 text-sm leading-7 text-gray-500 sm:mt-3">{item.desc}</p>
@@ -361,7 +409,7 @@ export default function HomePage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
+            transition={springReveal}
             className="mb-8 text-center sm:mb-12"
           >
             <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Reviews</p>
@@ -377,7 +425,7 @@ export default function HomePage() {
             className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4"
           >
             {REVIEWS.map((review, i) => (
-              <motion.div key={review.name} variants={fadeUp} transition={{ duration: 0.5, delay: i * 0.07 }} className="rounded-xl bg-white p-5 shadow-sm sm:rounded-2xl sm:p-7">
+              <motion.div key={review.name} variants={fadeUp} transition={{ ...springReveal, delay: i * 0.04 }} whileHover={{ y: -6, scale: 1.015 }} className="rounded-xl bg-white p-5 shadow-sm transition-shadow hover:shadow-md sm:rounded-2xl sm:p-7">
                 <Stars count={review.rating}/>
                 <p className="mb-5 mt-3 text-sm italic leading-7 text-gray-600 sm:mb-6 sm:mt-4">"{review.text}"</p>
                 <div className="border-t border-black/8 pt-4">
@@ -391,24 +439,20 @@ export default function HomePage() {
       </section>
 
       {/* ── EMAIL SIGNUP ── */}
-      <section className="relative overflow-hidden bg-navy py-16 sm:py-24">
-        <div className="pointer-events-none absolute inset-0 opacity-5">
-          <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-pink"/>
-          <div className="absolute -bottom-20 -right-20 h-96 w-96 rounded-full bg-pink"/>
-        </div>
+      <section className="relative overflow-hidden border-y border-pink-light bg-white py-16 sm:py-24">
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.35 }}
-          transition={{ duration: 0.55 }}
+          transition={springReveal}
           className="relative mx-auto max-w-xl px-5 text-center sm:px-8"
         >
           <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-4">Join the family</p>
-          <h2 className="font-serif text-3xl font-semibold text-white sm:text-5xl">
+          <h2 className="font-serif text-3xl font-semibold text-navy sm:text-5xl">
             Get 20% off<br/>your first order
           </h2>
-          <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-white/55 sm:mt-4">
+          <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-slate-500 sm:mt-4">
             Plus early access to new arrivals and exclusive members-only offers.
           </p>
 
@@ -418,8 +462,8 @@ export default function HomePage() {
               animate={{ opacity: 1, scale: 1 }}
               className="mt-8 sm:mt-10"
             >
-              <p className="text-lg font-semibold text-pink">🎉 You're in!</p>
-              <p className="mt-2 text-sm text-white/60">Check your inbox for your 20% off discount code.</p>
+              <p className="text-lg font-semibold text-pink">You're in!</p>
+              <p className="mt-2 text-sm text-slate-500">Check your inbox for your 20% off discount code.</p>
             </motion.div>
           ) : (
             <>
@@ -433,12 +477,12 @@ export default function HomePage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="min-w-0 flex-1 rounded-full border border-white/20 bg-white/10 px-5 py-3.5 text-sm text-white outline-none transition-colors placeholder:text-white/40 focus:border-pink focus:bg-white/15 sm:px-6 sm:py-4"
+                  className="min-w-0 flex-1 rounded-full border border-slate-200 bg-white px-5 py-3.5 text-sm text-navy shadow-sm outline-none transition-colors placeholder:text-slate-400 focus:border-pink focus:ring-4 focus:ring-pink/10 sm:px-6 sm:py-4"
                 />
                 <button
                   type="submit"
                   disabled={emailLoading}
-                  className="rounded-full bg-pink px-7 py-3.5 text-sm font-bold text-white transition-all hover:bg-pink-dark disabled:opacity-60 sm:px-8 sm:py-4"
+                  className="rounded-full bg-navy px-7 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-pink disabled:opacity-60 sm:px-8 sm:py-4"
                 >
                   {emailLoading ? 'Subscribing…' : 'Get 20% Off'}
                 </button>

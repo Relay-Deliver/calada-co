@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import PaymentMethods from '../cart/PaymentMethods';
 
 const SHOP_LINKS = [
   { label: 'New Arrivals', to: '/collections/new-arrivals' },
@@ -34,7 +35,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-navy text-white mt-24">
+    <footer className="bg-navy text-white">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 pt-16 pb-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-10 pb-12 border-b border-white/10">
 
@@ -107,7 +108,7 @@ export default function Footer() {
               Get 15% off your first order when you join our community.
             </p>
             {submitted ? (
-              <p className="text-sm text-pink-mid font-medium">Thanks for joining! 🌸</p>
+              <p className="text-sm text-pink-mid font-medium">Thanks for joining!</p>
             ) : (
               <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
                 <input
@@ -129,9 +130,12 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-8 text-[12px] text-white/25">
+        <div className="flex flex-col items-start justify-between gap-5 pt-8 text-[12px] text-white/25 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} CalAda & Co. All rights reserved.</p>
-          <p>Made with love · Every piece crafted to order</p>
+          <div className="flex flex-col gap-3 sm:items-end">
+            <PaymentMethods className="[&_p]:text-white/30 [&_span]:border-white/10 [&_span]:bg-white/10 [&_span]:text-white/60" />
+            <p>Made with love · Every piece crafted to order</p>
+          </div>
         </div>
       </div>
     </footer>
