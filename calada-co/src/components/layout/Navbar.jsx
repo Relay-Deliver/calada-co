@@ -44,15 +44,6 @@ const CloseIcon = () => (
   </svg>
 );
 
-const Logo = ({ height = 56 }) => (
-  <img
-   src="/assets/calada-logo.png"
-    alt="CalAda & Co."
-    height={height}
-    style={{ height, width: 'auto', display: 'block' }}
-  />
-);
-
 export default function Navbar() {
   const { itemCount, openCart } = useCart();
   const { count: wishlistCount } = useWishlist();
@@ -106,7 +97,11 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" onMouseEnter={() => setActiveMenuKey(null)}>
-            <Logo height={56} />
+            <img
+              src="/assets/calada-logo.png"
+              alt="CalAda & Co."
+              style={{ height: 64, width: 'auto', display: 'block' }}
+            />
           </Link>
 
           {/* Nav links */}
@@ -186,7 +181,11 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" className="mx-auto" onClick={() => setMobileOpen(false)}>
-            <Logo height={44} />
+            <img
+              src="/assets/calada-logo.png"
+              alt="CalAda & Co."
+              style={{ height: 44, width: 'auto', display: 'block' }}
+            />
           </Link>
 
           {/* Mobile icons */}
