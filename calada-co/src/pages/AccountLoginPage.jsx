@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -30,7 +30,6 @@ export default function AccountLoginPage() {
         <h1 className="mb-1.5 font-serif text-3xl font-semibold text-navy">Welcome Back</h1>
         <p className="text-sm text-[#888888] mb-7">Sign in to your CalAda &amp; Co account</p>
 
-        {/* Google + Apple buttons */}
         <div className="flex flex-col gap-3 mb-5">
           
             href={SHOPIFY_URL}
@@ -55,7 +54,6 @@ export default function AccountLoginPage() {
           </a>
         </div>
 
-        {/* Divider */}
         <div className="relative mb-5">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-[#eeeeee]" />
