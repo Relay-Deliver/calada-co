@@ -31,8 +31,8 @@ export default function AccountLoginPage() {
         <p className="text-sm text-[#888888] mb-7">Sign in to your CalAda &amp; Co account</p>
 
         <div className="flex flex-col gap-3 mb-5">
-          
-            href={SHOPIFY_URL}
+<a
+={SHOPIFY_URL}
             className="flex w-full items-center justify-center gap-3 rounded-full border-[1.5px] border-[#eeeeee] bg-white py-2.5 px-4 text-sm font-medium text-[#333333] transition-all hover:border-[#c084a0] hover:shadow-sm"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
@@ -43,8 +43,8 @@ export default function AccountLoginPage() {
             </svg>
             Continue with Google
           </a>
-          
-            href={SHOPIFY_URL}
+<a
+={SHOPIFY_URL}
             className="flex w-full items-center justify-center gap-3 rounded-full border-[1.5px] border-[#eeeeee] bg-white py-2.5 px-4 text-sm font-medium text-[#333333] transition-all hover:border-[#c084a0] hover:shadow-sm"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
