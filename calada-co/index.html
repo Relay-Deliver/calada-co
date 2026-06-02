@@ -13,8 +13,9 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-
-    <!-- CHAT WIDGET — replace this comment block with your chat embed script when ready -->
-    <!-- Example: <script src="https://..." data-shop="caladaco.myshopify.com"></script> -->
+    <script>
+      window.smartbotConfig = { shop: 'caladaco.myshopify.com' };
+    </script>
+    <script src="https://cdn.smartbot.app/widget/smartbot.js" async></script>
   </body>
 </html>
