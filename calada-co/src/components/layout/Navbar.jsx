@@ -52,6 +52,7 @@ export default function Navbar() {
 
   const [activeMenuKey, setActiveMenuKey] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpandedKey, setMobileExpandedKey] = useState(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
@@ -95,16 +96,10 @@ export default function Navbar() {
         {/* DESKTOP BAR */}
         <div className="mx-auto hidden h-[88px] max-w-screen-2xl grid-cols-[minmax(220px,0.8fr)_minmax(0,1.7fr)_minmax(150px,0.5fr)] items-center gap-5 px-6 xl:grid 2xl:px-10">
 
-          {/* Logo */}
           <Link to="/" onMouseEnter={() => setActiveMenuKey(null)}>
-            <img
-              src="/assets/calada-logo.png"
-              alt="CalAda & Co."
-              style={{ height: 64, width: 'auto', display: 'block' }}
-            />
+            <img src="/assets/calada-logo.png" alt="CalAda & Co." style={{ height: 64, width: 'auto', display: 'block' }} />
           </Link>
 
-          {/* Nav links */}
           <ul className="flex min-w-0 items-center justify-center gap-4 2xl:gap-8">
             {HEADER_NAV.map((menu) => (
               <li key={menu.key} className="relative">
@@ -121,21 +116,11 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Desktop icons */}
           <div className="flex items-center justify-end gap-1 text-navy">
-            <button
-              className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
-              onClick={() => setSearchOpen(o => !o)}
-              aria-label="Search"
-            >
+            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
               <SearchIcon />
             </button>
-
-            <Link
-              to="/account/wishlist"
-              className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
-              aria-label={`Wishlist${wishlistCount > 0 ? ` (${wishlistCount})` : ''}`}
-            >
+            <Link to="/account/wishlist" className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
                 <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
@@ -143,20 +128,10 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-
-            <Link
-              to={isLoggedIn ? '/account' : '/account/login'}
-              className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
-              aria-label="Account"
-            >
+            <Link to={isLoggedIn ? '/account' : '/account/login'} className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Account">
               <AccountIcon />
             </Link>
-
-            <button
-              className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
-              onClick={openCart}
-              aria-label="Cart"
-            >
+            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (
                 <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
@@ -167,34 +142,16 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* MOBILE / TABLET BAR */}
+        {/* MOBILE BAR */}
         <div className="grid h-[72px] grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 px-4 xl:hidden">
-
-          <button
-            className="grid h-11 w-11 place-items-center text-navy"
-            onClick={() => setMobileOpen(o => !o)}
-            aria-label="Menu"
-            aria-expanded={mobileOpen}
-          >
+          <button className="grid h-11 w-11 place-items-center text-navy" onClick={() => setMobileOpen(o => !o)} aria-label="Menu" aria-expanded={mobileOpen}>
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
-
-          {/* Logo */}
           <Link to="/" className="mx-auto" onClick={() => setMobileOpen(false)}>
-            <img
-              src="/assets/calada-logo.png"
-              alt="CalAda & Co."
-              style={{ height: 44, width: 'auto', display: 'block' }}
-            />
+            <img src="/assets/calada-logo.png" alt="CalAda & Co." style={{ height: 44, width: 'auto', display: 'block' }} />
           </Link>
-
-          {/* Mobile icons */}
           <div className="flex items-center justify-end gap-1 text-navy">
-            <Link
-              to="/account/wishlist"
-              className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
-              aria-label="Wishlist"
-            >
+            <Link to="/account/wishlist" className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
                 <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
@@ -202,20 +159,10 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-
-            <button
-              className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
-              onClick={() => setSearchOpen(o => !o)}
-              aria-label="Search"
-            >
+            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
               <SearchIcon />
             </button>
-
-            <button
-              className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
-              onClick={openCart}
-              aria-label="Cart"
-            >
+            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (
                 <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
@@ -238,74 +185,148 @@ export default function Navbar() {
                 placeholder="Search for products..."
                 className="min-w-0 flex-1 rounded-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20"
               />
-              <button
-                type="submit"
-                className="rounded-full bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]"
-              >
+              <button type="submit" className="rounded-full bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]">
                 Search
               </button>
             </form>
           </div>
         )}
 
-        {/* Mega menu dropdown (desktop) */}
+        {/* DESKTOP MEGA MENU */}
         {activeMenu && (
           <div
             className="absolute left-0 right-0 top-full z-50 hidden border-t border-gray-100 bg-white shadow-xl xl:block"
             onMouseLeave={() => setActiveMenuKey(null)}
           >
-            <div className="mx-auto grid max-w-screen-2xl grid-cols-[0.8fr_1.5fr] gap-8 px-8 py-7">
-              <div className="max-w-sm">
-                <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
-                <h3 className="mt-2 font-serif text-3xl font-semibold text-navy">{activeMenu.label}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-500">
-                  Fresh boutique picks for mothers, families, and little ones.
-                </p>
-                <Link
-                  to={activeMenu.to}
-                  className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
-                  onClick={() => setActiveMenuKey(null)}
-                >
-                  Shop now
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {activeMenu.cards?.map(card => (
+            {activeMenu.groups ? (
+              // Collections — grouped layout
+              <div className="mx-auto max-w-screen-2xl px-8 py-7">
+                <div className="mb-5 flex items-baseline justify-between">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
+                    <h3 className="mt-1 font-serif text-2xl font-semibold text-navy">Collections</h3>
+                  </div>
                   <Link
-                    key={card.title}
-                    to={card.to}
-                    className="group grid grid-cols-[120px_1fr] overflow-hidden rounded-lg border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-md"
+                    to="/collections"
+                    className="border-b-2 border-navy pb-0.5 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
                     onClick={() => setActiveMenuKey(null)}
                   >
-                    <img src={card.image} alt="" className="h-full min-h-[132px] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    <span className="flex flex-col justify-center p-5">
-                      <span className="font-serif text-xl font-semibold text-navy">{card.title}</span>
-                      <span className="mt-1 text-sm text-slate-500">{card.caption}</span>
-                      <span className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">Shop now</span>
-                    </span>
+                    View All
                   </Link>
-                ))}
+                </div>
+                <div className="grid grid-cols-3 gap-8">
+                  {activeMenu.groups.map(group => (
+                    <div key={group.heading}>
+                      <p className="mb-3 text-[11px] font-black uppercase tracking-[0.22em] text-navy">{group.heading}</p>
+                      <ul className="grid gap-1.5">
+                        {group.links.map(link => (
+                          <li key={link.to}>
+                            <Link
+                              to={link.to}
+                              className="text-sm text-slate-500 transition-colors hover:text-[#c084a0]"
+                              onClick={() => setActiveMenuKey(null)}
+                            >
+                              {link.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            ) : (
+              // Standard card layout
+              <div className="mx-auto grid max-w-screen-2xl grid-cols-[0.8fr_1.5fr] gap-8 px-8 py-7">
+                <div className="max-w-sm">
+                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
+                  <h3 className="mt-2 font-serif text-3xl font-semibold text-navy">{activeMenu.label}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-500">
+                    Fresh boutique picks for mothers, families, and little ones.
+                  </p>
+                  <Link
+                    to={activeMenu.to}
+                    className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
+                    onClick={() => setActiveMenuKey(null)}
+                  >
+                    Shop now
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {activeMenu.cards?.map(card => (
+                    <Link
+                      key={card.title}
+                      to={card.to}
+                      className="group grid grid-cols-[120px_1fr] overflow-hidden rounded-lg border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-md"
+                      onClick={() => setActiveMenuKey(null)}
+                    >
+                      <img src={card.image} alt="" className="h-full min-h-[132px] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <span className="flex flex-col justify-center p-5">
+                        <span className="font-serif text-xl font-semibold text-navy">{card.title}</span>
+                        <span className="mt-1 text-sm text-slate-500">{card.caption}</span>
+                        <span className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">Shop now</span>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Mobile menu drawer */}
+        {/* MOBILE MENU DRAWER */}
         {mobileOpen && (
           <div className="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg xl:hidden">
             <ul className="grid gap-1">
               {HEADER_NAV.map((menu) => (
                 <li key={menu.key}>
-                  <Link
-                    to={menu.to}
-                    className="flex items-center justify-between rounded-lg px-3 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <span>{menu.label}</span>
-                    <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </Link>
+                  {menu.groups ? (
+                    <div>
+                      <button
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
+                        onClick={() => setMobileExpandedKey(mobileExpandedKey === menu.key ? null : menu.key)}
+                      >
+                        <span>{menu.label}</span>
+                        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
+                          style={{ transform: mobileExpandedKey === menu.key ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
+                        </svg>
+                      </button>
+                      {mobileExpandedKey === menu.key && (
+                        <div className="mb-2 ml-3 grid gap-4 rounded-lg bg-slate-50 p-4">
+                          {menu.groups.map(group => (
+                            <div key={group.heading}>
+                              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-navy">{group.heading}</p>
+                              <ul className="grid gap-1.5">
+                                {group.links.map(link => (
+                                  <li key={link.to}>
+                                    <Link
+                                      to={link.to}
+                                      className="text-sm text-slate-500 hover:text-[#c084a0]"
+                                      onClick={() => { setMobileOpen(false); setMobileExpandedKey(null); }}
+                                    >
+                                      {link.label}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={menu.to}
+                      className="flex items-center justify-between rounded-lg px-3 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span>{menu.label}</span>
+                      <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
+                      </svg>
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
