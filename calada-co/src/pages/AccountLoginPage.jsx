@@ -32,7 +32,7 @@ export default function AccountLoginPage() {
 
         <div className="flex flex-col gap-3 mb-5">
 <a
-={SHOPIFY_URL}
+            href={SHOPIFY_URL}
             className="flex w-full items-center justify-center gap-3 rounded-full border-[1.5px] border-[#eeeeee] bg-white py-2.5 px-4 text-sm font-medium text-[#333333] transition-all hover:border-[#c084a0] hover:shadow-sm"
           >
             <svg width="18" height="18" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@ export default function AccountLoginPage() {
             Continue with Google
           </a>
 <a
-={SHOPIFY_URL}
+            href={SHOPIFY_URL}
             className="flex w-full items-center justify-center gap-3 rounded-full border-[1.5px] border-[#eeeeee] bg-white py-2.5 px-4 text-sm font-medium text-[#333333] transition-all hover:border-[#c084a0] hover:shadow-sm"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
