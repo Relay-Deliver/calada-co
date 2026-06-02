@@ -6,7 +6,6 @@ import AnnouncementBar from './components/layout/AnnouncementBar';
 import CountdownBanner from './components/layout/CountdownBanner';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import ChatWidget from './components/layout/ChatWidget';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import CartPage from './pages/CartPage';
@@ -49,7 +48,6 @@ export default function App() {
               </Routes>
             </main>
             <Footer />
-            <ChatWidget />
           </WishlistProvider>
         </CartProvider>
       </AuthProvider>
