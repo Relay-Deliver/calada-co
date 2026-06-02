@@ -46,7 +46,7 @@ const CloseIcon = () => (
 
 const Logo = ({ height = 56 }) => (
   <img
-    src="/assets/CalAda Logo-1.png"
+   src="/assets/calada-logo.png"
     alt="CalAda & Co."
     height={height}
     style={{ height, width: 'auto', display: 'block' }}
