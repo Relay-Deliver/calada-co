@@ -34,7 +34,7 @@ export const HERO_SLIDES = [
 export const CATEGORY_TILES = [
   {
     label: 'Browse All',
-    desc: 'Start with every live Shopify product',
+    desc: 'Start with every live product',
     to: '/shop',
     image: '/assets/hero/flower-market.png',
   },
@@ -97,19 +97,63 @@ export const NAV_MENUS = {
   },
   collections: {
     label: 'Collections',
-    to: '/collections/women',
-    cards: [
+    to: '/collections',
+    groups: [
       {
-        title: 'Women',
-        caption: 'Elevated everyday apparel',
-        to: '/collections/women',
-        image: '/assets/hero/flower-market.png',
+        heading: 'Sports',
+        links: [
+          { label: 'Baseball / Softball', to: '/collections/baseball-softball' },
+          { label: 'Football', to: '/collections/football' },
+          { label: 'Basketball', to: '/collections/basketball' },
+          { label: 'Cheer', to: '/collections/cheer' },
+          { label: 'Tennis / Pickleball', to: '/collections/tennis-pickleball' },
+          { label: 'Soccer', to: '/collections/soccer' },
+          { label: 'Gymnastics', to: '/collections/gymnastics' },
+          { label: '4H', to: '/collections/4h' },
+          { label: 'Golf', to: '/collections/golf' },
+        ],
       },
       {
-        title: 'Children',
-        caption: 'Playful spring essentials',
-        to: '/collections/children',
+        heading: 'Seasons',
+        links: [
+          { label: 'Summer', to: '/collections/summer' },
+          { label: 'Fall / Thanksgiving / Halloween', to: '/collections/fall' },
+          { label: 'Christmas / Winter', to: '/collections/christmas-winter' },
+          { label: 'Spring / Easter', to: '/collections/spring-easter' },
+          { label: 'Valentine\'s Day', to: '/collections/valentines-day' },
+          { label: 'St. Patrick\'s Day', to: '/collections/st-pats-day' },
+          { label: 'Red White Blue', to: '/collections/red-white-blue' },
+        ],
+      },
+      {
+        heading: 'Lifestyle',
+        links: [
+          { label: 'Moms', to: '/collections/moms' },
+          { label: 'Coffee Lovers', to: '/collections/coffee-lovers' },
+          { label: 'Drinks', to: '/collections/drinks' },
+          { label: 'Michigan Made', to: '/collections/michigan-made' },
+          { label: 'Snacks', to: '/collections/snacks' },
+          { label: 'Reading', to: '/collections/reading' },
+          { label: 'Teacher / School', to: '/collections/teacher-school' },
+          { label: 'Kids', to: '/collections/kids' },
+          { label: 'Homestead / Farm', to: '/collections/homestead-farm' },
+          { label: 'Pet Lover', to: '/collections/pet-lover' },
+          { label: 'Mens', to: '/collections/mens' },
+        ],
+      },
+    ],
+    cards: [
+      {
+        title: 'Sports',
+        caption: 'Rep your team in style',
+        to: '/collections/baseball-softball',
         image: '/assets/hero/porch-family.png',
+      },
+      {
+        title: 'Seasons',
+        caption: 'Dressed for every holiday',
+        to: '/collections/summer',
+        image: '/assets/hero/flower-market.png',
       },
     ],
   },
@@ -126,7 +170,7 @@ export const NAV_MENUS = {
       {
         title: 'Soft Florals',
         caption: 'Lightweight pieces for warm days',
-        to: '/collections/women',
+        to: '/collections/summer',
         image: '/assets/hero/boutique-rack.png',
       },
     ],
@@ -144,7 +188,7 @@ export const NAV_MENUS = {
       {
         title: 'Little Favorites',
         caption: 'Top picks for children',
-        to: '/collections/children',
+        to: '/collections/kids',
         image: '/assets/hero/porch-family.png',
       },
     ],
@@ -179,7 +223,6 @@ export function getFallbackImage(seed = '') {
   const value = String(seed)
     .split('')
     .reduce((total, char) => total + char.charCodeAt(0), 0);
-
   return FALLBACK_IMAGES[value % FALLBACK_IMAGES.length];
 }
 
@@ -189,93 +232,64 @@ export const navMenus = [
     href: '/collections/new-arrivals',
   },
   {
-    label: 'Women',
+    label: 'Sports',
     columns: [
       {
-        heading: 'Tops',
+        heading: 'Sports',
         links: [
-          { label: 'All Tops', href: '/collections/womens-tops' },
-          { label: 'Tees & Tanks', href: '/collections/tees-tanks' },
-          { label: 'Blouses', href: '/collections/blouses' },
-          { label: 'Sweaters', href: '/collections/sweaters' },
-        ],
-      },
-      {
-        heading: 'Bottoms',
-        links: [
-          { label: 'All Bottoms', href: '/collections/womens-bottoms' },
-          { label: 'Jeans & Pants', href: '/collections/jeans-pants' },
-          { label: 'Shorts', href: '/collections/shorts' },
-          { label: 'Skirts', href: '/collections/skirts' },
-        ],
-      },
-      {
-        heading: 'Dresses',
-        links: [
-          { label: 'All Dresses', href: '/collections/dresses' },
-          { label: 'Midi Dresses', href: '/collections/midi-dresses' },
-          { label: 'Maxi Dresses', href: '/collections/maxi-dresses' },
-          { label: 'Mini Dresses', href: '/collections/mini-dresses' },
-        ],
-      },
-      {
-        heading: 'Sets & More',
-        links: [
-          { label: 'Matching Sets', href: '/collections/matching-sets' },
-          { label: 'Loungewear', href: '/collections/loungewear' },
-          { label: 'Swimwear', href: '/collections/swimwear' },
-          { label: 'Accessories', href: '/collections/accessories' },
+          { label: 'Baseball / Softball', href: '/collections/baseball-softball' },
+          { label: 'Football', href: '/collections/football' },
+          { label: 'Basketball', href: '/collections/basketball' },
+          { label: 'Cheer', href: '/collections/cheer' },
+          { label: 'Tennis / Pickleball', href: '/collections/tennis-pickleball' },
+          { label: 'Soccer', href: '/collections/soccer' },
+          { label: 'Gymnastics', href: '/collections/gymnastics' },
+          { label: '4H', href: '/collections/4h' },
+          { label: 'Golf', href: '/collections/golf' },
         ],
       },
     ],
   },
   {
-    label: 'Children',
+    label: 'Seasons',
     columns: [
       {
-        heading: 'Girls',
+        heading: 'Seasons',
         links: [
-          { label: 'All Girls', href: '/collections/girls' },
-          { label: 'Dresses', href: '/collections/girls-dresses' },
-          { label: 'Tops', href: '/collections/girls-tops' },
-          { label: 'Sets', href: '/collections/girls-sets' },
-        ],
-      },
-      {
-        heading: 'Boys',
-        links: [
-          { label: 'All Boys', href: '/collections/boys' },
-          { label: 'Shirts', href: '/collections/boys-shirts' },
-          { label: 'Shorts & Pants', href: '/collections/boys-bottoms' },
-          { label: 'Sets', href: '/collections/boys-sets' },
-        ],
-      },
-      {
-        heading: 'Baby',
-        links: [
-          { label: 'All Baby', href: '/collections/baby' },
-          { label: 'Onesies', href: '/collections/onesies' },
-          { label: 'Baby Sets', href: '/collections/baby-sets' },
-          { label: 'Gifts', href: '/collections/baby-gifts' },
-        ],
-      },
-      {
-        heading: 'Shop By Age',
-        links: [
-          { label: '0–12 Months', href: '/collections/0-12-months' },
-          { label: '1–3 Years', href: '/collections/1-3-years' },
-          { label: '4–7 Years', href: '/collections/4-7-years' },
-          { label: '8–12 Years', href: '/collections/8-12-years' },
+          { label: 'Summer', href: '/collections/summer' },
+          { label: 'Fall / Thanksgiving / Halloween', href: '/collections/fall' },
+          { label: 'Christmas / Winter', href: '/collections/christmas-winter' },
+          { label: 'Spring / Easter', href: '/collections/spring-easter' },
+          { label: "Valentine's Day", href: '/collections/valentines-day' },
+          { label: "St. Patrick's Day", href: '/collections/st-pats-day' },
+          { label: 'Red White Blue', href: '/collections/red-white-blue' },
         ],
       },
     ],
   },
   {
-    label: 'Family Sets',
+    label: 'Lifestyle',
+    columns: [
+      {
+        heading: 'Lifestyle',
+        links: [
+          { label: 'Moms', href: '/collections/moms' },
+          { label: 'Coffee Lovers', href: '/collections/coffee-lovers' },
+          { label: 'Drinks', href: '/collections/drinks' },
+          { label: 'Michigan Made', href: '/collections/michigan-made' },
+          { label: 'Snacks', href: '/collections/snacks' },
+          { label: 'Reading', href: '/collections/reading' },
+          { label: 'Teacher / School', href: '/collections/teacher-school' },
+          { label: 'Kids', href: '/collections/kids' },
+          { label: 'Homestead / Farm', href: '/collections/homestead-farm' },
+          { label: 'Pet Lover', href: '/collections/pet-lover' },
+          { label: 'Mens', href: '/collections/mens' },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Bundles',
     href: '/collections/family-sets',
-  },
-  {
-    label: 'Sale',
-    href: '/collections/sale',
   },
 ];
