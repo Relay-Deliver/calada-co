@@ -43,11 +43,14 @@ const CloseIcon = () => (
     <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
   </svg>
 );
-const LogoHeart = () => (
-  <svg width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M20.8 4.9c-2-2.1-5.2-2.1-7.2 0L12 6.5l-1.6-1.6c-2-2.1-5.2-2.1-7.2 0-2.1 2.2-2.1 5.7 0 7.9L12 21l8.8-8.2c2.1-2.2 2.1-5.7 0-7.9Z" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M7.7 6.9h.01" stroke="#D4537E" strokeLinecap="round" strokeWidth="2.8" />
-  </svg>
+
+const Logo = ({ height = 56 }) => (
+  <img
+    src="/assets/CalAda Logo-1.png"
+    alt="CalAda & Co."
+    height={height}
+    style={{ height, width: 'auto', display: 'block' }}
+  />
 );
 
 export default function Navbar() {
@@ -98,22 +101,12 @@ export default function Navbar() {
         ref={menuRef}
         className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
       >
-        {/* ── DESKTOP BAR ── */}
-        <div className="mx-auto hidden h-[88px] max-w-screen-2xl grid-cols-[minmax(250px,0.8fr)_minmax(0,1.7fr)_minmax(150px,0.5fr)] items-center gap-5 px-6 xl:grid 2xl:px-10">
+        {/* DESKTOP BAR */}
+        <div className="mx-auto hidden h-[88px] max-w-screen-2xl grid-cols-[minmax(220px,0.8fr)_minmax(0,1.7fr)_minmax(150px,0.5fr)] items-center gap-5 px-6 xl:grid 2xl:px-10">
 
           {/* Logo */}
-          <Link to="/" className="flex min-w-0 items-center gap-3 text-navy" onMouseEnter={() => setActiveMenuKey(null)}>
-            <span className="grid h-11 w-11 shrink-0 place-items-center">
-              <LogoHeart />
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate font-serif text-[28px] font-semibold leading-none tracking-[0.01em]">
-                CalAda <span className="text-[#c084a0]">&amp;</span> Co
-              </span>
-              <span className="mt-1 block truncate text-[10px] font-bold uppercase tracking-[0.42em] text-slate-400">
-                For families, for good
-              </span>
-            </span>
+          <Link to="/" onMouseEnter={() => setActiveMenuKey(null)}>
+            <Logo height={56} />
           </Link>
 
           {/* Nav links */}
@@ -133,10 +126,8 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Desktop icons — Search, Wishlist, Account, Cart */}
+          {/* Desktop icons */}
           <div className="flex items-center justify-end gap-1 text-navy">
-
-            {/* Search */}
             <button
               className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
               onClick={() => setSearchOpen(o => !o)}
@@ -145,7 +136,6 @@ export default function Navbar() {
               <SearchIcon />
             </button>
 
-            {/* Wishlist ✅ now on desktop */}
             <Link
               to="/account/wishlist"
               className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
@@ -159,7 +149,6 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Account */}
             <Link
               to={isLoggedIn ? '/account' : '/account/login'}
               className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
@@ -168,7 +157,6 @@ export default function Navbar() {
               <AccountIcon />
             </Link>
 
-            {/* Cart */}
             <button
               className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
               onClick={openCart}
@@ -181,14 +169,12 @@ export default function Navbar() {
                 </span>
               )}
             </button>
-
           </div>
         </div>
 
-        {/* ── MOBILE / TABLET BAR ── */}
+        {/* MOBILE / TABLET BAR */}
         <div className="grid h-[72px] grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 px-4 xl:hidden">
 
-          {/* Hamburger */}
           <button
             className="grid h-11 w-11 place-items-center text-navy"
             onClick={() => setMobileOpen(o => !o)}
@@ -199,24 +185,12 @@ export default function Navbar() {
           </button>
 
           {/* Logo */}
-          <Link to="/" className="mx-auto flex min-w-0 items-center gap-2 text-navy" onClick={() => setMobileOpen(false)}>
-            <span className="grid h-9 w-9 shrink-0 place-items-center">
-              <LogoHeart />
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate font-serif text-xl font-semibold leading-none">
-                CalAda <span className="text-[#c084a0]">&amp;</span> Co
-              </span>
-              <span className="mt-0.5 hidden truncate text-[8px] font-bold uppercase tracking-[0.28em] text-slate-400 min-[390px]:block">
-                For families, for good
-              </span>
-            </span>
+          <Link to="/" className="mx-auto" onClick={() => setMobileOpen(false)}>
+            <Logo height={44} />
           </Link>
 
-          {/* Mobile icons — Wishlist + Cart */}
+          {/* Mobile icons */}
           <div className="flex items-center justify-end gap-1 text-navy">
-
-            {/* Wishlist on mobile */}
             <Link
               to="/account/wishlist"
               className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
@@ -230,7 +204,6 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Search on mobile */}
             <button
               className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
               onClick={() => setSearchOpen(o => !o)}
@@ -239,7 +212,6 @@ export default function Navbar() {
               <SearchIcon />
             </button>
 
-            {/* Cart */}
             <button
               className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]"
               onClick={openCart}
@@ -252,11 +224,10 @@ export default function Navbar() {
                 </span>
               )}
             </button>
-
           </div>
         </div>
 
-        {/* ── Search dropdown ── */}
+        {/* Search dropdown */}
         {searchOpen && (
           <div className="border-t border-gray-100 bg-white px-4 py-3 shadow-md">
             <form onSubmit={handleSearch} className="mx-auto flex max-w-2xl items-center gap-2">
@@ -265,7 +236,7 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search for products…"
+                placeholder="Search for products..."
                 className="min-w-0 flex-1 rounded-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20"
               />
               <button
@@ -278,7 +249,7 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* ── Mega menu dropdown (desktop) ── */}
+        {/* Mega menu dropdown (desktop) */}
         {activeMenu && (
           <div
             className="absolute left-0 right-0 top-full z-50 hidden border-t border-gray-100 bg-white shadow-xl xl:block"
@@ -296,7 +267,7 @@ export default function Navbar() {
                   className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
                   onClick={() => setActiveMenuKey(null)}
                 >
-                  Shop now →
+                  Shop now
                 </Link>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -311,7 +282,7 @@ export default function Navbar() {
                     <span className="flex flex-col justify-center p-5">
                       <span className="font-serif text-xl font-semibold text-navy">{card.title}</span>
                       <span className="mt-1 text-sm text-slate-500">{card.caption}</span>
-                      <span className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">Shop now →</span>
+                      <span className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">Shop now</span>
                     </span>
                   </Link>
                 ))}
@@ -320,7 +291,7 @@ export default function Navbar() {
           </div>
         )}
 
-        {/* ── Mobile menu drawer ── */}
+        {/* Mobile menu drawer */}
         {mobileOpen && (
           <div className="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg xl:hidden">
             <ul className="grid gap-1">
