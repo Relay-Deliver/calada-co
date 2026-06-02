@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+﻿import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -12,6 +12,9 @@ import CartPage from './pages/CartPage';
 import ProductPage from './pages/ProductPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import ShippingPage from './pages/ShippingPage';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
 import AccountLoginPage from './pages/AccountLoginPage';
 import AccountRegisterPage from './pages/AccountRegisterPage';
 import AccountDashboardPage from './pages/AccountDashboardPage';
@@ -35,6 +38,9 @@ export default function App() {
                 <Route path="/products/:handle"     element={<ProductPage />} />
                 <Route path="/about"                element={<AboutPage />} />
                 <Route path="/contact"              element={<ContactPage />} />
+                <Route path="/shipping"             element={<ShippingPage />} />
+                <Route path="/privacy"              element={<PrivacyPage />} />
+                <Route path="/terms"                element={<TermsPage />} />
                 <Route path="/account"              element={<AccountDashboardPage />} />
                 <Route path="/account/login"        element={<AccountLoginPage />} />
                 <Route path="/account/register"     element={<AccountRegisterPage />} />

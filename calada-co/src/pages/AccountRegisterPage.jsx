@@ -36,7 +36,7 @@ export default function AccountRegisterPage() {
         <p className="text-sm text-[#888888] mb-7">Create your CalAda &amp; Co account</p>
 
         <div className="flex flex-col gap-3 mb-5">
-          
+          <a
             href={SHOPIFY_URL}
             className="flex w-full items-center justify-center gap-3 rounded-full border-[1.5px] border-[#eeeeee] bg-white py-2.5 px-4 text-sm font-medium text-[#333333] transition-all hover:border-[#c084a0] hover:shadow-sm"
           >
@@ -48,7 +48,7 @@ export default function AccountRegisterPage() {
             </svg>
             Continue with Google
           </a>
-          
+          <a
             href={SHOPIFY_URL}
             className="flex w-full items-center justify-center gap-3 rounded-full border-[1.5px] border-[#eeeeee] bg-white py-2.5 px-4 text-sm font-medium text-[#333333] transition-all hover:border-[#c084a0] hover:shadow-sm"
           >
