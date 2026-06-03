@@ -8,7 +8,7 @@ const FAQS = [
   },
   {
     q: 'Do you offer returns or refunds?',
-    a: 'We accept returns within 14 days of delivery for unworn, unwashed items in original condition with tags attached. Sale items and custom orders are final sale. Email hello@caladaco.com to start a return.',
+    a: 'We accept returns within 14 days of delivery for unworn, unwashed items in original condition with tags attached. Sale items and custom orders are final sale. Email support@caladaco.com to start a return.',
   },
   {
     q: 'What shipping methods do you offer?',
@@ -20,11 +20,11 @@ const FAQS = [
   },
   {
     q: 'Do you work with influencers?',
-    a: 'Yes! We love partnering with families and creators who align with our values. Reach out at hello@caladaco.com with your social handle and we will be in touch.',
+    a: 'Yes! We love partnering with families and creators who align with our values. Reach out at support@caladaco.com with your social handle and we will be in touch.',
   },
   {
     q: 'Can I change or cancel my order?',
-    a: 'Orders can be modified or cancelled within 24 hours of placement. After that, production may have already begun. Please contact us immediately at hello@caladaco.com.',
+    a: 'Orders can be modified or cancelled within 24 hours of placement. After that, production may have already begun. Please contact us immediately at support@caladaco.com.',
   },
 ];
 
