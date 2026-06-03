@@ -32,13 +32,16 @@ export default function CartDrawer() {
         />
       )}
 
-      <div className={`fixed top-0 right-0 w-full max-w-[440px] h-full bg-white z-[201] flex flex-col shadow-[-6px_0_32px_rgba(0,0,0,0.13)] transition-transform duration-[320ms] ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed right-0 top-0 z-[201] flex h-full w-full max-w-[460px] flex-col bg-white shadow-[-6px_0_32px_rgba(0,0,0,0.13)] transition-transform duration-[320ms] ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-[18px] border-b border-[#f0f0f0]">
-          <h2 className="text-[19px] font-bold text-[#1a1a1a] tracking-[0.01em]">
-            Your Cart {itemCount > 0 && <span className="text-[#1a1a1a] font-bold">({itemCount})</span>}
-          </h2>
+        <div className="flex items-center justify-between border-b border-pink-light bg-[#fff8fb] px-6 pb-[18px] pt-5">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-pink">Shopping Bag</p>
+            <h2 className="mt-1 font-serif text-2xl font-semibold leading-none text-navy">
+              Your Cart {itemCount > 0 && <span className="font-sans text-base font-bold">({itemCount})</span>}
+            </h2>
+          </div>
           <button
             onClick={closeCart}
             className="flex items-center justify-center w-9 h-9 rounded-full text-[#555555] transition-colors hover:bg-[#f5f5f5]"
@@ -52,13 +55,13 @@ export default function CartDrawer() {
 
         {/* Free shipping bar */}
         {lines.length > 0 && (
-          <div className="px-6 pt-3 pb-3.5 bg-white border-b border-[#f0f0f0]">
+          <div className="border-b border-[#f0f0f0] bg-white px-6 pb-3.5 pt-3">
             {qualifies ? (
-              <p className="text-[13px] text-[#2a7a2a] mb-2 text-center">
+              <p className="mb-2 text-center text-[13px] text-[#2a7a2a]">
                 You've qualified for <strong>free shipping.</strong>
               </p>
             ) : (
-              <p className="text-[13px] text-[#444444] mb-2 text-center">
+              <p className="mb-2 text-center text-[13px] text-[#444444]">
                 You're <strong>{formatPrice(remaining, currencyCode)}</strong> away from free shipping.
               </p>
             )}
@@ -155,7 +158,7 @@ export default function CartDrawer() {
 
         {/* Footer */}
         {lines.length > 0 && (
-          <div className="px-5 pt-4 pb-5 border-t border-[#f0f0f0] flex flex-col gap-3 bg-white sm:px-6 sm:pb-6">
+          <div className="flex flex-col gap-3 border-t border-[#f0f0f0] bg-[#fff8fb] px-5 pb-5 pt-4 sm:px-6 sm:pb-6">
             <div className="flex justify-between text-base font-bold text-[#1a1a1a] pb-1">
               <span>SUBTOTAL</span>
               <span>{formatPrice(totalPrice, currencyCode)}</span>
@@ -166,10 +169,14 @@ export default function CartDrawer() {
             </p>
 
             <button
-              className="w-full py-4 bg-[#6b1a2a] text-white rounded-lg text-[15px] font-bold tracking-[0.03em] transition-colors hover:bg-[#c084a0] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex w-full items-center justify-center gap-2 py-4 bg-pink text-white rounded-xl text-[15px] font-bold tracking-[0.03em] transition-all hover:bg-pink-dark shadow-md hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={checkoutDisabled}
               onClick={handleCheckout}
             >
+              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" strokeLinecap="round"/>
+              </svg>
               {loading ? 'Updating...' : 'Secure Checkout'}
             </button>
 

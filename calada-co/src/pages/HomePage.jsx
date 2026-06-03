@@ -116,25 +116,55 @@ function AnimatedStat({ value, suffix = '', label, delay = 0 }) {
 }
 
 function ProductCarousel({ products }) {
-  const [index, setIndex] = useState(0);
-  const perPage = 4;
+  const viewportRef = useRef(null);
+  const [page, setPage] = useState(0);
+  const [perPage, setPerPage] = useState(4);
+  const [viewportWidth, setViewportWidth] = useState(0);
   const total = products.length;
   const maxIndex = Math.max(0, total - perPage);
+  const maxPage = Math.max(0, Math.ceil(total / perPage) - 1);
+  const startIndex = Math.min(page * perPage, maxIndex);
+  const gapPx = perPage === 2 ? 14 : perPage === 3 ? 18 : 24;
+  const cardBasis = `calc((100% - ${gapPx * (perPage - 1)}px) / ${perPage})`;
+  const cardWidth = viewportWidth > 0 ? (viewportWidth - gapPx * (perPage - 1)) / perPage : 0;
+  const xOffset = cardWidth > 0 ? -startIndex * (cardWidth + gapPx) : 0;
 
-  const prev = () => setIndex((i) => Math.max(0, i - 1));
-  const next = () => setIndex((i) => Math.min(maxIndex, i + 1));
+  useEffect(() => {
+    const updateCarousel = () => {
+      setViewportWidth(viewportRef.current?.clientWidth || 0);
+
+      if (window.innerWidth < 640) {
+        setPerPage(2);
+      } else if (window.innerWidth < 1024) {
+        setPerPage(3);
+      } else {
+        setPerPage(4);
+      }
+    };
+
+    updateCarousel();
+    window.addEventListener('resize', updateCarousel);
+    return () => window.removeEventListener('resize', updateCarousel);
+  }, []);
+
+  useEffect(() => {
+    setPage((current) => Math.min(current, maxPage));
+  }, [maxPage]);
+
+  const prev = () => setPage((i) => Math.max(0, i - 1));
+  const next = () => setPage((i) => Math.min(maxPage, i + 1));
 
   return (
     <div className="relative">
-      <div className="overflow-hidden">
+      <div ref={viewportRef} className="overflow-hidden">
         <motion.div
-          className="flex gap-4 md:gap-6"
-          animate={{ x: `calc(-${index * (100 / perPage)}% - ${index * (16 / perPage)}px)` }}
+          className="flex"
+          animate={{ x: xOffset }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          style={{ width: `${(total / perPage) * 100}%` }}
+          style={{ gap: `${gapPx}px` }}
         >
           {products.map((product) => (
-            <div key={product.id} style={{ width: `${100 / total}%` }}>
+            <div key={product.id} style={{ flex: `0 0 ${cardWidth > 0 ? `${cardWidth}px` : cardBasis}` }}>
               <ProductCard product={product} />
             </div>
           ))}
@@ -142,10 +172,10 @@ function ProductCarousel({ products }) {
       </div>
 
       {/* Arrows */}
-      {index > 0 && (
+      {page > 0 && (
         <button
           onClick={prev}
-          className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 grid h-10 w-10 place-items-center rounded-full bg-white shadow-md border border-gray-100 transition-colors hover:bg-navy hover:text-white"
+          className="absolute -left-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-gray-100 bg-white shadow-md transition-colors hover:bg-navy hover:text-white sm:-left-4"
           aria-label="Previous"
         >
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -153,10 +183,10 @@ function ProductCarousel({ products }) {
           </svg>
         </button>
       )}
-      {index < maxIndex && (
+      {page < maxPage && (
         <button
           onClick={next}
-          className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 grid h-10 w-10 place-items-center rounded-full bg-white shadow-md border border-gray-100 transition-colors hover:bg-navy hover:text-white"
+          className="absolute -right-2 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-gray-100 bg-white shadow-md transition-colors hover:bg-navy hover:text-white sm:-right-4"
           aria-label="Next"
         >
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -168,11 +198,11 @@ function ProductCarousel({ products }) {
       {/* Dots */}
       {total > perPage && (
         <div className="mt-6 flex justify-center gap-2">
-          {[...Array(maxIndex + 1)].map((_, i) => (
+          {[...Array(maxPage + 1)].map((_, i) => (
             <button
               key={i}
-              onClick={() => setIndex(i)}
-              className={`h-2 rounded-full transition-all ${i === index ? 'w-6 bg-navy' : 'w-2 bg-gray-300'}`}
+              onClick={() => setPage(i)}
+              className={`h-2 rounded-full transition-all ${i === page ? 'w-6 bg-navy' : 'w-2 bg-gray-300'}`}
             />
           ))}
         </div>
@@ -375,15 +405,78 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* PINK PRODUCT SHOWCASE */}
+      <section className="bg-[#f6bfd6] py-12 sm:py-16">
+        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+          <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink-dark">Fresh picks</p>
+              <h2 className="max-w-2xl font-serif text-3xl font-semibold leading-tight text-navy sm:text-5xl">
+                Go-to family pieces for sunny days ahead
+              </h2>
+            </div>
+            <Link to="/collections/new-arrivals" className="hidden shrink-0 border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-pink-dark hover:text-pink-dark sm:inline-flex">
+              Shop new arrivals
+            </Link>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[minmax(280px,0.95fr)_minmax(0,1.55fr)] lg:items-stretch">
+            <Link
+              to="/collections/family-sets"
+              className="group relative block min-h-[320px] overflow-hidden rounded-lg bg-navy sm:min-h-[420px]"
+            >
+              <img
+                src="/assets/hero/family-picnic.png"
+                alt="Family clothing favorites"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-5 text-white sm:p-7">
+                <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/65">Coordinated looks</p>
+                <h3 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">Family Sets</h3>
+                <span className="mt-4 inline-flex items-center gap-2 border-b border-white/70 pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-white">
+                  Shop now
+                  <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/></svg>
+                </span>
+              </div>
+            </Link>
+
+            {loading ? (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {[...Array(3)].map((_, i) => <div key={i} className="aspect-[3/4] animate-pulse rounded-lg bg-white/50"/>)}
+              </div>
+            ) : (
+              <motion.div
+                variants={stagger}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+                className="grid grid-cols-2 gap-4 sm:grid-cols-3"
+              >
+                {displayProducts.slice(0, 3).map((product) => (
+                  <ProductCard key={product.id} product={product}/>
+                ))}
+              </motion.div>
+            )}
+          </div>
+
+          <div className="mt-8 text-center sm:hidden">
+            <Link to="/collections/new-arrivals" className="inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy">
+              Shop new arrivals
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* 3-COLUMN BANNER GRID */}
-      <section className="py-4 sm:py-6">
+      <section className="py-10 sm:py-12">
         <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
-            {BANNER_GRID.map((banner, i) => (
+            {BANNER_GRID.map((banner) => (
               <Link
                 key={banner.title}
                 to={banner.to}
-                className="group relative block overflow-hidden"
+                className="group relative block overflow-hidden rounded-lg"
                 style={{ aspectRatio: '4/5' }}
               >
                 <img

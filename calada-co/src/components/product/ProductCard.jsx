@@ -71,7 +71,7 @@ export default function ProductCard({ product }) {
       {/* Image container */}
       <Link
         to={`/products/${product.handle}`}
-        className="block relative aspect-[3/4] overflow-hidden rounded-xl bg-[#fdf4f7]"
+        className="relative block aspect-[3/4] overflow-hidden rounded-lg bg-[#fdf4f7]"
       >
         {/* Primary image */}
         <img
@@ -146,11 +146,11 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Add to Cart button */}
-        <div className="absolute inset-x-0 bottom-0 z-10 p-2.5 sm:translate-y-full sm:transition-transform sm:duration-300 sm:ease-out sm:group-hover:translate-y-0">
+        <div className="absolute inset-x-0 bottom-0 z-10 p-2 sm:translate-y-full sm:p-2.5 sm:transition-transform sm:duration-300 sm:ease-out sm:group-hover:translate-y-0">
           <button
             onClick={handleQuickAdd}
             disabled={!canQuickAdd || loading}
-            className={`w-full rounded-full py-2.5 text-[12px] font-bold shadow-lg transition-colors ${
+            className={`w-full rounded-full py-2 text-[11px] font-bold shadow-lg transition-colors sm:py-2.5 sm:text-[12px] ${
               added
                 ? 'bg-emerald-500 text-white'
                 : canQuickAdd
@@ -167,7 +167,7 @@ export default function ProductCard({ product }) {
       <div className="mt-2.5 space-y-1 px-0.5">
         <Link
           to={`/products/${product.handle}`}
-          className="block text-[13px] font-semibold leading-snug text-gray-900 transition-colors hover:text-[#c084a0] sm:text-sm"
+          className="block min-h-[2.55rem] text-[13px] font-semibold leading-snug text-gray-900 transition-colors hover:text-[#c084a0] sm:text-sm"
         >
           {product.title}
         </Link>
