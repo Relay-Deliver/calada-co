@@ -94,10 +94,10 @@ export default function Navbar() {
         className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
       >
         {/* DESKTOP BAR */}
-        <div className="mx-auto hidden h-[100px] max-w-screen-2xl grid-cols-[minmax(220px,0.8fr)_minmax(0,1.7fr)_minmax(150px,0.5fr)] items-center gap-5 px-6 xl:grid 2xl:px-10">
+        <div className="mx-auto hidden h-[110px] max-w-screen-2xl grid-cols-[minmax(220px,0.8fr)_minmax(0,1.7fr)_minmax(150px,0.5fr)] items-center gap-5 px-6 xl:grid 2xl:px-10">
 
           <Link to="/" onMouseEnter={() => setActiveMenuKey(null)}>
-            <img src="/assets/calada-logo.png" alt="CalAda & Co." style={{ height: 80, width: 'auto', display: 'block' }} />
+            <img src="/assets/calada-logo-new.png" alt="CalAda & Co." style={{ height: 100, width: 'auto', display: 'block' }} />
           </Link>
 
           <ul className="flex min-w-0 items-center justify-center gap-4 2xl:gap-8">
@@ -148,7 +148,7 @@ export default function Navbar() {
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
           <Link to="/" className="mx-auto" onClick={() => setMobileOpen(false)}>
-            <img src="/assets/calada-logo.png" alt="CalAda & Co." style={{ height: 52, width: 'auto', display: 'block' }} />
+            <img src="/assets/calada-logo-new.png" alt="CalAda & Co." style={{ height: 68, width: 'auto', display: 'block' }} />
           </Link>
           <div className="flex items-center justify-end gap-1 text-navy">
             <Link to="/account/wishlist" className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Wishlist">

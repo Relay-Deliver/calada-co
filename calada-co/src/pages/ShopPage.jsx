@@ -343,7 +343,7 @@ export default function ShopPage() {
           <div className="text-center py-24 px-5">
             <div className="mx-auto max-w-md">
               <div className="mb-6 text-6xl">
-                <img src="/assets/calada-logo.png" alt="" style={{ height: 80, width: 'auto', margin: '0 auto', opacity: 0.3 }} />
+                <img src="/assets/calada-logo-new.png" alt="" style={{ height: 80, width: 'auto', margin: '0 auto', opacity: 0.3 }} />
               </div>
               <h2 className="font-serif text-2xl font-semibold text-navy mb-3">Coming Soon</h2>
               <p className="text-slate-500 text-sm leading-7 mb-6">
