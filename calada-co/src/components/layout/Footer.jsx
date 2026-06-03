@@ -35,9 +35,6 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <Link to="/" className="block mb-5">
-              <img src="/assets/calada-logo.png" alt="CalAda & Co." style={{ height: 56, width: 'auto' }} />
-            </Link>
             <p className="text-sm text-white/50 leading-relaxed max-w-[240px] font-light">
               Boutique apparel for mothers, families &amp; little ones. Made with love, crafted to order.
             </p>
