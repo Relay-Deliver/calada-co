@@ -15,16 +15,40 @@ const REVIEWS = [
 ];
 
 const PERKS = [
-  { icon: '✦', title: 'Made to Order', desc: 'Every piece crafted just for you' },
-  { icon: '✦', title: 'Fast Shipping', desc: 'Ready in 3–5 business days' },
-  { icon: '✦', title: 'Easy Returns', desc: '30-day hassle-free returns' },
-  { icon: '✦', title: 'Real Support', desc: 'From real people who care' },
+  { title: 'Made to Order', desc: 'Every piece crafted just for you' },
+  { title: 'Fast Shipping', desc: 'Ready in 3-5 business days' },
+  { title: 'Easy Returns', desc: '30-day hassle-free returns' },
+  { title: 'Real Support', desc: 'From real people who care' },
 ];
 
 const STORY_STATS = [
   { value: 2000, suffix: '+', label: 'Happy families' },
   { value: 100, suffix: '%', label: 'Made to order' },
   { value: 5, suffix: '-star', label: 'Average review' },
+];
+
+const BANNER_GRID = [
+  {
+    title: 'Sports',
+    subtitle: 'Rep your team in style',
+    to: '/collections/baseball-softball',
+    image: '/assets/hero/porch-family.png',
+    align: 'left',
+  },
+  {
+    title: 'Seasons',
+    subtitle: 'Dressed for every holiday',
+    to: '/collections/summer',
+    image: '/assets/hero/flower-market.png',
+    align: 'center',
+  },
+  {
+    title: 'Michigan Made',
+    subtitle: 'Small town, big style',
+    to: '/collections/michigan-made',
+    image: '/assets/hero/boutique-rack.png',
+    align: 'right',
+  },
 ];
 
 const fadeUp = {
@@ -91,6 +115,72 @@ function AnimatedStat({ value, suffix = '', label, delay = 0 }) {
   );
 }
 
+function ProductCarousel({ products }) {
+  const [index, setIndex] = useState(0);
+  const perPage = 4;
+  const total = products.length;
+  const maxIndex = Math.max(0, total - perPage);
+
+  const prev = () => setIndex((i) => Math.max(0, i - 1));
+  const next = () => setIndex((i) => Math.min(maxIndex, i + 1));
+
+  return (
+    <div className="relative">
+      <div className="overflow-hidden">
+        <motion.div
+          className="flex gap-4 md:gap-6"
+          animate={{ x: `calc(-${index * (100 / perPage)}% - ${index * (16 / perPage)}px)` }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          style={{ width: `${(total / perPage) * 100}%` }}
+        >
+          {products.map((product) => (
+            <div key={product.id} style={{ width: `${100 / total}%` }}>
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Arrows */}
+      {index > 0 && (
+        <button
+          onClick={prev}
+          className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 grid h-10 w-10 place-items-center rounded-full bg-white shadow-md border border-gray-100 transition-colors hover:bg-navy hover:text-white"
+          aria-label="Previous"
+        >
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6"/>
+          </svg>
+        </button>
+      )}
+      {index < maxIndex && (
+        <button
+          onClick={next}
+          className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 grid h-10 w-10 place-items-center rounded-full bg-white shadow-md border border-gray-100 transition-colors hover:bg-navy hover:text-white"
+          aria-label="Next"
+        >
+          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      )}
+
+      {/* Dots */}
+      {total > perPage && (
+        <div className="mt-6 flex justify-center gap-2">
+          {[...Array(maxIndex + 1)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndex(i)}
+              className={`h-2 rounded-full transition-all ${i === index ? 'w-6 bg-navy' : 'w-2 bg-gray-300'}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -101,7 +191,7 @@ export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
-    getProducts({ first: 8 })
+    getProducts({ first: 12 })
       .then((data) => setProducts(data.edges.map((e) => e.node)))
       .catch(() => setProducts(DUMMY_PRODUCTS))
       .finally(() => setLoading(false));
@@ -142,7 +232,7 @@ export default function HomePage() {
   return (
     <div className="overflow-x-hidden bg-white">
 
-      {/* ── HERO ── */}
+      {/* HERO */}
       <section className="relative min-h-[560px] overflow-hidden bg-[#f5e9f0] sm:min-h-[calc(100vh-132px)]">
         <AnimatePresence mode="wait">
           <motion.img
@@ -206,7 +296,6 @@ export default function HomePage() {
           </AnimatePresence>
         </div>
 
-        {/* Slide controls */}
         <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-full bg-white/85 px-3 py-1.5 shadow backdrop-blur sm:bottom-6 sm:px-4 sm:py-2">
           <button onClick={() => goToSlide('prev')} className="grid h-7 w-7 place-items-center rounded-full transition-colors hover:bg-black hover:text-white sm:h-8 sm:w-8" aria-label="Previous">
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m15 18-6-6 6-6"/></svg>
@@ -222,7 +311,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── PERKS STRIP ── */}
+      {/* PERKS STRIP */}
       <section className="border-y border-black/8 bg-[#fdf8f5] py-6 sm:py-7">
         <motion.div
           variants={stagger}
@@ -243,7 +332,7 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* ── CATEGORY TILES ── */}
+      {/* CATEGORY TILES */}
       <section className="py-14 sm:py-20">
         <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
           <motion.div
@@ -286,7 +375,61 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── FAN FAVORITES ── */}
+      {/* 3-COLUMN BANNER GRID */}
+      <section className="py-4 sm:py-6">
+        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+            {BANNER_GRID.map((banner, i) => (
+              <Link
+                key={banner.title}
+                to={banner.to}
+                className="group relative block overflow-hidden"
+                style={{ aspectRatio: '4/5' }}
+              >
+                <img
+                  src={banner.image}
+                  alt={banner.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/30 transition-colors group-hover:bg-black/40" />
+                <div className={`absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white ${
+                  banner.align === 'center' ? 'text-center' : banner.align === 'right' ? 'text-right' : 'text-left'
+                }`}>
+                  <h3 className="font-serif text-3xl font-semibold italic sm:text-4xl">{banner.title}</h3>
+                  <p className="mt-2 text-sm text-white/75">{banner.subtitle}</p>
+                  <span className="mt-4 inline-flex items-center gap-2 border-b border-white/60 pb-0.5 text-[11px] font-black uppercase tracking-[0.18em] text-white/80 transition-colors group-hover:border-white group-hover:text-white">
+                    Shop now
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* NEW ARRIVALS CAROUSEL */}
+      <section className="py-14 sm:py-20">
+        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+          <div className="mb-8 flex items-end justify-between gap-6 sm:mb-10">
+            <div>
+              <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Just landed</p>
+              <h2 className="font-serif text-3xl font-semibold text-navy sm:text-4xl">New Arrivals</h2>
+            </div>
+            <Link to="/collections/new-arrivals" className="hidden shrink-0 border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-pink hover:text-pink sm:inline-flex">
+              View all
+            </Link>
+          </div>
+          {loading ? (
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+              {[...Array(4)].map((_, i) => <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-gray-200"/>)}
+            </div>
+          ) : (
+            <ProductCarousel products={displayProducts.slice(0, 8)} />
+          )}
+        </div>
+      </section>
+
+      {/* FAN FAVORITES */}
       <section className="bg-[#fdf8f5] py-14 sm:py-20">
         <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
           <div className="mb-8 flex items-end justify-between gap-6 sm:mb-12">
@@ -296,10 +439,9 @@ export default function HomePage() {
               <p className="mt-1 text-sm text-gray-500 sm:mt-2">Our most-loved pieces right now</p>
             </div>
             <Link to="/shop" className="hidden shrink-0 border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-pink hover:text-pink sm:inline-flex">
-              View all →
+              View all
             </Link>
           </div>
-
           {loading ? (
             <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
               {[...Array(4)].map((_, i) => <div key={i} className="aspect-[3/4] animate-pulse rounded-xl bg-gray-200"/>)}
@@ -317,17 +459,15 @@ export default function HomePage() {
               ))}
             </motion.div>
           )}
-
-          {/* Mobile view all link */}
           <div className="mt-8 text-center sm:hidden">
             <Link to="/shop" className="inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy">
-              View all products →
+              View all products
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── OUR STORY ── */}
+      {/* OUR STORY */}
       <section className="bg-navy py-16 sm:py-24">
         <motion.div
           variants={stagger}
@@ -346,25 +486,18 @@ export default function HomePage() {
               CalAda & Co started with a simple idea: every family deserves beautiful, thoughtfully made pieces they will reach for again and again.
             </p>
             <Link to="/about" className="mt-6 inline-flex items-center gap-2 border-b border-pink pb-1 text-[11px] font-bold uppercase tracking-[0.18em] text-pink transition-colors hover:border-white hover:text-white sm:mt-8">
-              Read our full story →
+              Read our full story
             </Link>
           </motion.div>
-
           <motion.div variants={stagger} className="grid grid-cols-3 gap-4 text-center sm:gap-8">
             {STORY_STATS.map((item, i) => (
-              <AnimatedStat
-                key={item.label}
-                value={item.value}
-                suffix={item.suffix}
-                label={item.label}
-                delay={i * 0.12}
-              />
+              <AnimatedStat key={item.label} value={item.value} suffix={item.suffix} label={item.label} delay={i * 0.12} />
             ))}
           </motion.div>
         </motion.div>
       </section>
 
-      {/* ── WHY CALADA ── */}
+      {/* WHY CALADA */}
       <section className="py-14 sm:py-20">
         <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
           <motion.div
@@ -401,7 +534,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── REVIEWS ── */}
+      {/* REVIEWS */}
       <section className="bg-[#fdf8f5] py-14 sm:py-20">
         <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
           <motion.div
@@ -416,7 +549,6 @@ export default function HomePage() {
             <h2 className="font-serif text-3xl font-semibold text-navy sm:text-5xl">Loved by families everywhere</h2>
             <p className="mx-auto mt-2 max-w-md text-sm leading-7 text-gray-500 sm:mt-3">Real notes from customers who live in these pieces.</p>
           </motion.div>
-
           <motion.div
             variants={stagger}
             initial="hidden"
@@ -438,8 +570,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── EMAIL SIGNUP ── */}
-      <section className="relative overflow-hidden border-y border-pink-light bg-white py-16 sm:py-24">
+      {/* INSTAGRAM PLACEHOLDER */}
+      <section className="py-14 sm:py-20">
+        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+          <div className="mb-8 text-center sm:mb-10">
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Follow along</p>
+            <h2 className="font-serif text-3xl font-semibold text-navy sm:text-4xl">Shop Our Instagram</h2>
+            <p className="mt-2 text-sm text-gray-500">
+              Follow us{' '}
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-[#c084a0] font-medium">
+                @caladaco
+              </a>{' '}
+              for daily style inspiration
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-6 sm:gap-3">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="aspect-square rounded-lg bg-[#fdf4f7] flex items-center justify-center overflow-hidden"
+              >
+                <img
+                  src={[
+                    '/assets/hero/porch-family.png',
+                    '/assets/hero/flower-market.png',
+                    '/assets/hero/boutique-rack.png',
+                    '/assets/hero/porch-family.png',
+                    '/assets/hero/flower-market.png',
+                    '/assets/hero/boutique-rack.png',
+                  ][i]}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            
+              href="https://instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border-[1.5px] border-navy px-6 py-2.5 text-[12px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:bg-navy hover:text-white"
+            >
+              Follow on Instagram
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* EMAIL SIGNUP */}
+      <section className="relative overflow-hidden border-y border-pink-light bg-[#fdf4f7] py-16 sm:py-24">
         <motion.div
           variants={fadeUp}
           initial="hidden"
@@ -455,22 +635,14 @@ export default function HomePage() {
           <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-slate-500 sm:mt-4">
             Plus early access to new arrivals and exclusive members-only offers.
           </p>
-
           {emailSent ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="mt-8 sm:mt-10"
-            >
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 sm:mt-10">
               <p className="text-lg font-semibold text-pink">You're in!</p>
               <p className="mt-2 text-sm text-slate-500">Check your inbox for your 20% off discount code.</p>
             </motion.div>
           ) : (
             <>
-              <form
-                className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row"
-                onSubmit={handleEmailSignup}
-              >
+              <form className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row" onSubmit={handleEmailSignup}>
                 <input
                   type="email"
                   placeholder="your@email.com"
@@ -484,12 +656,10 @@ export default function HomePage() {
                   disabled={emailLoading}
                   className="rounded-full bg-navy px-7 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-pink disabled:opacity-60 sm:px-8 sm:py-4"
                 >
-                  {emailLoading ? 'Subscribing…' : 'Get 20% Off'}
+                  {emailLoading ? 'Subscribing...' : 'Get 20% Off'}
                 </button>
               </form>
-              {emailError && (
-                <p className="mt-3 text-sm text-red-400">{emailError}</p>
-              )}
+              {emailError && <p className="mt-3 text-sm text-red-400">{emailError}</p>}
             </>
           )}
         </motion.div>
