@@ -68,10 +68,10 @@ export default function ProductCard({ product }) {
       transition={{ type: 'spring', stiffness: 260, damping: 24 }}
       className="group"
     >
-      {/* ── Image container ── */}
+      {/* Image container */}
       <Link
         to={`/products/${product.handle}`}
-        className="block relative aspect-[3/4] overflow-hidden rounded-xl bg-gray-100"
+        className="block relative aspect-[3/4] overflow-hidden rounded-xl bg-[#fdf4f7]"
       >
         {/* Primary image */}
         <img
@@ -116,20 +116,14 @@ export default function ProductCard({ product }) {
           )}
         </div>
 
-        {/* Heart + Share — top right, always visible on mobile, hover on desktop */}
+        {/* Heart + Share — top right */}
         <div className="absolute top-2.5 right-2.5 z-10 flex flex-col gap-2 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100">
           <button
             onClick={handleWishlist}
             className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md transition-transform active:scale-95 hover:scale-110"
             aria-label="Add to wishlist"
           >
-            <svg
-              width="16" height="16"
-              fill={wishlisted ? '#c084a0' : 'none'}
-              stroke={wishlisted ? '#c084a0' : '#666'}
-              strokeWidth="1.8"
-              viewBox="0 0 24 24"
-            >
+            <svg width="16" height="16" fill={wishlisted ? '#c084a0' : 'none'} stroke={wishlisted ? '#c084a0' : '#666'} strokeWidth="1.8" viewBox="0 0 24 24">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
           </button>
@@ -144,18 +138,14 @@ export default function ProductCard({ product }) {
               </svg>
             ) : (
               <svg width="15" height="15" fill="none" stroke="#666" strokeWidth="1.8" viewBox="0 0 24 24">
-                <circle cx="18" cy="5" r="3"/>
-                <circle cx="6" cy="12" r="3"/>
-                <circle cx="18" cy="19" r="3"/>
+                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
                 <path strokeLinecap="round" d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
               </svg>
             )}
           </button>
         </div>
 
-        {/* Add to Cart button
-            — Mobile: always visible at bottom
-            — Desktop: slides up on hover */}
+        {/* Add to Cart button */}
         <div className="absolute inset-x-0 bottom-0 z-10 p-2.5 sm:translate-y-full sm:transition-transform sm:duration-300 sm:ease-out sm:group-hover:translate-y-0">
           <button
             onClick={handleQuickAdd}
@@ -168,12 +158,12 @@ export default function ProductCard({ product }) {
                 : 'cursor-not-allowed bg-white/80 text-gray-400'
             }`}
           >
-            {added ? '✓ Added!' : canQuickAdd ? (loading ? 'Adding…' : 'Add to Cart') : 'View Details'}
+            {added ? 'Added!' : canQuickAdd ? (loading ? 'Adding...' : 'Add to Cart') : 'View Details'}
           </button>
         </div>
       </Link>
 
-      {/* ── Product info below image ── */}
+      {/* Product info */}
       <div className="mt-2.5 space-y-1 px-0.5">
         <Link
           to={`/products/${product.handle}`}
