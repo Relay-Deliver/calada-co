@@ -13,27 +13,30 @@ export default function ContactPage() {
     <div className="py-[60px] pb-20">
       <div className="max-w-[1280px] mx-auto px-5">
         <h1 className="text-[32px] font-bold text-navy mb-2">Contact Us</h1>
-        <p className="text-[15px] text-[#888888] mb-12">We'd love to hear from you. We typically respond within 24 hours.</p>
+        <p className="text-[15px] text-[#888888] mb-12">We would love to hear from you. We typically respond within 24 hours.</p>
         <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 md:gap-[60px]">
           <div className="flex flex-col gap-6">
-            <div className="flex items-start gap-3">
-              <span className="text-[20px]">📧</span>
-              <a href="mailto:hello@caladaco.com" className="text-sm text-[#333333]">hello@caladaco.com</a>
+            <div className="flex flex-col gap-1">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-navy">Email</p>
+              <a href="mailto:support@caladaco.com" className="text-sm text-[#c084a0] hover:underline">support@caladaco.com</a>
             </div>
-            <div className="flex items-start gap-3">
-              <span className="text-[20px]">⏱️</span>
-              <p className="text-sm text-[#333333]">Mon–Fri, 9am–5pm EST</p>
+            <div className="flex flex-col gap-1">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-navy">Hours</p>
+              <p className="text-sm text-[#555555]">Mon - Fri, 9am - 5pm EST</p>
             </div>
-            <div className="flex items-start gap-3">
-              <span className="text-[20px]">📦</span>
-              <p className="text-sm text-[#333333]">Orders ready in 3–5 business days</p>
+            <div className="flex flex-col gap-1">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-navy">Processing</p>
+              <p className="text-sm text-[#555555]">Orders ready in 3 - 5 business days</p>
+            </div>
+            <div className="flex flex-col gap-1">
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-navy">Follow Us</p>
+              <a href="https://instagram.com/calada.co" target="_blank" rel="noreferrer" className="text-sm text-[#c084a0] hover:underline">@calada.co</a>
             </div>
           </div>
           {sent ? (
             <div className="text-center py-[60px] px-5">
-              <span className="text-[48px] block mb-4">🌸</span>
               <h3 className="text-[22px] font-semibold text-navy mb-2">Message sent!</h3>
-              <p className="text-[#888888]">Thanks for reaching out. We'll get back to you soon.</p>
+              <p className="text-[#888888]">Thanks for reaching out. We will get back to you soon.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
