@@ -94,18 +94,20 @@ export default function Navbar() {
         className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
       >
         {/* DESKTOP BAR */}
-        <div className="mx-auto hidden h-[160px] max-w-screen-2xl grid-cols-[minmax(220px,0.8fr)_minmax(0,1.7fr)_minmax(150px,0.5fr)] items-center gap-5 px-6 xl:grid 2xl:px-10">
+        <div className="mx-auto hidden h-[86px] max-w-screen-2xl grid-cols-[84px_minmax(0,1fr)_168px] items-center gap-4 px-5 xl:grid 2xl:px-8">
 
-          <Link to="/" onMouseEnter={() => setActiveMenuKey(null)}>
-            <img src="/assets/calada-logo-new.png" alt="CalAda & Co." style={{ height: 160, width: 'auto', display: 'block' }} />
+          <Link to="/" className="grid h-[68px] w-[68px] place-items-center overflow-hidden rounded-full" onMouseEnter={() => setActiveMenuKey(null)}>
+            <span className="grid h-full w-full place-items-center">
+              <img src="/assets/calada-logo-new.png" alt="CalAda & Co." className="h-full w-full object-cover" />
+            </span>
           </Link>
 
-          <ul className="flex min-w-0 items-center justify-center gap-4 2xl:gap-8">
+          <ul className="flex min-w-0 items-center justify-center gap-3 2xl:gap-6">
             {HEADER_NAV.map((menu) => (
               <li key={menu.key} className="relative">
                 <Link
                   to={menu.to}
-                  className={`block whitespace-nowrap px-1 py-3 text-[13px] font-black uppercase tracking-[0.12em] transition-colors hover:text-[#c084a0] ${activeMenuKey === menu.key ? 'text-[#c084a0]' : 'text-slate-500'}`}
+                  className={`block whitespace-nowrap px-1 py-3 text-[12px] font-black uppercase tracking-[0.1em] transition-colors hover:text-[#c084a0] 2xl:text-[13px] 2xl:tracking-[0.12em] ${activeMenuKey === menu.key ? 'text-[#c084a0]' : 'text-slate-500'}`}
                   onMouseEnter={() => setActiveMenuKey(menu.key)}
                   onFocus={() => setActiveMenuKey(menu.key)}
                   onClick={() => setActiveMenuKey(null)}
@@ -143,15 +145,15 @@ export default function Navbar() {
         </div>
 
         {/* MOBILE BAR */}
-        <div className="grid h-[72px] grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 px-4 xl:hidden">
-          <button className="grid h-11 w-11 place-items-center text-navy" onClick={() => setMobileOpen(o => !o)} aria-label="Menu" aria-expanded={mobileOpen}>
+        <div className="grid h-[74px] grid-cols-[42px_minmax(58px,1fr)_auto] items-center gap-1.5 px-3 sm:px-4 xl:hidden">
+          <button className="grid h-10 w-10 place-items-center text-navy" onClick={() => setMobileOpen(o => !o)} aria-label="Menu" aria-expanded={mobileOpen}>
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
-          <Link to="/" className="mx-auto" onClick={() => setMobileOpen(false)}>
-            <img src="/assets/calada-logo-new.png" alt="CalAda & Co." style={{ height: 110, width: 'auto', display: 'block' }} />
+          <Link to="/" className="mx-auto grid h-[62px] w-[62px] place-items-center overflow-hidden rounded-full bg-navy shadow-sm" onClick={() => setMobileOpen(false)}>
+            <img src="/assets/calada-logo-new.png" alt="CalAda & Co." className="h-full w-full object-contain" />
           </Link>
-          <div className="flex items-center justify-end gap-1 text-navy">
-            <Link to="/account/wishlist" className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Wishlist">
+          <div className="flex items-center justify-end gap-0 text-navy sm:gap-1">
+            <Link to="/account/wishlist" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
                 <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
@@ -159,10 +161,10 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
+            <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
               <SearchIcon />
             </button>
-            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={openCart} aria-label="Cart">
+            <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (
                 <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
@@ -276,7 +278,7 @@ export default function Navbar() {
 
         {/* MOBILE MENU DRAWER */}
         {mobileOpen && (
-          <div className="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg xl:hidden">
+          <div className="max-h-[calc(100vh-74px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg xl:hidden">
             <ul className="grid gap-1">
               {HEADER_NAV.map((menu) => (
                 <li key={menu.key}>

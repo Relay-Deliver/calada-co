@@ -148,7 +148,7 @@ export default function ProductPage() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="mx-auto max-w-7xl px-4 py-8 sm:px-8 lg:py-12"
+      className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-8 lg:py-12"
     >
       {/* Breadcrumb */}
       <nav className="mb-6 text-xs text-gray-400">
@@ -159,7 +159,7 @@ export default function ProductPage() {
         <span className="text-gray-600">{product.title}</span>
       </nav>
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-14">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.82fr)] lg:gap-14">
 
         {/* ── LEFT: Image Gallery ── */}
         <div className="flex gap-3">
@@ -187,7 +187,7 @@ export default function ProductPage() {
           )}
 
           {/* Main image */}
-          <div className="relative flex-1 overflow-hidden rounded-xl bg-gray-50">
+          <div className="relative flex-1 overflow-hidden rounded-lg bg-gray-50">
             <AnimatePresence mode="wait">
               <motion.img
                 key={selectedImg}
@@ -207,13 +207,15 @@ export default function ProductPage() {
               <>
                 <button
                   onClick={prevImg}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 shadow hover:bg-white"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white"
+                  aria-label="Previous image"
                 >
                   <ChevronLeft />
                 </button>
                 <button
                   onClick={nextImg}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/80 p-1.5 shadow hover:bg-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white"
+                  aria-label="Next image"
                 >
                   <ChevronRight />
                 </button>
@@ -258,7 +260,7 @@ export default function ProductPage() {
         </div>
 
         {/* ── RIGHT: Product Info ── */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
 
           {/* Title */}
           <h1 className="text-2xl font-semibold leading-snug text-gray-900 lg:text-3xl">
@@ -280,6 +282,10 @@ export default function ProductPage() {
             {onSale && (
               <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-600">SALE</span>
             )}
+          </div>
+
+          <div className="rounded-lg border border-pink-light bg-[#fff8fb] px-4 py-3 text-sm leading-6 text-[#6b4352]">
+            Made to order with secure checkout, easy returns, and shipping options shown before payment.
           </div>
 
           <hr className="border-gray-100" />
@@ -326,7 +332,7 @@ export default function ProductPage() {
                       <button
                         key={val}
                         onClick={() => setSelectedOptions((o) => ({ ...o, [option.name]: val }))}
-                        className={`min-w-[48px] rounded border px-3 py-2 text-sm font-medium transition-all ${
+                        className={`min-w-[48px] rounded-md border px-3 py-2 text-sm font-medium transition-all ${
                           active
                             ? 'border-[#c084a0] bg-[#c084a0] text-white'
                             : 'border-gray-200 text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0]'
@@ -346,11 +352,11 @@ export default function ProductPage() {
             <button
               onClick={handleAddToCart}
               disabled={!canAdd || cartLoading}
-              className={`flex-1 rounded-lg py-4 text-sm font-bold uppercase tracking-wider transition-all ${
+              className={`flex-1 rounded-lg py-4 text-sm font-bold uppercase tracking-wider shadow-sm transition-all ${
                 added
                   ? 'bg-green-500 text-white'
                   : canAdd
-                  ? 'bg-gray-900 text-white hover:bg-[#c084a0]'
+                  ? 'bg-gray-900 text-white hover:bg-[#c084a0] hover:shadow-md active:scale-[0.99]'
                   : 'cursor-not-allowed bg-gray-200 text-gray-400'
               }`}
             >
@@ -360,7 +366,7 @@ export default function ProductPage() {
             {/* Wishlist heart button */}
             <button
               onClick={() => toggle(product.id || handle)}
-              className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg border-2 transition-all ${
+              className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg border-2 transition-all active:scale-95 ${
                 wishlisted ? 'border-[#c084a0] bg-pink-50' : 'border-gray-200 hover:border-[#c084a0]'
               }`}
               aria-label="Add to wishlist"
@@ -370,7 +376,7 @@ export default function ProductPage() {
           </div>
 
           {/* Trust badges */}
-          <div className="grid grid-cols-3 gap-3 rounded-xl border border-gray-100 p-4">
+          <div className="grid grid-cols-3 gap-3 rounded-lg border border-gray-100 p-4">
             <div className="flex flex-col items-center gap-1.5 text-center">
               <TruckIcon />
               <p className="text-xs font-semibold text-gray-700">Free Shipping</p>
