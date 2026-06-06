@@ -312,7 +312,7 @@ export default function ProductPage() {
                       <button
                         key={val}
                         title={val}
-                        onClick={() => setSelectedOptions((o) => ({ ...o, [option.name]: val }))}
+                        onClick={() => handleOptionChange(option.name, val)}
                         className={`h-8 w-8 rounded-full border-2 transition-all ${
                           active ? 'border-[#c084a0] scale-110 shadow-md' : 'border-gray-200 hover:border-gray-400'
                         }`}
@@ -331,7 +331,7 @@ export default function ProductPage() {
                     return (
                       <button
                         key={val}
-                        onClick={() => setSelectedOptions((o) => ({ ...o, [option.name]: val }))}
+                        onClick={() => handleOptionChange(option.name, val)}
                         className={`min-w-[48px] rounded-md border px-3 py-2 text-sm font-medium transition-all ${
                           active
                             ? 'border-[#c084a0] bg-[#c084a0] text-white'
