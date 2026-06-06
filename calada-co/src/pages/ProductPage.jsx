@@ -65,6 +65,8 @@ export default function ProductPage() {
   const [imageFailed, setImageFailed] = useState({});
   const [added, setAdded] = useState(false);
   const [openSection, setOpenSection] = useState('description');
+  const [quantity, setQuantity] = useState(1);
+  const [sizeError, setSizeError] = useState(false);
 
   /* load product */
   useEffect(() => {
@@ -104,10 +106,20 @@ export default function ProductPage() {
   const wishlisted = isWishlisted(product?.id || handle);
 
   const handleAddToCart = async () => {
-    if (!canAdd) return;
-    await addItem(variant.id, 1);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    const sizeOption = product?.options?.find(o => /size/i.test(o.name));
+    if (sizeOption && !selectedOptions[sizeOption.name]) {
+      setSizeError(true);
+      setTimeout(() => setSizeError(false), 3000);
+      return;
+    }
+    if (!variant?.id || cartLoading) return;
+    try {
+      for (let i = 0; i < quantity; i++) {
+        await addItem(variant.id);
+      }
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1800);
+    } catch {}
   };
 
   const prevImg = () => setSelectedImg((i) => (i - 1 + images.length) % images.length);
@@ -346,6 +358,32 @@ export default function ProductPage() {
               )}
             </div>
           ))}
+
+          {/* Quantity selector */}
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-semibold uppercase tracking-widest text-gray-700">Quantity</p>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-lg font-bold text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0] transition-colors"
+              >
+                -
+              </button>
+              <span className="w-8 text-center text-base font-semibold text-gray-900">{quantity}</span>
+              <button
+                onClick={() => setQuantity(q => q + 1)}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-lg font-bold text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0] transition-colors"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          {sizeError && (
+            <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-2.5 text-sm text-red-600 font-medium">
+              Please select a size before adding to cart.
+            </div>
+          )}
 
           {/* Add to Cart + Wishlist row */}
           <div className="flex gap-3">
