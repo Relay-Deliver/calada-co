@@ -81,6 +81,18 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [sizeError, setSizeError] = useState(false);
 
+  const handleOptionChange = (optionName, val) => {
+    setSelectedOptions((o) => ({ ...o, [optionName]: val }));
+    if (isColorOption(optionName)) {
+      const colorLower = val.toLowerCase();
+      const matchIndex = images.findIndex((img) =>
+        img.altText?.toLowerCase().includes(colorLower) ||
+        img.url?.toLowerCase().includes(colorLower)
+      );
+      setSelectedImg(matchIndex !== -1 ? matchIndex : 0);
+    }
+  };
+
   /* load product */
   useEffect(() => {
     setLoading(true);
