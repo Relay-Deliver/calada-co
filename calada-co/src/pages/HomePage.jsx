@@ -234,6 +234,9 @@ export default function HomePage() {
 
   const displayProducts = useMemo(() => (products.length > 0 ? products : DUMMY_PRODUCTS), [products]);
   const slide = HERO_SLIDES[activeSlide];
+  const titleWords = slide.title.split(' ');
+  const leadingTitle = titleWords.slice(0, -1).join(' ');
+  const highlightedTitleWord = titleWords[titleWords.length - 1];
 
   const goToSlide = (dir) => setActiveSlide((c) =>
     dir === 'prev' ? (c === 0 ? HERO_SLIDES.length - 1 : c - 1) : (c + 1) % HERO_SLIDES.length
@@ -297,10 +300,10 @@ export default function HomePage() {
                 {slide.eyebrow}
               </motion.p>
               <h1 className="text-balance break-words font-serif text-[2.35rem] font-black uppercase leading-[0.92] text-black sm:text-[5.8rem] lg:text-[7.5rem]">
-                {slide.title.split(' ').slice(0, -1).join(' ')}{' '}
-                <span className="relative inline-block text-white">
-                  {slide.title.split(' ').slice(-1)}
-                  <svg className="pointer-events-none absolute -inset-x-2 -inset-y-2 sm:-inset-x-4 sm:-inset-y-3" viewBox="0 0 220 88" fill="none" aria-hidden="true">
+                {leadingTitle}{' '}
+                <span className="relative inline-block leading-none text-white">
+                  {highlightedTitleWord}
+                  <svg className="pointer-events-none absolute left-1/2 top-1/2 h-[1.08em] w-[118%] -translate-x-1/2 -translate-y-1/2 overflow-visible" viewBox="0 0 220 88" fill="none" aria-hidden="true">
                     <ellipse cx="110" cy="44" rx="100" ry="34" stroke="black" strokeWidth="4" strokeLinecap="round" transform="rotate(-7 110 44)"/>
                   </svg>
                 </span>
