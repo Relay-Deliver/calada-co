@@ -277,7 +277,7 @@ export default function Navbar() {
                       <span className="flex flex-col justify-center p-5">
                         <span className="font-serif text-xl font-semibold text-navy">{card.title}</span>
                         <span className="mt-1 text-sm text-slate-500">{card.caption}</span>
-                        <span className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">Shop now</span>
+                        <span className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">{card.cta || "Learn more"}</span>
                       </span>
                     </Link>
                   ))}
