@@ -130,9 +130,7 @@ export const NAV_MENUS = {
         links: [
           { label: 'Moms', to: '/collections/moms' },
           { label: 'Coffee Lovers', to: '/collections/coffee-lovers' },
-          { label: 'Drinks', to: '/collections/drinks' },
           { label: 'Michigan Made', to: '/collections/michigan-made' },
-          { label: 'Snacks', to: '/collections/snacks' },
           { label: 'Reading', to: '/collections/reading' },
           { label: 'Teacher / School', to: '/collections/teacher-school' },
           { label: 'Kids', to: '/collections/kids' },
@@ -275,9 +273,7 @@ export const navMenus = [
         links: [
           { label: 'Moms', href: '/collections/moms' },
           { label: 'Coffee Lovers', href: '/collections/coffee-lovers' },
-          { label: 'Drinks', href: '/collections/drinks' },
           { label: 'Michigan Made', href: '/collections/michigan-made' },
-          { label: 'Snacks', href: '/collections/snacks' },
           { label: 'Reading', href: '/collections/reading' },
           { label: 'Teacher / School', href: '/collections/teacher-school' },
           { label: 'Kids', href: '/collections/kids' },
