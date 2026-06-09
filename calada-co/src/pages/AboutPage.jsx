@@ -29,12 +29,12 @@ const FAQS = [
 ];
 
 const GALLERY = [
-  { src: '/assets/megan-kohn.PNG', alt: 'Meagan Kohn - Founder of CalAda & Co' },
-  { src: '/assets/hero/studio-mama-mini.png', alt: 'Mama and mini studio' },
-  { src: '/assets/hero/flower-market.png', alt: 'Flower market' },
-  { src: '/assets/hero/family-picnic.png', alt: 'Family picnic' },
-  { src: '/assets/hero/boutique-rack.png', alt: 'Boutique clothing rack' },
-  { src: '/assets/hero/beach-child.png', alt: 'Child at the beach' },
+  { src: '/assets/family-photo.png', alt: 'Meagan and family' },
+  { src: '/assets/adalynn.png', alt: 'Adalynn' },
+  { src: '/assets/adalynn-2.png', alt: 'Adalynn' },
+  { src: '/assets/calvin.png', alt: 'Calvin' },
+  { src: '/assets/calvin-2.png', alt: 'Calvin' },
+  { src: '/assets/family-2.png', alt: 'CalAda family moment' },
 ];
 
 function FAQItem({ q, a }) {
@@ -61,7 +61,7 @@ export default function AboutPage() {
       {/* HERO */}
       <div className="relative bg-navy py-24 sm:py-36 px-5 text-center overflow-hidden">
         <img
-          src="/assets/megan-kohn.PNG"
+          src="/assets/megan-kohn.png"
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none"
         />
@@ -99,7 +99,7 @@ export default function AboutPage() {
           </div>
           <div className="rounded-2xl overflow-hidden shadow-lg" style={{ aspectRatio: '4/5' }}>
             <img
-              src="/assets/megan-kohn.PNG"
+              src="/assets/megan-kohn.png"
               alt="Meagan and family"
               className="w-full h-full object-cover"
             />
