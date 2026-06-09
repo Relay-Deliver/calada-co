@@ -424,7 +424,10 @@ export default function ProductPage() {
                         className={`h-8 w-8 rounded-full border-2 transition-all ${
                           active ? 'border-[#c084a0] scale-110 shadow-md' : 'border-gray-200 hover:border-gray-400'
                         }`}
-                        style={hex ? { backgroundColor: hex } : undefined}
+                        style={hex ? {
+                          backgroundColor: hex,
+                          boxShadow: active ? `0 0 0 2px white, 0 0 0 4px ${hex}` : undefined,
+                        } : undefined}
                       >
                         {!hex && <span className="text-[9px] leading-none">{val.slice(0, 2)}</span>}
                       </button>
@@ -494,7 +497,9 @@ export default function ProductPage() {
                   : 'cursor-not-allowed bg-gray-200 text-gray-400'
               }`}
             >
-              {added ? '✓ Added to Bag!' : cartLoading ? 'Adding…' : canAdd ? 'Add to Cart' : 'Unavailable'}
+              {added ? '✓ Added to Bag!' : cartLoading ? 'Adding...' : canAdd
+    ? ('Add to Cart' + (selectedOptions['Color'] ? ' — ' + selectedOptions['Color'] : '') + (selectedOptions['Size'] ? ' / ' + selectedOptions['Size'] : ''))
+    : 'Select options'}
             </button>
 
             {/* Wishlist heart button */}
