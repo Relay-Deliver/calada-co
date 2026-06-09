@@ -262,7 +262,7 @@ export default function Navbar() {
                     className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
                     onClick={() => setActiveMenuKey(null)}
                   >
-                    Shop now
+                    {activeMenu?.key === 'more' ? 'Learn more' : 'Shop now'}
                   </Link>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
