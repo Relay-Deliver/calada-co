@@ -99,7 +99,7 @@ export default function AboutPage() {
           </div>
           <div className="rounded-2xl overflow-hidden shadow-lg" style={{ aspectRatio: '4/5' }}>
             <img
-              src="/assets/hero/studio-mama-mini.png"
+              src="/assets/megan-kohn.PNG"
               alt="Meagan and family"
               className="w-full h-full object-cover"
             />
