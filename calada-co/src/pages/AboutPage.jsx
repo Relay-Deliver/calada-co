@@ -29,7 +29,7 @@ const FAQS = [
 ];
 
 const GALLERY = [
-  { src: '/assets/hero/porch-family.png', alt: 'Family on porch' },
+  { src: '/assets/meagan-kohn.PNG', alt: 'Meagan Kohn - Founder of CalAda & Co' },
   { src: '/assets/hero/studio-mama-mini.png', alt: 'Mama and mini studio' },
   { src: '/assets/hero/flower-market.png', alt: 'Flower market' },
   { src: '/assets/hero/family-picnic.png', alt: 'Family picnic' },
@@ -61,7 +61,7 @@ export default function AboutPage() {
       {/* HERO */}
       <div className="relative bg-navy py-24 sm:py-36 px-5 text-center overflow-hidden">
         <img
-          src="/assets/hero/studio-mama-mini.png"
+          src="/assets/meagan-kohn.PNG"
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none"
         />
@@ -86,12 +86,12 @@ export default function AboutPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center mb-20">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.28em] text-pink mb-3">The Founder</p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-navy mb-6">Meet Meagan</h2>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-navy mb-6">Meet Megan</h2>
             <p className="text-[15px] text-[#333333] leading-[1.9] mb-4">
               CalAda &amp; Co. was born from a simple idea — that mothers and families deserve beautifully made clothing that feels as special as the moments they are worn in.
             </p>
             <p className="text-[15px] text-[#333333] leading-[1.9] mb-4">
-              A mother of two, Meagan named this brand after her children — Cal and Ada — and built it from the ground up right here in small-town Michigan. What started as a simple idea grew into a full clothing line rooted in family, faith, and everyday style.
+              A mother of two, Megan named this brand after her children — Calvin and Adalynn — and built it from the ground up right here in small-town Michigan. What started as a simple idea grew into a full clothing line rooted in family, faith, and everyday style.
             </p>
             <p className="text-[15px] text-[#333333] leading-[1.9]">
               Every piece in our collection is crafted with care and designed to become a favorite in your wardrobe for years to come. Because around here, we believe families deserve to look and feel their best — without the big price tag.
