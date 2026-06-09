@@ -43,6 +43,15 @@ const CloseIcon = () => (
     <line x1="6" y1="6" x2="18" y2="18" strokeLinecap="round" />
   </svg>
 );
+const LogoMark = ({ className = '' }) => (
+  <span className={`grid place-items-center overflow-hidden rounded-full bg-navy shadow-sm ring-1 ring-navy/10 ${className}`}>
+    <img
+      src="/assets/calada-logo-new.png"
+      alt="CalAda & Co."
+      className="h-full w-full scale-[1.18] object-cover"
+    />
+  </span>
+);
 
 export default function Navbar() {
   const { itemCount, openCart } = useCart();
@@ -96,10 +105,8 @@ export default function Navbar() {
         {/* DESKTOP BAR */}
         <div className="mx-auto hidden h-[86px] max-w-screen-2xl grid-cols-[84px_minmax(0,1fr)_168px] items-center gap-4 px-5 xl:grid 2xl:px-8">
 
-          <Link to="/" className="grid h-[68px] w-[68px] place-items-center overflow-hidden rounded-full" onMouseEnter={() => setActiveMenuKey(null)}>
-            <span className="grid h-full w-full place-items-center">
-              <img src="/assets/calada-logo-new.png" alt="CalAda & Co." className="h-full w-full object-cover" />
-            </span>
+          <Link to="/" className="grid h-[70px] w-[70px] place-items-center rounded-full" onMouseEnter={() => setActiveMenuKey(null)}>
+            <LogoMark className="h-full w-full" />
           </Link>
 
           <ul className="flex min-w-0 items-center justify-center gap-3 2xl:gap-6">
@@ -145,14 +152,18 @@ export default function Navbar() {
         </div>
 
         {/* MOBILE BAR */}
-        <div className="grid h-[74px] grid-cols-[42px_minmax(58px,1fr)_auto] items-center gap-1.5 px-3 sm:px-4 xl:hidden">
-          <button className="grid h-10 w-10 place-items-center text-navy" onClick={() => setMobileOpen(o => !o)} aria-label="Menu" aria-expanded={mobileOpen}>
+        <div className="relative flex h-[74px] items-center justify-between px-3 sm:h-[80px] sm:px-5 xl:hidden">
+          <button className="relative z-10 grid h-10 w-10 place-items-center text-navy" onClick={() => setMobileOpen(o => !o)} aria-label="Menu" aria-expanded={mobileOpen}>
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
-          <Link to="/" className="mx-auto grid h-[62px] w-[62px] place-items-center overflow-hidden rounded-full bg-navy shadow-sm" onClick={() => setMobileOpen(false)}>
-            <img src="/assets/calada-logo-new.png" alt="CalAda & Co." className="h-full w-full object-contain" />
+          <Link
+            to="/"
+            className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full sm:h-16 sm:w-16"
+            onClick={() => setMobileOpen(false)}
+          >
+            <LogoMark className="h-full w-full" />
           </Link>
-          <div className="flex items-center justify-end gap-0 text-navy sm:gap-1">
+          <div className="relative z-10 flex items-center justify-end gap-0 text-navy sm:gap-1">
             <Link to="/account/wishlist" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
@@ -278,7 +289,7 @@ export default function Navbar() {
 
         {/* MOBILE MENU DRAWER */}
         {mobileOpen && (
-          <div className="max-h-[calc(100vh-74px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg xl:hidden">
+          <div className="max-h-[calc(100vh-74px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg sm:max-h-[calc(100vh-80px)] xl:hidden">
             <ul className="grid gap-1">
               {HEADER_NAV.map((menu) => (
                 <li key={menu.key}>

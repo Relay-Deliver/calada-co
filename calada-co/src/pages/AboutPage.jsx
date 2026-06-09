@@ -160,7 +160,7 @@ export default function AboutPage() {
         </div>
 
         {/* FAQ */}
-        <div className="mb-16">
+        <div id="faq" className="mb-16 scroll-mt-36">
           <h2 className="font-serif text-2xl font-bold text-navy mb-1">Frequently Asked Questions</h2>
           <p className="text-sm text-slate-400 mb-6">Everything you need to know before you shop.</p>
           {FAQS.map(faq => (
