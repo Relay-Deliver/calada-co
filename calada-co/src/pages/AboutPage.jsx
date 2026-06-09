@@ -29,7 +29,7 @@ const FAQS = [
 ];
 
 const GALLERY = [
-  { src: '/assets/meagan-kohn.PNG', alt: 'Meagan Kohn - Founder of CalAda & Co' },
+  { src: '/assets/megan-kohn.PNG', alt: 'Meagan Kohn - Founder of CalAda & Co' },
   { src: '/assets/hero/studio-mama-mini.png', alt: 'Mama and mini studio' },
   { src: '/assets/hero/flower-market.png', alt: 'Flower market' },
   { src: '/assets/hero/family-picnic.png', alt: 'Family picnic' },
@@ -61,7 +61,7 @@ export default function AboutPage() {
       {/* HERO */}
       <div className="relative bg-navy py-24 sm:py-36 px-5 text-center overflow-hidden">
         <img
-          src="/assets/meagan-kohn.PNG"
+          src="/assets/megan-kohn.PNG"
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-20 pointer-events-none"
         />
