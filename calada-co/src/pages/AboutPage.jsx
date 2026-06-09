@@ -152,7 +152,7 @@ export default function AboutPage() {
                 <img
                   src={img.src}
                   alt={img.alt}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain bg-[#fdf4f7] hover:scale-105 transition-transform duration-500"
                 />
               </div>
             ))}
