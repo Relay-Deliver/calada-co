@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+try { localStorage.removeItem('calada_countdown_target'); } catch(e) {}
 const TARGET = new Date('2026-07-01T00:00:00');
 TARGET.setDate(TARGET.getDate() + 30);
 
