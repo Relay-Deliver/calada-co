@@ -199,7 +199,7 @@ export const NAV_MENUS = {
         title: 'Our Story',
         caption: 'Meet CalAda & Co',
         to: '/about',
-        image: '/assets/hero/porch-family.png',
+        image: '/assets/family.png',
       },
       {
         title: 'Contact Us',
