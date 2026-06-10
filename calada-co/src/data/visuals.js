@@ -6,7 +6,7 @@ export const HERO_SLIDES = [
     subtitle: 'Shine with fresh pieces for mothers, families, and little ones.',
     cta: 'Shop Spring / Summer',
     to: '/shop',
-    image: '/assets/hero/porch-family.png',
+    image: '/assets/family.png',
     align: 'center',
   },
   {
