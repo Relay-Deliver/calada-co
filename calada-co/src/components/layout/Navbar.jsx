@@ -103,10 +103,10 @@ export default function Navbar() {
         className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
       >
         {/* DESKTOP BAR */}
-        <div className="mx-auto hidden h-[86px] max-w-screen-2xl grid-cols-[84px_minmax(0,1fr)_168px] items-center gap-4 px-5 xl:grid 2xl:px-8">
+        <div className="mx-auto hidden h-[86px] max-w-screen-2xl grid-cols-[200px_minmax(0,1fr)_168px] items-center gap-4 px-5 xl:grid 2xl:px-8">
 
-          <Link to="/" className="grid h-[70px] w-[70px] place-items-center " onMouseEnter={() => setActiveMenuKey(null)}>
-            <LogoMark className="h-14 w-auto" />
+          <Link to="/" className="flex h-[70px] w-[200px] items-center" onMouseEnter={() => setActiveMenuKey(null)}>
+            <LogoMark className="h-12 w-auto max-w-[190px]" />
           </Link>
 
           <ul className="flex min-w-0 items-center justify-center gap-3 2xl:gap-6">
