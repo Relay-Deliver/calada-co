@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 
-const TARGET = new Date();
+const TARGET = new Date('2026-07-01T00:00:00');
 TARGET.setDate(TARGET.getDate() + 30);
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
 export default function CountdownBanner() {
-  const [visible, setVisible] = useState(true);
+  
   const [time, setTime] = useState({ days: '30', hours: '00', mins: '00', secs: '00' });
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function CountdownBanner() {
     return () => clearInterval(id);
   }, []);
 
-  if (!visible) return null;
+  
 
   return (
     <div className="relative flex flex-col items-center justify-center gap-3 border-b border-[#e8b4c8] bg-[linear-gradient(135deg,#fdf0f5_0%,#fff8fb_50%,#f8f0fd_100%)] px-10 py-3 text-center sm:flex-row sm:gap-6 sm:px-8 sm:py-4">
@@ -58,11 +58,7 @@ export default function CountdownBanner() {
         ))}
       </div>
 
-      <button
-        onClick={() => setVisible(false)}
-        aria-label="Close banner"
-        className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-pink-dark/10 text-base leading-none text-pink-dark transition-colors hover:bg-pink-dark hover:text-white sm:right-4 sm:top-1/2 sm:-translate-y-1/2"
-      >✕</button>
+      
     </div>
   );
 }
