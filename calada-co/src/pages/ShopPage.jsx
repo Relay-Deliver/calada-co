@@ -224,15 +224,15 @@ export default function ShopPage() {
       <FilterSection title="Price" open={openSections.price} onToggle={() => toggleSection('price')}>
         <div className="px-1">
           <div className="flex justify-between text-[12px] text-slate-500 mb-2">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}</span>
+            <span>${minPrice}</span>
+            <span>${maxPrice}</span>
           </div>
           <input
             type="range"
             min="0"
             max="200"
-            value={priceRange[1]}
-            onChange={e => setPriceRange([priceRange[0], Number(e.target.value)])}
+            value={maxPrice}
+            onChange={e => setMaxPrice(Number(e.target.value))}
             className="w-full accent-[#c084a0]"
           />
           <div className="flex gap-2 mt-3">
