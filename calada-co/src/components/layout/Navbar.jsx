@@ -44,7 +44,7 @@ const CloseIcon = () => (
   </svg>
 );
 const LogoMark = ({ className = '' }) => (
-  <span className={`grid place-items-center overflow-hidden rounded-full bg-navy shadow-sm ring-1 ring-navy/10 ${className}`}>
+  <span className={`grid place-items-center   bg-navy shadow-sm ring-1 ring-navy/10 ${className}`}>
     <img
       src="/assets/cal.png"
       alt="CalAda & Co."
@@ -105,7 +105,7 @@ export default function Navbar() {
         {/* DESKTOP BAR */}
         <div className="mx-auto hidden h-[86px] max-w-screen-2xl grid-cols-[84px_minmax(0,1fr)_168px] items-center gap-4 px-5 xl:grid 2xl:px-8">
 
-          <Link to="/" className="grid h-[70px] w-[70px] place-items-center rounded-full" onMouseEnter={() => setActiveMenuKey(null)}>
+          <Link to="/" className="grid h-[70px] w-[70px] place-items-center " onMouseEnter={() => setActiveMenuKey(null)}>
             <LogoMark className="h-full w-full" />
           </Link>
 
@@ -132,7 +132,7 @@ export default function Navbar() {
             <Link to="/account/wishlist" className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center  bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -143,7 +143,7 @@ export default function Navbar() {
             <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center  bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
@@ -158,7 +158,7 @@ export default function Navbar() {
           </button>
           <Link
             to="/"
-            className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full sm:h-16 sm:w-16"
+            className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center  sm:h-16 sm:w-16"
             onClick={() => setMobileOpen(false)}
           >
             <LogoMark className="h-full w-full" />
@@ -167,7 +167,7 @@ export default function Navbar() {
             <Link to="/account/wishlist" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center  bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -178,7 +178,7 @@ export default function Navbar() {
             <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center  bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
@@ -196,9 +196,9 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search for products..."
-                className="min-w-0 flex-1 rounded-full border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20"
+                className="min-w-0 flex-1  border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20"
               />
-              <button type="submit" className="rounded-full bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]">
+              <button type="submit" className=" bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]">
                 Search
               </button>
             </form>
@@ -270,7 +270,7 @@ export default function Navbar() {
                     <Link
                       key={card.title}
                       to={card.to}
-                      className="group grid grid-cols-[120px_1fr] overflow-hidden rounded-lg border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-md"
+                      className="group grid grid-cols-[120px_1fr]  rounded-lg border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-md"
                       onClick={() => setActiveMenuKey(null)}
                     >
                       <img src={card.image} alt="" className="h-full min-h-[132px] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -366,7 +366,7 @@ export default function Navbar() {
                     Wishlist
                   </span>
                   {wishlistCount > 0 && (
-                    <span className="rounded-full bg-[#c084a0] px-2 py-0.5 text-xs font-bold text-white">
+                    <span className=" bg-[#c084a0] px-2 py-0.5 text-xs font-bold text-white">
                       {wishlistCount}
                     </span>
                   )}

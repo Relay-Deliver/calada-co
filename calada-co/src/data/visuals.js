@@ -42,7 +42,7 @@ export const CATEGORY_TILES = [
     label: 'New Arrivals',
     desc: 'Fresh pieces ready to add to your bag',
     to: '/collections/new-arrivals',
-    image: '/assets/hero/porch-family.png',
+    image: '/assets/family.png',
   },
   {
     label: 'Family Sets',
