@@ -91,7 +91,7 @@ export default function AboutPage() {
               CalAda &amp; Co. was born from a simple idea — that mothers and families deserve beautifully made clothing that feels as special as the moments they are worn in.
             </p>
             <p className="text-[15px] text-[#333333] leading-[1.9] mb-4">
-              A mother of two, Megan named this brand after her children — Calvin and Adalynn — and built it from the ground up right here in small-town Michigan. What started as a simple idea grew into a full clothing line rooted in family, faith, and everyday style.
+              A mother of two, Megan named this brand after her children — Calvin and Adalynn — and built it from the ground up right here in Michigan. What started as a simple idea grew into a full clothing line rooted in family, faith, and everyday style.
             </p>
             <p className="text-[15px] text-[#333333] leading-[1.9]">
               Every piece in our collection is crafted with care and designed to become a favorite in your wardrobe for years to come. Because around here, we believe families deserve to look and feel their best — without the big price tag.
