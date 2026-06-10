@@ -1,31 +1,36 @@
-﻿import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useWishlist } from '../context/WishlistContext';
 import { useEffect, useState } from 'react';
-import { getProducts } from '../services/shopify';
+import { getProductByHandle } from '../services/shopify';
 import ProductCard from '../components/product/ProductCard';
-import { DUMMY_PRODUCTS } from '../data/dummyProducts';
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } };
 
 export default function WishlistPage() {
-  const { wishlist } = useWishlist();
-  const [allProducts, setAllProducts] = useState([]);
+  const { wishlist, toggle } = useWishlist();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getProducts({ first: 50 })
-      .then((data) => setAllProducts(data.edges.map((e) => e.node)))
-      .catch(() => setAllProducts(DUMMY_PRODUCTS));
-  }, []);
-
-  const wishedProducts = allProducts.filter((p) =>
-    wishlist.some(id =>
-      p.id === id ||
-      p.id?.endsWith(id) ||
-      id?.endsWith(p.id) ||
-      p.id?.split('/').pop() === id?.split('/').pop()
-    )
-  );
+    if (!wishlist.length) { setLoading(false); return; }
+    setLoading(true);
+    import('../services/shopify').then(({ getProducts }) => {
+      getProducts({ first: 50 })
+        .then((data) => {
+          const all = data.edges.map((e) => e.node);
+          const matched = all.filter((p) =>
+            wishlist.some(id =>
+              p.id === id ||
+              p.id?.split('/').pop() === id?.split('/').pop()
+            )
+          );
+          setProducts(matched);
+        })
+        .catch(() => setProducts([]))
+        .finally(() => setLoading(false));
+    });
+  }, [wishlist]);
 
   return (
     <div className="mx-auto max-w-screen-2xl px-5 py-12 sm:px-8">
@@ -46,13 +51,25 @@ export default function WishlistPage() {
             Start Shopping
           </Link>
         </div>
-      ) : (
+      ) : loading ? (
+        <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
+          {wishlist.map((id) => <div key={id} className="aspect-[3/4] animate-pulse rounded-2xl bg-gray-100"/>)}
+        </div>
+      ) : products.length > 0 ? (
         <motion.div initial="hidden" animate="visible" transition={{ staggerChildren: 0.08 }} className="mt-10 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
-          {wishedProducts.length > 0
-            ? wishedProducts.map((p) => <ProductCard key={p.id} product={p}/>)
-            : wishlist.map((id) => <div key={id} className="aspect-[3/4] animate-pulse rounded-2xl bg-gray-100"/>)
-          }
+          {products.map((p) => <ProductCard key={p.id} product={p}/>)}
         </motion.div>
+      ) : (
+        <div className="mt-20 text-center">
+          <p className="text-lg font-semibold text-navy">Could not load saved items</p>
+          <p className="mt-2 text-sm text-gray-500">Your saved items may have been removed or are unavailable.</p>
+          <button onClick={() => wishlist.forEach(id => toggle(id))} className="mt-6 inline-flex rounded-full border border-navy px-8 py-3 text-sm font-bold text-navy hover:bg-navy hover:text-white transition-colors">
+            Clear Wishlist
+          </button>
+          <Link to="/shop" className="mt-3 ml-3 inline-flex rounded-full bg-pink px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-navy">
+            Browse Products
+          </Link>
+        </div>
       )}
     </div>
   );
