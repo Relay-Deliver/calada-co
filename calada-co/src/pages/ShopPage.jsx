@@ -89,7 +89,8 @@ export default function ShopPage() {
   // Filter state
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedAgeGroups, setSelectedAgeGroups] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 200]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(200);
   const [openSections, setOpenSections] = useState({ size: true, price: true, age: true });
 
   const sort = searchParams.get('sort') || '';
@@ -98,7 +99,7 @@ export default function ShopPage() {
   const toggleSize = (s) => setSelectedSizes(p => p.includes(s) ? p.filter(x => x !== s) : [...p, s]);
   const toggleAge = (a) => setSelectedAgeGroups(p => p.includes(a) ? p.filter(x => x !== a) : [...p, a]);
   const activeFilterCount = selectedSizes.length + selectedAgeGroups.length;
-  const clearFilters = () => { setSelectedSizes([]); setSelectedAgeGroups([]); setPriceRange([0, 200]); };
+  const clearFilters = () => { setSelectedSizes([]); setSelectedAgeGroups([]); setMinPrice(0); setMaxPrice(200); };
 
   const sortedProducts = useMemo(() => {
     let next = [...products];
@@ -112,7 +113,7 @@ export default function ShopPage() {
     // Price filter
     next = next.filter(p => {
       const price = Number(p.priceRange?.minVariantPrice?.amount || 0);
-      return price >= priceRange[0] && price <= priceRange[1];
+      return price >= minPrice && price <= maxPrice;
     });
 
     // Size filter
@@ -146,7 +147,7 @@ export default function ShopPage() {
     }
 
     return next;
-  }, [products, sort, priceRange, selectedSizes, selectedAgeGroups]);
+  }, [products, sort, minPrice, maxPrice, selectedSizes, selectedAgeGroups]);
 
   useEffect(() => {
     setLoading(true);
@@ -237,16 +238,16 @@ export default function ShopPage() {
           <div className="flex gap-2 mt-3">
             <input
               type="number"
-              value={priceRange[0]}
-              onChange={e => setPriceRange([Number(e.target.value), priceRange[1]])}
+              value={minPrice}
+              onChange={e => setMinPrice(Number(e.target.value))}
               className="w-full border border-[#eeeeee] rounded px-2 py-1 text-sm text-center outline-none focus:border-[#c084a0]"
               placeholder="Min"
             />
             <span className="text-slate-400 self-center">—</span>
             <input
               type="number"
-              value={priceRange[1]}
-              onChange={e => setPriceRange([priceRange[0], Number(e.target.value)])}
+              value={maxPrice}
+              onChange={e => setMaxPrice(Number(e.target.value))}
               className="w-full border border-[#eeeeee] rounded px-2 py-1 text-sm text-center outline-none focus:border-[#c084a0]"
               placeholder="Max"
             />
