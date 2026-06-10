@@ -73,7 +73,7 @@ export const NAV_MENUS = {
         title: 'Family Weekend Set',
         caption: 'Soft matching favorites',
         to: '/collections/family-sets',
-        image: '/assets/hero/porch-family.png',
+        image: '/assets/family.png',
       },
     ],
   },
