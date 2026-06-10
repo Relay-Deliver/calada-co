@@ -106,7 +106,7 @@ export default function Navbar() {
         <div className="mx-auto hidden h-[86px] max-w-screen-2xl grid-cols-[84px_minmax(0,1fr)_168px] items-center gap-4 px-5 xl:grid 2xl:px-8">
 
           <Link to="/" className="grid h-[70px] w-[70px] place-items-center " onMouseEnter={() => setActiveMenuKey(null)}>
-            <LogoMark className="h-full w-full" />
+            <LogoMark className="h-14 w-auto" />
           </Link>
 
           <ul className="flex min-w-0 items-center justify-center gap-3 2xl:gap-6">
