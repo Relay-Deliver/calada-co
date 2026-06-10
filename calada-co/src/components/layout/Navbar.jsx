@@ -44,7 +44,7 @@ const CloseIcon = () => (
   </svg>
 );
 const LogoMark = ({ className = '' }) => (
-  <span className={`grid place-items-center    shadow-sm ring-1 ring-navy/10 ${className}`}>
+  <span className={`flex items-center ${className}`} style={{background:"transparent",border:"none",boxShadow:"none"}}>
     <img
       src="/assets/cal.png"
       alt="CalAda & Co."
