@@ -46,7 +46,7 @@ const CloseIcon = () => (
 const LogoMark = ({ className = '' }) => (
   <span className={`grid place-items-center overflow-hidden rounded-full bg-navy shadow-sm ring-1 ring-navy/10 ${className}`}>
     <img
-      src="/assets/business-logo.png"
+      src="/assets/cal.png"
       alt="CalAda & Co."
       className="h-full w-full scale-[1.18] object-cover"
     />
