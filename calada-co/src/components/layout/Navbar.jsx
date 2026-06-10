@@ -175,6 +175,9 @@ export default function Navbar() {
             <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
               <SearchIcon />
             </button>
+            <Link to="/account" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Account">
+              <AccountIcon />
+            </Link>
             <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (

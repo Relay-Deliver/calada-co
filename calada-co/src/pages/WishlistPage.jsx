@@ -18,7 +18,14 @@ export default function WishlistPage() {
       .catch(() => setAllProducts(DUMMY_PRODUCTS));
   }, []);
 
-  const wishedProducts = allProducts.filter((p) => wishlist.includes(p.id));
+  const wishedProducts = allProducts.filter((p) =>
+    wishlist.some(id =>
+      p.id === id ||
+      p.id?.endsWith(id) ||
+      id?.endsWith(p.id) ||
+      p.id?.split('/').pop() === id?.split('/').pop()
+    )
+  );
 
   return (
     <div className="mx-auto max-w-screen-2xl px-5 py-12 sm:px-8">
