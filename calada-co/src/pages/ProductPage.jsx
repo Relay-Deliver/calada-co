@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProductByHandle, formatPrice } from '../services/shopify';
@@ -79,6 +79,7 @@ const COLOR_MAP = {
   'heather dust': '#c4b9a8', 'heather heliconia pink': '#df3079',
 };
 const isColorOption = (name) => /colou?r/i.test(name);
+const isDenomOption = (name) => /denomination/i.test(name);
 const getColorHex = (val) => {
   const normalized = val.toLowerCase();
   for (const [key, hex] of Object.entries(COLOR_MAP)) {
@@ -134,11 +135,32 @@ const ClockIcon = () => (
   </svg>
 );
 
+/* ── sparkle helpers ── */
+const SPARKLE_COLORS = ['#D4537E', '#c084a0', '#f0c8d8'];
+const CONFETTI_COLORS = ['#D4537E', '#c084a0', '#1A2744', '#f0c8d8', '#ffffff'];
+
+function drawStar(ctx, x, y, r, color, alpha) {
+  ctx.save();
+  ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for (let i = 0; i < 8; i++) {
+    const ang = (i * Math.PI) / 4;
+    const rad = i % 2 === 0 ? r : r * 0.35;
+    if (i === 0) ctx.moveTo(x + rad * Math.cos(ang), y + rad * Math.sin(ang));
+    else ctx.lineTo(x + rad * Math.cos(ang), y + rad * Math.sin(ang));
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
 export default function ProductPage() {
   const { handle } = useParams();
   const { addItem, loading: cartLoading } = useCart();
   const { toggle, isWishlisted } = useWishlist();
 
+  /* ── standard state ── */
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedOptions, setSelectedOptions] = useState({});
@@ -149,13 +171,29 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [sizeError, setSizeError] = useState(false);
 
-  // ── Gift card personalization state ──
-  const isGiftCard = handle?.includes('gift-card') || false;
+  /* ── gift card state ── */
+  const isGiftCard = handle?.includes('gift-card');
   const [recipientName, setRecipientName] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
+  const [voucherBouncing, setVoucherBouncing] = useState(false);
+  const [denomPopping, setDenomPopping] = useState(null);
 
+  /* ── animation refs ── */
+  const sparkleCanvasRef = useRef(null);
+  const sparkleAnimRef = useRef(null);
+  const sparklesRef = useRef([]);
+  const confettiCanvasRef = useRef(null);
+  const confettiAnimRef = useRef(null);
+
+  /* ── option change ── */
   const handleOptionChange = (optionName, val) => {
     setSelectedOptions((o) => ({ ...o, [optionName]: val }));
+    // Denomination pop
+    if (isDenomOption(optionName)) {
+      setDenomPopping(val);
+      setTimeout(() => setDenomPopping(null), 350);
+    }
+    // Color → image switch
     if (isColorOption(optionName)) {
       const colorLower = val.toLowerCase();
       const matchIndex = images.findIndex((img) =>
@@ -166,7 +204,7 @@ export default function ProductPage() {
     }
   };
 
-  /* load product */
+  /* ── load product ── */
   useEffect(() => {
     setLoading(true);
     setImageFailed({});
@@ -177,7 +215,7 @@ export default function ProductPage() {
       .finally(() => setLoading(false));
   }, [handle]);
 
-  /* default options */
+  /* ── default options ── */
   useEffect(() => {
     if (!product?.options) return;
     const defaults = {};
@@ -203,22 +241,129 @@ export default function ProductPage() {
   const canAdd = variant?.id && !variant.id.startsWith('dummy');
   const wishlisted = isWishlisted(product?.id || handle);
 
-  // ── Gift card computed values ──
-  // Valid Until: always 30 days from today (displayed as estimated; exact date locked at purchase)
+  /* ── gift card computed values ── */
   const validUntilDate = useMemo(() => {
     const d = new Date();
     d.setDate(d.getDate() + 30);
     return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
   }, []);
 
-  // Voucher Value: auto-pulled from the selected Denominations option
   const voucherValue = useMemo(() => {
     const denomEntry = Object.entries(selectedOptions).find(([k]) => /denomination/i.test(k));
-    if (denomEntry) return denomEntry[1]; // e.g. "$10.00"
+    if (denomEntry) return denomEntry[1];
     if (price?.amount) return `$${parseFloat(price.amount).toFixed(2)}`;
     return '';
   }, [selectedOptions, price]);
 
+  /* ── voucher bounce on denomination change ── */
+  useEffect(() => {
+    if (!voucherValue || !isGiftCard) return;
+    setVoucherBouncing(true);
+    const t = setTimeout(() => setVoucherBouncing(false), 420);
+    return () => clearTimeout(t);
+  }, [voucherValue]);
+
+  /* ── sparkle animation ── */
+  useEffect(() => {
+    if (!isGiftCard) return;
+    const canvas = sparkleCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width > 0) {
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        // Re-seed sparkles when resized
+        sparklesRef.current = Array.from({ length: 22 }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 2.2 + 0.6,
+          alpha: Math.random(),
+          da: (Math.random() * 0.025 + 0.008) * (Math.random() < 0.5 ? 1 : -1),
+          vy: Math.random() * 0.25 + 0.08,
+          color: SPARKLE_COLORS[Math.floor(Math.random() * SPARKLE_COLORS.length)],
+        }));
+      }
+    };
+
+    // Small delay to let layout paint first
+    const initTimer = setTimeout(resize, 80);
+
+    const animate = () => {
+      if (canvas.width > 0 && canvas.height > 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        sparklesRef.current.forEach((s) => {
+          s.alpha += s.da;
+          if (s.alpha > 1 || s.alpha < 0) s.da *= -1;
+          s.y -= s.vy;
+          if (s.y < -4) {
+            s.y = canvas.height + 4;
+            s.x = Math.random() * canvas.width;
+          }
+          drawStar(ctx, s.x, s.y, s.r, s.color, s.alpha);
+        });
+      }
+      sparkleAnimRef.current = requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      clearTimeout(initTimer);
+      if (sparkleAnimRef.current) cancelAnimationFrame(sparkleAnimRef.current);
+    };
+  }, [isGiftCard]);
+
+  /* ── confetti ── */
+  const triggerConfetti = useCallback(() => {
+    const canvas = confettiCanvasRef.current;
+    if (!canvas) return;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+    const ctx = canvas.getContext('2d');
+    if (confettiAnimRef.current) cancelAnimationFrame(confettiAnimRef.current);
+
+    const pieces = Array.from({ length: 130 }, () => ({
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      w: Math.random() * 9 + 4,
+      h: Math.random() * 5 + 3,
+      color: CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)],
+      rot: Math.random() * Math.PI * 2,
+      rv: (Math.random() - 0.5) * 0.15,
+      vx: (Math.random() - 0.5) * 7,
+      vy: -(Math.random() * 10 + 7),
+      g: 0.32,
+    }));
+
+    let frame = 0;
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      pieces.forEach((p) => {
+        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.rot += p.rv;
+        if (p.y < canvas.height + 20) alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      frame++;
+      if (frame < 120 || alive) {
+        confettiAnimRef.current = requestAnimationFrame(draw);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.style.display = 'none';
+      }
+    };
+    draw();
+  }, []);
+
+  /* ── add to cart ── */
   const handleAddToCart = async () => {
     const sizeOption = product?.options?.find(o => /size/i.test(o.name));
     if (sizeOption && !selectedOptions[sizeOption.name]) {
@@ -228,8 +373,6 @@ export default function ProductPage() {
     }
     if (!variant?.id || cartLoading) return;
 
-    // Build line-item attributes for gift cards
-    // NOTE: CartContext.addItem needs to accept (variantId, attributes) — see comment below
     const giftAttrs = isGiftCard ? [
       { key: 'Voucher Value', value: voucherValue },
       ...(recipientName.trim() ? [{ key: 'Recipient Name', value: recipientName.trim() }] : []),
@@ -241,6 +384,7 @@ export default function ProductPage() {
       for (let i = 0; i < quantity; i++) {
         await addItem(variant.id, giftAttrs);
       }
+      if (isGiftCard) triggerConfetti();
       setAdded(true);
       setTimeout(() => setAdded(false), 1800);
     } catch {}
@@ -286,6 +430,30 @@ export default function ProductPage() {
       transition={{ duration: 0.4 }}
       className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-8 lg:py-12"
     >
+      {/* ── Animation keyframes ── */}
+      <style>{`
+        @keyframes voucherBounce {
+          0%, 100% { transform: scale(1); }
+          40%       { transform: scale(1.32); }
+          70%       { transform: scale(0.95); }
+        }
+        @keyframes denomPop {
+          0%, 100% { transform: scale(1); }
+          50%       { transform: scale(1.11); }
+        }
+        .voucher-bounce { animation: voucherBounce 0.4s ease; }
+        .denom-pop      { animation: denomPop 0.32s ease; }
+      `}</style>
+
+      {/* ── Full-screen confetti canvas (fixed, pointer-events-none) ── */}
+      <canvas
+        ref={confettiCanvasRef}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 9999,
+          pointerEvents: 'none', display: 'none',
+        }}
+      />
+
       {/* Breadcrumb */}
       <nav className="mb-6 text-xs text-gray-400">
         <Link to="/" className="hover:text-[#c084a0]">Home</Link>
@@ -297,83 +465,185 @@ export default function ProductPage() {
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(360px,0.82fr)] lg:gap-14">
 
-        {/* ── LEFT: Image Gallery ── */}
+        {/* ══ LEFT: Image Gallery ══ */}
         <div className="flex gap-3">
 
-          {/* Thumbnail strip — desktop only */}
-          {images.length > 1 && (
-            <div className="hidden w-[72px] flex-shrink-0 flex-col gap-2 lg:flex">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImg(i)}
-                  className={`overflow-hidden rounded-md border-2 transition-all ${
-                    selectedImg === i ? 'border-[#c084a0]' : 'border-transparent hover:border-gray-300'
-                  }`}
-                >
-                  <img
-                    src={imageFailed[i] ? getFallbackImage(handle) : img.url}
-                    alt={img.altText || `View ${i + 1}`}
-                    onError={() => setImageFailed(f => ({ ...f, [i]: true }))}
-                    className="aspect-square w-full object-cover"
-                  />
-                </button>
-              ))}
+          {isGiftCard ? (
+            /* ── Gift card: sparkle canvas + live overlay panel ── */
+            <div className="flex flex-1 flex-col gap-3">
+              {/* Main preview */}
+              <div
+                className="relative overflow-hidden rounded-lg bg-white"
+                style={{ aspectRatio: '16 / 10' }}
+              >
+                {/* Sparkle canvas — positioned over the image */}
+                <canvas
+                  ref={sparkleCanvasRef}
+                  className="absolute inset-0 z-10 h-full w-full pointer-events-none"
+                />
+
+                {/* Gift card base image */}
+                <img
+                  src={imageFailed[0] ? getFallbackImage(handle) : images[0]?.url}
+                  alt={images[0]?.altText || product.title}
+                  onError={() => setImageFailed(f => ({ ...f, [0]: true }))}
+                  className="h-full w-full object-contain"
+                />
+
+                {/* ── Live data overlay ──
+                    Tune top/left % values in DevTools to align with your
+                    gift-card-front.png placeholder lines. Current values are
+                    starting estimates based on the card design in screenshots. */}
+                <div className="absolute inset-0 pointer-events-none">
+
+                  {/* Voucher Value */}
+                  <div style={{ position: 'absolute', left: '5%', top: '46%', width: '43%' }}>
+                    <p style={{
+                      fontSize: '7px', color: '#c084a0', margin: 0,
+                      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
+                    }}>
+                      Voucher Value
+                    </p>
+                    <p style={{
+                      fontSize: '18px', fontWeight: 600, margin: '3px 0 0', lineHeight: 1,
+                      color: voucherValue ? '#1A2744' : '#bbb',
+                      transition: 'color 0.35s',
+                    }}>
+                      {voucherValue || '—'}
+                    </p>
+                  </div>
+
+                  {/* Recipient Name */}
+                  <div style={{ position: 'absolute', left: '5%', top: '63%', width: '43%' }}>
+                    <p style={{
+                      fontSize: '7px', color: '#c084a0', margin: 0,
+                      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
+                    }}>
+                      Recipient Name
+                    </p>
+                    <p style={{
+                      fontSize: '13px', margin: '3px 0 0', lineHeight: 1,
+                      color: recipientName ? '#1A2744' : '#bbb',
+                      fontStyle: recipientName ? 'normal' : 'italic',
+                      transition: 'color 0.2s',
+                    }}>
+                      {recipientName || 'enter name'}
+                    </p>
+                  </div>
+
+                  {/* Valid Until */}
+                  <div style={{ position: 'absolute', left: '5%', top: '78%', width: '43%' }}>
+                    <p style={{
+                      fontSize: '7px', color: '#c084a0', margin: 0,
+                      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
+                    }}>
+                      Valid Until
+                    </p>
+                    <p style={{ fontSize: '10px', color: '#888', margin: '3px 0 0', lineHeight: 1 }}>
+                      {validUntilDate}
+                    </p>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* Thumbnail strip for back-of-card image */}
+              {images.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedImg(i)}
+                      className={`flex-shrink-0 overflow-hidden rounded-md border-2 transition-all ${
+                        selectedImg === i ? 'border-[#c084a0]' : 'border-transparent hover:border-gray-300'
+                      }`}
+                    >
+                      <img
+                        src={imageFailed[i] ? getFallbackImage(handle) : img.url}
+                        alt={img.altText || `View ${i + 1}`}
+                        onError={() => setImageFailed(f => ({ ...f, [i]: true }))}
+                        className="h-14 w-14 object-contain bg-white"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+          ) : (
+            /* ── Standard product: existing gallery ── */
+            <>
+              {/* Thumbnail strip — desktop only */}
+              {images.length > 1 && (
+                <div className="hidden w-[72px] flex-shrink-0 flex-col gap-2 lg:flex">
+                  {images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedImg(i)}
+                      className={`overflow-hidden rounded-md border-2 transition-all ${
+                        selectedImg === i ? 'border-[#c084a0]' : 'border-transparent hover:border-gray-300'
+                      }`}
+                    >
+                      <img
+                        src={imageFailed[i] ? getFallbackImage(handle) : img.url}
+                        alt={img.altText || `View ${i + 1}`}
+                        onError={() => setImageFailed(f => ({ ...f, [i]: true }))}
+                        className="aspect-square w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Main image */}
+              <div className="relative flex-1 overflow-hidden rounded-lg bg-gray-50">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={selectedImg}
+                    src={imageFailed[selectedImg] ? getFallbackImage(handle) : images[selectedImg]?.url}
+                    alt={images[selectedImg]?.altText || product.title}
+                    onError={() => setImageFailed(f => ({ ...f, [selectedImg]: true }))}
+                    initial={{ opacity: 0, scale: 1.02 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="aspect-[3/4] w-full object-cover"
+                  />
+                </AnimatePresence>
+
+                {images.length > 1 && (
+                  <>
+                    <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white" aria-label="Previous image">
+                      <ChevronLeft />
+                    </button>
+                    <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white" aria-label="Next image">
+                      <ChevronRight />
+                    </button>
+                  </>
+                )}
+
+                {images.length > 1 && (
+                  <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 lg:hidden">
+                    {images.map((_, i) => (
+                      <button key={i} onClick={() => setSelectedImg(i)} className={`h-1.5 rounded-full transition-all ${selectedImg === i ? 'w-5 bg-[#c084a0]' : 'w-1.5 bg-white/70'}`} />
+                    ))}
+                  </div>
+                )}
+
+                {images.length > 1 && (
+                  <div className="mt-3 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
+                    {images.map((img, i) => (
+                      <button key={i} onClick={() => setSelectedImg(i)} className={`flex-shrink-0 overflow-hidden rounded border-2 transition-all ${selectedImg === i ? 'border-[#c084a0]' : 'border-transparent'}`}>
+                        <img src={imageFailed[i] ? getFallbackImage(handle) : img.url} alt={`View ${i + 1}`} onError={() => setImageFailed(f => ({ ...f, [i]: true }))} className="h-14 w-14 object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
           )}
-
-          {/* Main image */}
-          <div className="relative flex-1 overflow-hidden rounded-lg bg-gray-50">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={selectedImg}
-                style={isGiftCard ? { objectFit: 'contain', background: '#fff' } : undefined}
-                src={imageFailed[selectedImg] ? getFallbackImage(handle) : images[selectedImg]?.url}
-                alt={images[selectedImg]?.altText || product.title}
-                onError={() => setImageFailed(f => ({ ...f, [selectedImg]: true }))}
-                initial={{ opacity: 0, scale: 1.02 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-                className="aspect-[3/4] w-full object-cover"
-              />
-            </AnimatePresence>
-
-            {/* Prev / Next arrows */}
-            {images.length > 1 && (
-              <>
-                <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white" aria-label="Previous image">
-                  <ChevronLeft />
-                </button>
-                <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white" aria-label="Next image">
-                  <ChevronRight />
-                </button>
-              </>
-            )}
-
-            {/* Dot indicators — mobile */}
-            {images.length > 1 && (
-              <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 lg:hidden">
-                {images.map((_, i) => (
-                  <button key={i} onClick={() => setSelectedImg(i)} className={`h-1.5 rounded-full transition-all ${selectedImg === i ? 'w-5 bg-[#c084a0]' : 'w-1.5 bg-white/70'}`} />
-                ))}
-              </div>
-            )}
-
-            {/* Mobile thumbnail row */}
-            {images.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
-                {images.map((img, i) => (
-                  <button key={i} onClick={() => setSelectedImg(i)} className={`flex-shrink-0 overflow-hidden rounded border-2 transition-all ${selectedImg === i ? 'border-[#c084a0]' : 'border-transparent'}`}>
-                    <img src={imageFailed[i] ? getFallbackImage(handle) : img.url} alt={`View ${i + 1}`} onError={() => setImageFailed(f => ({ ...f, [i]: true }))} className="h-14 w-14 object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
-        {/* ── RIGHT: Product Info ── */}
+        {/* ══ RIGHT: Product Info ══ */}
         <div className="flex flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
 
           {/* Title */}
@@ -381,7 +651,7 @@ export default function ProductPage() {
             {product.title}
           </h1>
 
-          {/* Price row */}
+          {/* Price */}
           <div className="flex items-baseline gap-3">
             {price && (
               <span className={`text-2xl font-bold ${onSale ? 'text-red-500' : 'text-gray-900'}`}>
@@ -393,9 +663,7 @@ export default function ProductPage() {
                 {formatPrice(comparePrice.amount, comparePrice.currencyCode)}
               </span>
             )}
-            {onSale && (
-              <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-600">SALE</span>
-            )}
+            {onSale && <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-600">SALE</span>}
           </div>
 
           <div className="rounded-lg border border-pink-light bg-[#fff8fb] px-4 py-3 text-sm leading-6 text-[#6b4352]">
@@ -404,7 +672,7 @@ export default function ProductPage() {
 
           <hr className="border-gray-100" />
 
-          {/* Options (size, color, denomination, etc.) */}
+          {/* Options */}
           {product.options?.filter((o) => o.values.length > 1).map((option) => (
             <div key={option.name}>
               <p className="mb-2.5 text-sm font-semibold uppercase tracking-widest text-gray-700">
@@ -417,6 +685,7 @@ export default function ProductPage() {
               </p>
 
               {isColorOption(option.name) ? (
+                /* Color swatches */
                 <div className="flex flex-wrap gap-2">
                   {option.values.map((val) => {
                     const hex = getColorHex(val);
@@ -426,7 +695,9 @@ export default function ProductPage() {
                         key={val}
                         title={val}
                         onClick={() => handleOptionChange(option.name, val)}
-                        className={`h-8 w-8 rounded-full border-2 transition-all ${active ? 'border-[#c084a0] scale-110 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
+                        className={`h-8 w-8 rounded-full border-2 transition-all ${
+                          active ? 'border-[#c084a0] scale-110 shadow-md' : 'border-gray-200 hover:border-gray-400'
+                        }`}
                         style={hex ? {
                           backgroundColor: hex,
                           boxShadow: active ? `0 0 0 2px white, 0 0 0 4px ${hex}` : undefined,
@@ -437,7 +708,48 @@ export default function ProductPage() {
                     );
                   })}
                 </div>
+
+              ) : isGiftCard && isDenomOption(option.name) ? (
+                /* ── Gift card denomination tiles with PNG background + pop animation ── */
+                <div className="grid grid-cols-4 gap-2">
+                  {option.values.map((val) => {
+                    const active = selectedOptions[option.name] === val;
+                    return (
+                      <button
+                        key={val}
+                        onClick={() => handleOptionChange(option.name, val)}
+                        className={`denom-tile overflow-hidden rounded-lg border-2 transition-all ${
+                          active ? 'border-[#D4537E]' : 'border-gray-200 hover:border-[#c084a0]'
+                        } ${denomPopping === val ? 'denom-pop' : ''}`}
+                      >
+                        {/* Mini card thumbnail using gift-card-front.png */}
+                        <div
+                          className="relative h-10 overflow-hidden"
+                          style={{
+                            backgroundImage: images[0]?.url ? `url(${images[0].url})` : 'none',
+                            backgroundColor: '#fff5f8',
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'left center',
+                          }}
+                        >
+                          {/* Slight overlay so amount text is readable */}
+                          <div
+                            className="absolute inset-0"
+                            style={{ backgroundColor: active ? 'rgba(212,83,126,0.15)' : 'rgba(255,255,255,0.25)' }}
+                          />
+                        </div>
+                        <div className={`border-t border-gray-100 py-1.5 text-center text-sm font-semibold ${
+                          active ? 'text-[#c084a0]' : 'text-gray-700'
+                        }`}>
+                          {val}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
               ) : (
+                /* Standard size / other buttons */
                 <div className="flex flex-wrap gap-2">
                   {option.values.map((val) => {
                     const active = selectedOptions[option.name] === val;
@@ -460,7 +772,7 @@ export default function ProductPage() {
             </div>
           ))}
 
-          {/* ── Gift Card Personalization ── */}
+          {/* ── Gift card personalization ── */}
           {isGiftCard && (
             <div className="space-y-4 rounded-xl border border-pink-100 bg-[#fff8fb] p-5">
               <div className="flex items-center gap-2">
@@ -468,11 +780,16 @@ export default function ProductPage() {
                 <p className="text-sm font-semibold uppercase tracking-widest text-gray-700">Personalize Your Gift Card</p>
               </div>
 
-              {/* Voucher Value — auto-filled from denomination selection above */}
+              {/* Voucher Value — auto-filled, bounces on denomination change */}
               <div>
                 <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-gray-500">Voucher Value</p>
                 <div className="flex items-center gap-2.5 rounded-md border border-gray-200 bg-white px-3 py-2.5">
-                  <span className="text-base font-bold text-[#c084a0]">{voucherValue || '—'}</span>
+                  <span
+                    className={voucherBouncing ? 'voucher-bounce' : ''}
+                    style={{ fontSize: '18px', fontWeight: 700, color: '#c084a0', display: 'inline-block', minWidth: '56px' }}
+                  >
+                    {voucherValue || '—'}
+                  </span>
                   <span className="text-xs text-gray-400">· auto-filled from denomination above</span>
                 </div>
               </div>
@@ -492,8 +809,7 @@ export default function ProductPage() {
               {/* Gift Message */}
               <div>
                 <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-gray-500">
-                  Gift Message{' '}
-                  <span className="font-normal normal-case text-gray-400">(optional)</span>
+                  Gift Message <span className="font-normal normal-case text-gray-400">(optional)</span>
                 </p>
                 <textarea
                   value={giftMessage}
@@ -504,34 +820,23 @@ export default function ProductPage() {
                 />
               </div>
 
-              {/* Valid Until — auto-calculated */}
+              {/* Valid Until */}
               <div className="flex items-center gap-2 rounded-md bg-pink-50 px-3 py-2.5">
                 <ClockIcon />
                 <span className="text-sm text-gray-600">
-                  Valid Until:{' '}
-                  <strong className="text-gray-800">{validUntilDate}</strong>
+                  Valid Until: <strong className="text-gray-800">{validUntilDate}</strong>
                 </span>
               </div>
             </div>
           )}
 
-          {/* Quantity selector */}
+          {/* Quantity */}
           <div className="flex flex-col gap-2">
             <p className="text-sm font-semibold uppercase tracking-widest text-gray-700">Quantity</p>
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-lg font-bold text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0] transition-colors"
-              >
-                -
-              </button>
+              <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-lg font-bold text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0] transition-colors">-</button>
               <span className="w-8 text-center text-base font-semibold text-gray-900">{quantity}</span>
-              <button
-                onClick={() => setQuantity(q => q + 1)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-lg font-bold text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0] transition-colors"
-              >
-                +
-              </button>
+              <button onClick={() => setQuantity(q => q + 1)} className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-lg font-bold text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0] transition-colors">+</button>
             </div>
           </div>
 
@@ -541,7 +846,7 @@ export default function ProductPage() {
             </div>
           )}
 
-          {/* Add to Cart + Wishlist row */}
+          {/* Add to Cart + Wishlist */}
           <div className="flex gap-3">
             <button
               onClick={handleAddToCart}
@@ -589,7 +894,7 @@ export default function ProductPage() {
             </div>
           </div>
 
-          {/* Accordion sections */}
+          {/* Accordions */}
           {[
             { key: 'description', label: 'Description', content: product.description || product.descriptionHtml },
             { key: 'materials', label: 'Material & Care', content: 'Hand wash cold or machine wash gentle. Lay flat to dry. Do not bleach.' },
