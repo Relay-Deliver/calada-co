@@ -44,13 +44,15 @@ const CloseIcon = () => (
   </svg>
 );
 const LogoMark = ({ className = '' }) => (
-  <span className={`flex items-center ${className}`} style={{background:"transparent",border:"none",boxShadow:"none"}}>
-    <img
-      src="/assets/cal.png"
-      alt="CalAda & Co."
-      className="h-full w-full scale-[1.18] object-cover"
-    />
+  <span className={`flex items-center ${className}`} style={{ background:'transparent', border:'none', boxShadow:'none' }}>
+    <img src="/assets/cal.png" alt="CalAda & Co." className="h-full w-full scale-[1.18] object-cover" />
   </span>
+);
+const ChevronSm = ({ open }) => (
+  <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
+    style={{ transform: open ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
+  </svg>
 );
 
 export default function Navbar() {
@@ -91,62 +93,44 @@ export default function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
-      setSearchOpen(false);
+      setSearchQuery(''); setSearchOpen(false);
     }
   };
 
+  const closeMobile = () => { setMobileOpen(false); setMobileExpandedKey(null); };
+
   return (
     <>
-      <nav
-        ref={menuRef}
-        className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}
-      >
+      <nav ref={menuRef} className={`sticky top-0 z-50 bg-white transition-shadow duration-200 ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
+
         {/* DESKTOP BAR */}
         <div className="mx-auto hidden h-[86px] max-w-screen-2xl grid-cols-[260px_minmax(0,1fr)_168px] items-center gap-4 px-5 xl:grid 2xl:px-8">
-
           <Link to="/" className="flex h-[70px] w-[260px] items-center" onMouseEnter={() => setActiveMenuKey(null)}>
             <LogoMark className="h-16 w-auto max-w-[240px]" />
           </Link>
-
           <ul className="flex min-w-0 items-center justify-center gap-3 2xl:gap-6">
             {HEADER_NAV.map((menu) => (
               <li key={menu.key} className="relative">
-                <Link
-                  to={menu.to}
+                <Link to={menu.to}
                   className={`block whitespace-nowrap px-1 py-3 text-[12px] font-black uppercase tracking-[0.1em] transition-colors hover:text-[#c084a0] 2xl:text-[13px] 2xl:tracking-[0.12em] ${activeMenuKey === menu.key ? 'text-[#c084a0]' : 'text-slate-500'}`}
                   onMouseEnter={() => setActiveMenuKey(menu.key)}
                   onFocus={() => setActiveMenuKey(menu.key)}
-                  onClick={() => setActiveMenuKey(null)}
-                >
+                  onClick={() => setActiveMenuKey(null)}>
                   {menu.label}
                 </Link>
               </li>
             ))}
           </ul>
-
           <div className="flex items-center justify-end gap-1 text-navy">
-            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
-              <SearchIcon />
-            </button>
+            <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={() => setSearchOpen(o => !o)} aria-label="Search"><SearchIcon /></button>
             <Link to="/account/wishlist" className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
-              {wishlistCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
-                  {wishlistCount > 99 ? '99+' : wishlistCount}
-                </span>
-              )}
+              {wishlistCount > 0 && <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">{wishlistCount > 99 ? '99+' : wishlistCount}</span>}
             </Link>
-            <Link to={isLoggedIn ? '/account' : '/account/login'} className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Account">
-              <AccountIcon />
-            </Link>
+            <Link to={isLoggedIn ? '/account' : '/account/login'} className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Account"><AccountIcon /></Link>
             <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={openCart} aria-label="Cart">
               <CartIcon />
-              {itemCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
-                  {itemCount > 99 ? '99+' : itemCount}
-                </span>
-              )}
+              {itemCount > 0 && <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">{itemCount > 99 ? '99+' : itemCount}</span>}
             </button>
           </div>
         </div>
@@ -156,79 +140,46 @@ export default function Navbar() {
           <button className="relative z-10 grid h-10 w-10 place-items-center text-navy" onClick={() => setMobileOpen(o => !o)} aria-label="Menu" aria-expanded={mobileOpen}>
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
-          <Link
-            to="/"
-            className="absolute left-[40%] top-1/2 flex h-10 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-start sm:left-1/2 sm:h-14 sm:w-44"
-            onClick={() => setMobileOpen(false)}
-          >
+          <Link to="/" className="absolute left-[40%] top-1/2 flex h-10 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-start sm:left-1/2 sm:h-14 sm:w-44" onClick={closeMobile}>
             <LogoMark className="h-full w-full" />
           </Link>
           <div className="relative z-10 flex items-center justify-end gap-0 text-navy sm:gap-1">
             <Link to="/account/wishlist" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
-              {wishlistCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
-                  {wishlistCount > 99 ? '99+' : wishlistCount}
-                </span>
-              )}
+              {wishlistCount > 0 && <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">{wishlistCount > 99 ? '99+' : wishlistCount}</span>}
             </Link>
-            <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
-              <SearchIcon />
-            </button>
-            <Link to="/account" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Account">
-              <AccountIcon />
-            </Link>
+            <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={() => setSearchOpen(o => !o)} aria-label="Search"><SearchIcon /></button>
+            <Link to="/account" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Account"><AccountIcon /></Link>
             <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={openCart} aria-label="Cart">
               <CartIcon />
-              {itemCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
-                  {itemCount > 99 ? '99+' : itemCount}
-                </span>
-              )}
+              {itemCount > 0 && <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">{itemCount > 99 ? '99+' : itemCount}</span>}
             </button>
           </div>
         </div>
 
-        {/* Search dropdown */}
+        {/* Search bar */}
         {searchOpen && (
           <div className="border-t border-gray-100 bg-white px-4 py-3 shadow-md">
             <form onSubmit={handleSearch} className="mx-auto flex max-w-2xl items-center gap-2">
-              <input
-                ref={searchRef}
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+              <input ref={searchRef} type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search for products..."
-                className="min-w-0 flex-1 border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20"
-              />
-              <button type="submit" className="bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]">
-                Search
-              </button>
+                className="min-w-0 flex-1 border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20" />
+              <button type="submit" className="bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]">Search</button>
             </form>
           </div>
         )}
 
         {/* DESKTOP MEGA MENU */}
         {activeMenu && (
-          <div
-            className="absolute left-0 right-0 top-full z-50 hidden border-t border-gray-100 bg-white shadow-xl xl:block"
-            onMouseLeave={() => setActiveMenuKey(null)}
-          >
+          <div className="absolute left-0 right-0 top-full z-50 hidden border-t border-gray-100 bg-white shadow-xl xl:block" onMouseLeave={() => setActiveMenuKey(null)}>
             {activeMenu.groups ? (
-              // Collections — grouped layout
               <div className="mx-auto max-w-screen-2xl px-8 py-7">
                 <div className="mb-5 flex items-baseline justify-between">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
                     <h3 className="mt-1 font-serif text-2xl font-semibold text-navy">Collections</h3>
                   </div>
-                  <Link
-                    to="/collections"
-                    className="border-b-2 border-navy pb-0.5 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
-                    onClick={() => setActiveMenuKey(null)}
-                  >
-                    View All
-                  </Link>
+                  <Link to="/collections" className="border-b-2 border-navy pb-0.5 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]" onClick={() => setActiveMenuKey(null)}>View All</Link>
                 </div>
                 <div className="grid grid-cols-3 gap-8">
                   {activeMenu.groups.map(group => (
@@ -237,13 +188,7 @@ export default function Navbar() {
                       <ul className="grid gap-1.5">
                         {group.links.map(link => (
                           <li key={link.to}>
-                            <Link
-                              to={link.to}
-                              className="text-sm text-slate-500 transition-colors hover:text-[#c084a0]"
-                              onClick={() => setActiveMenuKey(null)}
-                            >
-                              {link.label}
-                            </Link>
+                            <Link to={link.to} className="text-sm text-slate-500 transition-colors hover:text-[#c084a0]" onClick={() => setActiveMenuKey(null)}>{link.label}</Link>
                           </li>
                         ))}
                       </ul>
@@ -252,42 +197,23 @@ export default function Navbar() {
                 </div>
               </div>
             ) : (
-              // Standard card layout
               <div className={`mx-auto grid max-w-screen-2xl ${activeMenu?.key === 'more' ? 'grid-cols-1' : 'grid-cols-[0.8fr_1.5fr]'} gap-8 px-8 py-7`}>
                 {activeMenu?.key !== 'more' && (
                   <div className="max-w-sm">
                     <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
                     <h3 className="mt-2 font-serif text-3xl font-semibold text-navy">{activeMenu.label}</h3>
-                    <p className="mt-3 text-sm leading-6 text-slate-500">
-                      Fresh boutique picks for mothers, families, and little ones.
-                    </p>
-                    <Link
-                      to={activeMenu.to}
-                      className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
-                      onClick={() => setActiveMenuKey(null)}
-                    >
-                      Shop now
-                    </Link>
+                    <p className="mt-3 text-sm leading-6 text-slate-500">Fresh boutique picks for mothers, families, and little ones.</p>
+                    <Link to={activeMenu.to} className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]" onClick={() => setActiveMenuKey(null)}>Shop now</Link>
                   </div>
                 )}
-                {/* ↓ CHANGED: grid-cols-3 for More menu so all 3 cards are in one row */}
                 <div className={`grid gap-4 ${activeMenu?.key === 'more' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {activeMenu.cards?.map(card => (
-                    <Link
-                      key={card.title}
-                      to={card.to}
+                    <Link key={card.title} to={card.to}
                       className="group grid grid-cols-[110px_1fr] overflow-hidden rounded-lg border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-md"
-                      onClick={() => setActiveMenuKey(null)}
-                    >
-                      {/* ↓ CHANGED: object-contain + bg-white for gift card image so the full design shows */}
+                      onClick={() => setActiveMenuKey(null)}>
                       <div className="overflow-hidden">
-                        <img
-                          src={card.image}
-                          alt=""
-                          className={`h-full min-h-[120px] w-full transition-transform duration-500 group-hover:scale-105 ${
-                            card.title?.toLowerCase().includes('gift') ? 'object-contain bg-white p-2' : 'object-cover'
-                          }`}
-                        />
+                        <img src={card.image} alt=""
+                          className={`h-full min-h-[120px] w-full transition-transform duration-500 group-hover:scale-105 ${card.title?.toLowerCase().includes('gift') ? 'object-contain bg-white p-2' : 'object-cover'}`} />
                       </div>
                       <span className="flex flex-col justify-center p-4">
                         <span className="font-serif text-lg font-semibold text-navy">{card.title}</span>
@@ -309,16 +235,13 @@ export default function Navbar() {
               {HEADER_NAV.map((menu) => (
                 <li key={menu.key}>
                   {menu.groups ? (
+                    /* Collections — expandable groups */
                     <div>
                       <button
                         className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
-                        onClick={() => setMobileExpandedKey(mobileExpandedKey === menu.key ? null : menu.key)}
-                      >
+                        onClick={() => setMobileExpandedKey(mobileExpandedKey === menu.key ? null : menu.key)}>
                         <span>{menu.label}</span>
-                        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
-                          style={{ transform: mobileExpandedKey === menu.key ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
-                        </svg>
+                        <ChevronSm open={mobileExpandedKey === menu.key} />
                       </button>
                       {mobileExpandedKey === menu.key && (
                         <div className="mb-2 ml-3 grid gap-4 rounded-lg bg-slate-50 p-4">
@@ -328,13 +251,7 @@ export default function Navbar() {
                               <ul className="grid gap-1.5">
                                 {group.links.map(link => (
                                   <li key={link.to}>
-                                    <Link
-                                      to={link.to}
-                                      className="text-sm text-slate-500 hover:text-[#c084a0]"
-                                      onClick={() => { setMobileOpen(false); setMobileExpandedKey(null); }}
-                                    >
-                                      {link.label}
-                                    </Link>
+                                    <Link to={link.to} className="text-sm text-slate-500 hover:text-[#c084a0]" onClick={closeMobile}>{link.label}</Link>
                                   </li>
                                 ))}
                               </ul>
@@ -343,16 +260,48 @@ export default function Navbar() {
                         </div>
                       )}
                     </div>
+
+                  ) : menu.cards ? (
+                    /* More — expandable cards (Gift Cards, Our Story, Contact Us) */
+                    <div>
+                      <button
+                        className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
+                        onClick={() => setMobileExpandedKey(mobileExpandedKey === menu.key ? null : menu.key)}>
+                        <span>{menu.label}</span>
+                        <ChevronSm open={mobileExpandedKey === menu.key} />
+                      </button>
+                      {mobileExpandedKey === menu.key && (
+                        <div className="mb-2 ml-3 grid gap-1 rounded-lg bg-slate-50 p-3">
+                          {menu.cards.map(card => (
+                            <Link
+                              key={card.title}
+                              to={card.to}
+                              className="flex items-center gap-3 rounded-md px-2 py-2.5 transition-colors hover:bg-pink-50"
+                              onClick={closeMobile}
+                            >
+                              <div className="h-10 w-14 flex-shrink-0 overflow-hidden rounded-md bg-white">
+                                <img src={card.image} alt="" className={`h-full w-full ${card.title?.toLowerCase().includes('gift') ? 'object-contain p-1' : 'object-cover'}`} />
+                              </div>
+                              <div>
+                                <p className="text-sm font-semibold text-slate-700">{card.title}</p>
+                                <p className="text-xs text-slate-400">{card.caption}</p>
+                              </div>
+                              <svg className="ml-auto flex-shrink-0" width="14" height="14" fill="none" stroke="#c084a0" strokeWidth="2" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
+                              </svg>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
                   ) : (
-                    <Link
-                      to={menu.to}
+                    /* Simple nav link */
+                    <Link to={menu.to}
                       className="flex items-center justify-between rounded-lg px-3 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
-                      onClick={() => setMobileOpen(false)}
-                    >
+                      onClick={closeMobile}>
                       <span>{menu.label}</span>
-                      <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
-                      </svg>
+                      <ChevronSm open={false} />
                     </Link>
                   )}
                 </li>
@@ -361,30 +310,18 @@ export default function Navbar() {
 
             <ul className="mt-4 grid gap-1 border-t border-gray-100 pt-4">
               <li>
-                <Link
-                  to={isLoggedIn ? '/account' : '/account/login'}
+                <Link to={isLoggedIn ? '/account' : '/account/login'}
                   className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-semibold text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <AccountIcon />
-                  My Account
+                  onClick={closeMobile}>
+                  <AccountIcon />My Account
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/account/wishlist"
+                <Link to="/account/wishlist"
                   className="flex items-center justify-between rounded-lg px-3 py-3 text-sm font-semibold text-slate-600 hover:bg-pink-50 hover:text-[#c084a0]"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <span className="flex items-center gap-3">
-                    <HeartIcon filled={wishlistCount > 0} />
-                    Wishlist
-                  </span>
-                  {wishlistCount > 0 && (
-                    <span className="bg-[#c084a0] px-2 py-0.5 text-xs font-bold text-white">
-                      {wishlistCount}
-                    </span>
-                  )}
+                  onClick={closeMobile}>
+                  <span className="flex items-center gap-3"><HeartIcon filled={wishlistCount > 0} />Wishlist</span>
+                  {wishlistCount > 0 && <span className="bg-[#c084a0] px-2 py-0.5 text-xs font-bold text-white">{wishlistCount}</span>}
                 </Link>
               </li>
             </ul>

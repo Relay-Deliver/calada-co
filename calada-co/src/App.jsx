@@ -8,6 +8,7 @@ import CountdownBanner from './components/layout/CountdownBanner';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Preloader from './components/layout/Preloader';
+import LaunchGate from './components/LaunchGate';
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import CartPage from './pages/CartPage';
@@ -39,7 +40,6 @@ function ScrollToTop() {
       });
       return;
     }
-
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }, [hash, pathname, search]);
 
@@ -80,30 +80,36 @@ export default function App() {
       <AuthProvider>
         <CartProvider>
           <WishlistProvider>
-            <AnnouncementBar />
-            <CountdownBanner />
-            <Navbar />
-            <main>
-              <Routes>
-                <Route path="/"                     element={<HomePage />} />
-                <Route path="/shop"                 element={<ShopPage />} />
-                <Route path="/cart"                 element={<CartPage />} />
-                <Route path="/collections"          element={<ShopPage />} />
-                <Route path="/collections/:handle"  element={<ShopPage />} />
-                <Route path="/products/:handle"     element={<ProductPage />} />
-                <Route path="/about"                element={<AboutPage />} />
-                <Route path="/contact"              element={<ContactPage />} />
-                <Route path="/shipping"             element={<ShippingPage />} />
-                <Route path="/privacy"              element={<PrivacyPage />} />
-                <Route path="/terms"                element={<TermsPage />} />
-                <Route path="/account"              element={<AccountDashboardPage />} />
-                <Route path="/account/login"        element={<AccountLoginPage />} />
-                <Route path="/account/register"     element={<AccountRegisterPage />} />
-                <Route path="/account/wishlist"     element={<WishlistPage />} />
-                <Route path="*"                     element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
-            <Footer />
+
+            {/* LaunchGate blurs the entire layout until user clicks Let's Go.
+                ready={!showPreloader} ensures it only appears after the preloader finishes. */}
+            <LaunchGate ready={!showPreloader}>
+              <AnnouncementBar />
+              <CountdownBanner />
+              <Navbar />
+              <main>
+                <Routes>
+                  <Route path="/"                     element={<HomePage />} />
+                  <Route path="/shop"                 element={<ShopPage />} />
+                  <Route path="/cart"                 element={<CartPage />} />
+                  <Route path="/collections"          element={<ShopPage />} />
+                  <Route path="/collections/:handle"  element={<ShopPage />} />
+                  <Route path="/products/:handle"     element={<ProductPage />} />
+                  <Route path="/about"                element={<AboutPage />} />
+                  <Route path="/contact"              element={<ContactPage />} />
+                  <Route path="/shipping"             element={<ShippingPage />} />
+                  <Route path="/privacy"              element={<PrivacyPage />} />
+                  <Route path="/terms"                element={<TermsPage />} />
+                  <Route path="/account"              element={<AccountDashboardPage />} />
+                  <Route path="/account/login"        element={<AccountLoginPage />} />
+                  <Route path="/account/register"     element={<AccountRegisterPage />} />
+                  <Route path="/account/wishlist"     element={<WishlistPage />} />
+                  <Route path="*"                     element={<Navigate to="/" replace />} />
+                </Routes>
+              </main>
+              <Footer />
+            </LaunchGate>
+
           </WishlistProvider>
         </CartProvider>
       </AuthProvider>
