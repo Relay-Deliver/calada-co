@@ -202,6 +202,13 @@ export const NAV_MENUS = {
         image: '/assets/family.png',
       },
       {
+        title: 'Gift Cards',
+        caption: 'The perfect gift for any occasion',
+        to: '/products/calada-co-gift-card',
+        image: '/assets/gift-card-front.png',
+        cta: 'Shop gift cards',
+      },
+      {
         title: 'Contact Us',
         caption: 'Questions, sizing, and support',
         to: '/contact',
