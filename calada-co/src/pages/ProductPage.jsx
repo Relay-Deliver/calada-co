@@ -455,24 +455,25 @@ export default function ProductPage() {
                     The card image already has "Voucher Value :", "Recipient Name :", "Valid Until :"
                     printed on it. These divs fill in the blank lines that follow each label.
                     ⚠ Tune top/left % in DevTools until each value sits on its blank line. ── */}
-               {isShowingBack && (
+{isShowingBack && (
   <div className="absolute inset-0 pointer-events-none">
 
-    {/* Voucher value — pushed right past the "Voucher Value :" label, up onto the line */}
-    <div style={{ position:'absolute', left:'28%', top:'36%', width:'30%' }}>
+    {/* Voucher value */}
+    <div style={{ position:'absolute', left:'28%', top:'36%', width:'42%' }}>
       <p style={{
-        fontSize:'13px', fontWeight:600, margin:0, lineHeight:1,
+        fontSize:'clamp(11px, 2.6vw, 14px)', fontWeight:600, margin:0, lineHeight:1,
         color: voucherValue ? '#1A2744' : '#bbb',
+        whiteSpace:'nowrap',
         transition:'color 0.35s',
       }}>
         {voucherValue || ''}
       </p>
     </div>
 
-    {/* Recipient name — pushed right past the "Recipient Name :" label, up onto the line */}
-    <div style={{ position:'absolute', left:'28%', top:'46%', width:'30%' }}>
+    {/* Recipient name — wider container + responsive font so it never clips on mobile */}
+    <div style={{ position:'absolute', left:'28%', top:'46%', width:'48%' }}>
       <p style={{
-        fontSize:'12px', margin:0, lineHeight:1,
+        fontSize:'clamp(10px, 2.4vw, 13px)', margin:0, lineHeight:1.15,
         color: recipientName ? '#1A2744' : '#aaa',
         fontStyle: recipientName ? 'normal' : 'italic',
         backgroundColor: recipientName ? 'rgba(255,255,255,0.65)' : 'transparent',
@@ -480,16 +481,21 @@ export default function ProductPage() {
         padding: recipientName ? '1px 3px' : '0',
         display:'inline-block',
         maxWidth:'100%',
-        wordBreak:'break-word',
+        overflow:'hidden',
+        textOverflow:'ellipsis',
+        whiteSpace:'nowrap',
         transition:'color 0.2s',
       }}>
         {recipientName || ''}
       </p>
     </div>
 
-    {/* Valid until — stays roughly where it was */}
-    <div style={{ position:'absolute', left:'20%', top:'60%', width:'36%' }}>
-      <p style={{ fontSize:'11px', color:'#555', margin:0, lineHeight:1 }}>
+    {/* Valid until */}
+    <div style={{ position:'absolute', left:'20%', top:'60%', width:'42%' }}>
+      <p style={{
+        fontSize:'clamp(9px, 2vw, 11px)', color:'#555', margin:0, lineHeight:1,
+        whiteSpace:'nowrap',
+      }}>
         {validUntilDate}
       </p>
     </div>
