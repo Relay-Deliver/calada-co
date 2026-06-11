@@ -490,61 +490,65 @@ export default function ProductPage() {
                   className="h-full w-full object-contain"
                 />
 
-                {/* ── Live data overlay ──
-                    Tune top/left % values in DevTools to align with your
-                    gift-card-front.png placeholder lines. Current values are
-                    starting estimates based on the card design in screenshots. */}
-                <div className="absolute inset-0 pointer-events-none">
+                {/* ── Live data overlay ── */}
+<div className="absolute inset-0 pointer-events-none">
 
-                  {/* Voucher Value */}
-                  <div style={{ position: 'absolute', left: '5%', top: '46%', width: '43%' }}>
-                    <p style={{
-                      fontSize: '7px', color: '#c084a0', margin: 0,
-                      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
-                    }}>
-                      Voucher Value
-                    </p>
-                    <p style={{
-                      fontSize: '18px', fontWeight: 600, margin: '3px 0 0', lineHeight: 1,
-                      color: voucherValue ? '#1A2744' : '#bbb',
-                      transition: 'color 0.35s',
-                    }}>
-                      {voucherValue || '—'}
-                    </p>
-                  </div>
+  {/* Voucher Value — sits above the Gift Voucher typography */}
+  <div style={{ position: 'absolute', left: '5%', top: '46%', width: '43%' }}>
+    <p style={{
+      fontSize: '7px', color: '#c084a0', margin: 0,
+      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
+    }}>
+      Voucher Value
+    </p>
+    <p style={{
+      fontSize: '18px', fontWeight: 600, margin: '3px 0 0', lineHeight: 1,
+      color: voucherValue ? '#1A2744' : '#bbb',
+      transition: 'color 0.35s',
+    }}>
+      {voucherValue || '—'}
+    </p>
+  </div>
 
-                  {/* Recipient Name */}
-                  <div style={{ position: 'absolute', left: '5%', top: '63%', width: '43%' }}>
-                    <p style={{
-                      fontSize: '7px', color: '#c084a0', margin: 0,
-                      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
-                    }}>
-                      Recipient Name
-                    </p>
-                    <p style={{
-                      fontSize: '13px', margin: '3px 0 0', lineHeight: 1,
-                      color: recipientName ? '#1A2744' : '#bbb',
-                      fontStyle: recipientName ? 'normal' : 'italic',
-                      transition: 'color 0.2s',
-                    }}>
-                      {recipientName || 'enter name'}
-                    </p>
-                  </div>
+  {/* Recipient Name — moved to 70% to clear the tagline */}
+  <div style={{ position: 'absolute', left: '5%', top: '70%', width: '43%' }}>
+    <p style={{
+      fontSize: '7px', color: '#c084a0', margin: 0,
+      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
+    }}>
+      Recipient Name
+    </p>
+    {/* White backdrop keeps long names readable over any card decoration */}
+    <p style={{
+      fontSize: '12px', margin: '3px 0 0', lineHeight: 1.3,
+      color: recipientName ? '#1A2744' : '#bbb',
+      fontStyle: recipientName ? 'normal' : 'italic',
+      transition: 'color 0.2s',
+      backgroundColor: 'rgba(255,255,255,0.72)',
+      borderRadius: '2px',
+      padding: '1px 3px 2px',
+      display: 'inline-block',
+      maxWidth: '100%',
+      wordBreak: 'break-word',
+    }}>
+      {recipientName || 'enter name'}
+    </p>
+  </div>
 
-                  {/* Valid Until */}
-                  <div style={{ position: 'absolute', left: '5%', top: '78%', width: '43%' }}>
-                    <p style={{
-                      fontSize: '7px', color: '#c084a0', margin: 0,
-                      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
-                    }}>
-                      Valid Until
-                    </p>
-                    <p style={{ fontSize: '10px', color: '#888', margin: '3px 0 0', lineHeight: 1 }}>
-                      {validUntilDate}
-                    </p>
-                  </div>
+  {/* Valid Until — shifted down to match */}
+  <div style={{ position: 'absolute', left: '5%', top: '83%', width: '43%' }}>
+    <p style={{
+      fontSize: '7px', color: '#c084a0', margin: 0,
+      textTransform: 'uppercase', letterSpacing: '0.12em', lineHeight: 1,
+    }}>
+      Valid Until
+    </p>
+    <p style={{ fontSize: '10px', color: '#888', margin: '3px 0 0', lineHeight: 1 }}>
+      {validUntilDate}
+    </p>
+  </div>
 
-                </div>
+</div>
               </div>
 
               {/* Thumbnail strip for back-of-card image */}
