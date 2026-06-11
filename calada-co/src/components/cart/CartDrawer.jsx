@@ -104,14 +104,27 @@ export default function CartDrawer() {
                 const img = line.merchandise.product?.images?.edges?.[0]?.node;
                 const variantName = line.merchandise.title !== 'Default Title' ? line.merchandise.title : '';
                 const lineTotal = (parseFloat(line.merchandise.price.amount) * line.quantity).toFixed(2);
+
+                // ── Gift card detection ──
+                const isGiftCard = line.merchandise.product?.title?.toLowerCase().includes('gift card');
+                // Filter to only attributes with values, skip internal underscore keys
+                const visibleAttrs = (line.attributes || []).filter(
+                  a => a.value?.trim() && !a.key.startsWith('_')
+                );
+
                 return (
                   <div key={line.id} className="flex gap-3.5 py-4 border-b border-[#f2f2f2]">
                     <div className="w-[90px] h-[110px] rounded-lg overflow-hidden flex-shrink-0 bg-[#f5f5f5]">
                       {img
-                        ? <img src={img.url} alt={img.altText || line.merchandise.product?.title || 'Cart item'} className="w-full h-full object-cover" />
+                        ? <img
+                            src={img.url}
+                            alt={img.altText || line.merchandise.product?.title || 'Cart item'}
+                            className={`w-full h-full ${isGiftCard ? 'object-contain p-1 bg-white' : 'object-cover'}`}
+                          />
                         : <div className="w-full h-full bg-[#ece6ea]" />
                       }
                     </div>
+
                     <div className="flex-1 flex flex-col gap-1">
                       <div className="flex justify-between items-start gap-2">
                         <p className="text-sm font-medium text-[#1a1a1a] leading-[1.4] flex-1">
@@ -125,7 +138,26 @@ export default function CartDrawer() {
                           Remove
                         </button>
                       </div>
-                      {variantName && <p className="text-xs text-[#777777]">Size: {variantName}</p>}
+
+                      {/* Variant label — "Value:" for gift cards, "Size:" for everything else */}
+                      {variantName && (
+                        <p className="text-xs text-[#777777]">
+                          {isGiftCard ? 'Value' : 'Size'}: {variantName}
+                        </p>
+                      )}
+
+                      {/* ── Gift card personalization attributes ── */}
+                      {visibleAttrs.length > 0 && (
+                        <div className="mt-1 rounded-md bg-[#fff8fb] border border-pink-100 px-2.5 py-2 space-y-1">
+                          {visibleAttrs.map(attr => (
+                            <p key={attr.key} className="text-[11px] text-[#6b4352] leading-snug">
+                              <span className="font-semibold">{attr.key}:</span>{' '}
+                              <span>{attr.value}</span>
+                            </p>
+                          ))}
+                        </div>
+                      )}
+
                       <div className="flex items-center justify-between mt-auto pt-2">
                         <div className="flex items-center border-[1.5px] border-[#dddddd] rounded-[6px] overflow-hidden">
                           <button

@@ -10,7 +10,6 @@ function getShopifyConfig() {
       'Missing Shopify Storefront env vars. Add VITE_SHOPIFY_STORE_DOMAIN and VITE_SHOPIFY_STOREFRONT_TOKEN to .env, then restart Vite.'
     );
   }
-
   return {
     apiUrl: `https://${DOMAIN}/api/${API_VERSION}/graphql.json`,
     token: TOKEN,
@@ -36,11 +35,38 @@ async function shopifyFetch(query, variables = {}) {
 function throwOnUserErrors(result, label = 'Shopify request') {
   const errors = result?.userErrors || result?.customerUserErrors || [];
   if (errors.length > 0) {
-    throw new Error(errors.map((error) => error.message).join(', ') || `${label} failed`);
+    throw new Error(errors.map((e) => e.message).join(', ') || `${label} failed`);
   }
 }
 
-// ─── Products ────────────────────────────────────────────────────────────────
+// ─── Shared cart fields ───────────────────────────────────────────────────────
+// Single source of truth for what we fetch on every cart operation.
+// attributes { key value } powers gift card personalization in the cart drawer.
+const CART_FIELDS = `
+  id checkoutUrl
+  cost { totalAmount { amount currencyCode } subtotalAmount { amount currencyCode } }
+  lines(first: 20) {
+    edges {
+      node {
+        id
+        quantity
+        attributes { key value }
+        merchandise {
+          ... on ProductVariant {
+            id title
+            price { amount currencyCode }
+            product {
+              title handle
+              images(first: 1) { edges { node { url altText } } }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// ─── Products ─────────────────────────────────────────────────────────────────
 
 export async function getProducts({ first = 12, after = null, query = '' } = {}) {
   const data = await shopifyFetch(`
@@ -160,19 +186,7 @@ export async function createCart() {
   const data = await shopifyFetch(`
     mutation CreateCart {
       cartCreate {
-        cart {
-          id checkoutUrl
-          cost { totalAmount { amount currencyCode } }
-          lines(first: 10) { edges { node { id quantity
-            merchandise {
-              ... on ProductVariant {
-                id title
-                price { amount currencyCode }
-                product { title handle images(first:1){ edges{ node{ url altText } } } }
-              }
-            }
-          }}}
-        }
+        cart { ${CART_FIELDS} }
         userErrors { field message }
       }
     }
@@ -181,27 +195,23 @@ export async function createCart() {
   return data.cartCreate.cart;
 }
 
-export async function addToCart(cartId, variantId, quantity = 1) {
+// attributes: array of { key, value } — used for gift card personalization
+export async function addToCart(cartId, variantId, quantity = 1, attributes = []) {
   const data = await shopifyFetch(`
     mutation AddToCart($cartId: ID!, $lines: [CartLineInput!]!) {
       cartLinesAdd(cartId: $cartId, lines: $lines) {
-        cart {
-          id checkoutUrl
-          cost { totalAmount { amount currencyCode } }
-          lines(first: 20) { edges { node { id quantity
-            merchandise {
-              ... on ProductVariant {
-                id title
-                price { amount currencyCode }
-                product { title handle images(first:1){ edges{ node{ url altText } } } }
-              }
-            }
-          }}}
-        }
+        cart { ${CART_FIELDS} }
         userErrors { field message }
       }
     }
-  `, { cartId, lines: [{ merchandiseId: variantId, quantity }] });
+  `, {
+    cartId,
+    lines: [{
+      merchandiseId: variantId,
+      quantity,
+      attributes,           // ← gift card personalization flows through here
+    }],
+  });
   throwOnUserErrors(data.cartLinesAdd, 'Add to cart');
   return data.cartLinesAdd.cart;
 }
@@ -210,19 +220,7 @@ export async function updateCartLine(cartId, lineId, quantity) {
   const data = await shopifyFetch(`
     mutation UpdateCartLine($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
       cartLinesUpdate(cartId: $cartId, lines: $lines) {
-        cart {
-          id checkoutUrl
-          cost { totalAmount { amount currencyCode } }
-          lines(first: 20) { edges { node { id quantity
-            merchandise {
-              ... on ProductVariant {
-                id title
-                price { amount currencyCode }
-                product { title handle images(first:1){ edges{ node{ url altText } } } }
-              }
-            }
-          }}}
-        }
+        cart { ${CART_FIELDS} }
         userErrors { field message }
       }
     }
@@ -235,19 +233,7 @@ export async function removeFromCart(cartId, lineIds) {
   const data = await shopifyFetch(`
     mutation RemoveFromCart($cartId: ID!, $lineIds: [ID!]!) {
       cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
-        cart {
-          id checkoutUrl
-          cost { totalAmount { amount currencyCode } }
-          lines(first: 20) { edges { node { id quantity
-            merchandise {
-              ... on ProductVariant {
-                id title
-                price { amount currencyCode }
-                product { title handle images(first:1){ edges{ node{ url altText } } } }
-              }
-            }
-          }}}
-        }
+        cart { ${CART_FIELDS} }
         userErrors { field message }
       }
     }
@@ -259,19 +245,7 @@ export async function removeFromCart(cartId, lineIds) {
 export async function getCart(cartId) {
   const data = await shopifyFetch(`
     query GetCart($cartId: ID!) {
-      cart(id: $cartId) {
-        id checkoutUrl
-        cost { totalAmount { amount currencyCode } subtotalAmount { amount currencyCode } }
-        lines(first: 20) { edges { node { id quantity
-          merchandise {
-            ... on ProductVariant {
-              id title
-              price { amount currencyCode }
-              product { title handle images(first:1){ edges{ node{ url altText } } } }
-            }
-          }
-        }}}
-      }
+      cart(id: $cartId) { ${CART_FIELDS} }
     }
   `, { cartId });
   return data.cart;
@@ -341,7 +315,7 @@ export async function getCustomer(accessToken) {
   return data.customer;
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 export function formatPrice(amount, currencyCode = 'USD') {
   return new Intl.NumberFormat('en-US', {

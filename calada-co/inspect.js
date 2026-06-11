@@ -1,0 +1,10 @@
+﻿const fs = require('fs');
+const n = fs.readFileSync('src/components/layout/Navbar.jsx', 'utf8');
+const i1 = n.indexOf('EXPLORE');
+console.log('=== NAVBAR INTRO ===');
+console.log(n.substring(i1-300, i1+500));
+const p = fs.readFileSync('src/pages/ProductPage.jsx', 'utf8');
+const i2 = p.indexOf('images');
+const i3 = p.indexOf('<img', i2);
+console.log('=== PRODUCT IMAGE ===');
+console.log(p.substring(i3-300, i3+400));

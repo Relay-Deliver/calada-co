@@ -132,7 +132,7 @@ export default function Navbar() {
             <Link to="/account/wishlist" className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center  bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -143,7 +143,7 @@ export default function Navbar() {
             <button className="relative grid h-10 w-10 place-items-center transition-colors hover:text-[#c084a0]" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center  bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[18px] min-w-[18px] items-center justify-center bg-[#c084a0] px-1 text-[10px] font-bold leading-none text-white">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
@@ -167,7 +167,7 @@ export default function Navbar() {
             <Link to="/account/wishlist" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
               {wishlistCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center  bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
                   {wishlistCount > 99 ? '99+' : wishlistCount}
                 </span>
               )}
@@ -181,7 +181,7 @@ export default function Navbar() {
             <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={openCart} aria-label="Cart">
               <CartIcon />
               {itemCount > 0 && (
-                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center  bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
+                <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
@@ -199,9 +199,9 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search for products..."
-                className="min-w-0 flex-1  border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20"
+                className="min-w-0 flex-1 border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-[#c084a0] focus:ring-2 focus:ring-[#c084a0]/20"
               />
-              <button type="submit" className=" bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]">
+              <button type="submit" className="bg-[#c084a0] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#a8607e]">
                 Search
               </button>
             </form>
@@ -255,34 +255,44 @@ export default function Navbar() {
               // Standard card layout
               <div className={`mx-auto grid max-w-screen-2xl ${activeMenu?.key === 'more' ? 'grid-cols-1' : 'grid-cols-[0.8fr_1.5fr]'} gap-8 px-8 py-7`}>
                 {activeMenu?.key !== 'more' && (
-                <div className="max-w-sm">
-                  <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
-                  <h3 className="mt-2 font-serif text-3xl font-semibold text-navy">{activeMenu.label}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-500">
-                    Fresh boutique picks for mothers, families, and little ones.
-                  </p>
-                  <Link
-                    to={activeMenu.to}
-                    className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
-                    onClick={() => setActiveMenuKey(null)}
-                  >
-                    {activeMenu?.key === 'more' ? 'Learn more' : 'Shop now'}
-                  </Link>
-                </div>
+                  <div className="max-w-sm">
+                    <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
+                    <h3 className="mt-2 font-serif text-3xl font-semibold text-navy">{activeMenu.label}</h3>
+                    <p className="mt-3 text-sm leading-6 text-slate-500">
+                      Fresh boutique picks for mothers, families, and little ones.
+                    </p>
+                    <Link
+                      to={activeMenu.to}
+                      className="mt-5 inline-flex border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
+                      onClick={() => setActiveMenuKey(null)}
+                    >
+                      Shop now
+                    </Link>
+                  </div>
                 )}
-                <div className="grid grid-cols-2 gap-4">
+                {/* ↓ CHANGED: grid-cols-3 for More menu so all 3 cards are in one row */}
+                <div className={`grid gap-4 ${activeMenu?.key === 'more' ? 'grid-cols-3' : 'grid-cols-2'}`}>
                   {activeMenu.cards?.map(card => (
                     <Link
                       key={card.title}
                       to={card.to}
-                      className="group grid grid-cols-[120px_1fr]  rounded-lg border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-md"
+                      className="group grid grid-cols-[110px_1fr] overflow-hidden rounded-lg border border-slate-100 bg-white shadow-sm transition-shadow hover:shadow-md"
                       onClick={() => setActiveMenuKey(null)}
                     >
-                      <img src={card.image} alt="" className="h-full min-h-[132px] w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      <span className="flex flex-col justify-center p-5">
-                        <span className="font-serif text-xl font-semibold text-navy">{card.title}</span>
+                      {/* ↓ CHANGED: object-contain + bg-white for gift card image so the full design shows */}
+                      <div className="overflow-hidden">
+                        <img
+                          src={card.image}
+                          alt=""
+                          className={`h-full min-h-[120px] w-full transition-transform duration-500 group-hover:scale-105 ${
+                            card.title?.toLowerCase().includes('gift') ? 'object-contain bg-white p-2' : 'object-cover'
+                          }`}
+                        />
+                      </div>
+                      <span className="flex flex-col justify-center p-4">
+                        <span className="font-serif text-lg font-semibold text-navy">{card.title}</span>
                         <span className="mt-1 text-sm text-slate-500">{card.caption}</span>
-                        <span className="mt-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">{card.cta || "Learn more"}</span>
+                        <span className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-[#c084a0]">{card.cta || 'Learn more'}</span>
                       </span>
                     </Link>
                   ))}
@@ -371,7 +381,7 @@ export default function Navbar() {
                     Wishlist
                   </span>
                   {wishlistCount > 0 && (
-                    <span className=" bg-[#c084a0] px-2 py-0.5 text-xs font-bold text-white">
+                    <span className="bg-[#c084a0] px-2 py-0.5 text-xs font-bold text-white">
                       {wishlistCount}
                     </span>
                   )}

@@ -30,14 +30,15 @@ export function CartProvider({ children }) {
     return newCart;
   };
 
-  const addItem = async (variantId, quantity = 1) => {
+  // attributes: optional array of { key, value } for gift card personalization
+  const addItem = async (variantId, attributes = []) => {
     setLoading(true);
     setError('');
     try {
       const currentCart = await getOrCreateCart();
-      const updated = await addToCart(currentCart.id, variantId, quantity);
+      const updated = await addToCart(currentCart.id, variantId, 1, attributes);
       setCart(updated);
-      setIsOpen(true); // ← opens the drawer
+      setIsOpen(true);
     } catch (err) {
       setError(err.message || 'Unable to add this item to your bag.');
       setIsOpen(true);

@@ -8,12 +8,9 @@ import { getFallbackImage } from '../data/visuals';
 
 /* ── colour helpers ── */
 const COLOR_MAP = {
-  // Basics
   black: '#111111', white: '#ffffff', red: '#cc0000', grey: '#9ca3af', gray: '#9ca3af',
   navy: '#1a2744', pink: '#ec4899', green: '#22c55e', yellow: '#eab308',
   purple: '#a855f7', orange: '#f97316', blue: '#3b82f6', brown: '#7c4b2a',
-
-  // Greens
   'alpine green': '#3a5a40', alpine: '#3a5a40', basil: '#4a7c59', bay: '#4a7a6d',
   forest: '#2d5a27', 'forest green': '#2d5a27', emerald: '#047857', sage: '#b2c9a0',
   'irish green': '#169b62', 'island green': '#2ecc71', 'military green': '#4a5240',
@@ -22,8 +19,6 @@ const COLOR_MAP = {
   'neo mint': '#a8e6cf', 'neon green': '#39ff14', 'safety green': '#00ff00',
   moss: '#8a9a5b', 'cypress green': '#3d6b4f', 'heather dark green': '#2d4a35',
   'heather forest': '#355e3b', 'chalky mint': '#b5e8d5', 'blue spruce': '#4a7b8c',
-
-  // Blues
   'arctic blue': '#7ec8e3', 'blue jean': '#5b7fa6', chambray: '#6d8dad',
   'carolina blue': '#56a0d3', caribbean: '#00aacc', denim: '#1560bd',
   indigo: '#4f46e5', 'indigo blue': '#3949ab', 'dusty blue': '#7ba7bc',
@@ -34,8 +29,6 @@ const COLOR_MAP = {
   'heather dark navy': '#162032', 'heather true royal': '#3b5998',
   'heather sport royal': '#4169e1', sky: '#87ceeb', oceanside: '#0077b6',
   'lavender blue': '#8080ff', 'heather deep teal': '#2a7f7f', cobalt: '#1e40af',
-
-  // Reds & Pinks
   crimson: '#dc143c', maroon: '#7f1d1d', burgundy: '#800020',
   'vintage burgundy': '#722f37', 'heather maroon': '#8b2635',
   'heather dark maroon': '#6b1a24', berry: '#8b1a4a', pomegranate: '#c0392b',
@@ -47,23 +40,17 @@ const COLOR_MAP = {
   paprika: '#8b1a1a', 'bright salmon': '#ff7f7f', salmon: '#fa8072',
   watermelon: '#fc6c85', melon: '#f3a683', wine: '#722f37', yam: '#c4622d',
   'cotton candy': '#ffbcd9', crunchberry: '#d44882',
-
-  // Purples
   'deep purple': '#4a0e8f', orchid: '#da70d6', lavender: '#e6e6fa',
   'dark lavender': '#967bb6', violet: '#7f00ff', amethyst: '#9b59b6',
   'neon purple': '#bc13fe', 'neon violet': '#8b00ff', mauve: '#e0b0c8',
   mauvelous: '#ef98aa', 'heather mauve': '#c4a0b0', 'heather team purple': '#6b3fa0',
   grape: '#6f2da8', 'heather radiant orchid': '#b163a3', hydrangea: '#b8a9c9',
-
-  // Yellows & Oranges
   mustard: '#d4a017', 'heather mustard': '#c49a0a', butter: '#f5d547',
   banana: '#ffe135', 'bright orange': '#ff6700', 'burnt orange': '#cc5500',
   'texas orange': '#bf5700', 'neon lemon': '#fff44f', cantaloupe: '#ff8c69',
   cantaloup: '#ff8c69', 'neon cantaloupe': '#ffa500', mango: '#ff8c00',
   'mango dream': '#ffb347', lemon: '#fff44f', peach: '#ffcba4', peachy: '#ffcba4',
   apricot: '#fbceb1', sunset: '#fd7c6e', 'heather sunset': '#f4a460', autumn: '#d2691e',
-
-  // Browns & Neutrals
   tan: '#d4b483', sand: '#c2b280', khaki: '#c3b091', bone: '#e3dac9',
   ivory: '#fffff0', cream: '#fef3c7', natural: '#f5f0e8', oatmeal: '#d4c5a9',
   parchment: '#f5e6ca', latte: '#c4a882', mocha: '#967259', chocolate: '#7b3f00',
@@ -71,8 +58,6 @@ const COLOR_MAP = {
   'brown sugar': '#a0522d', 'coyote brown': '#81613c', 'brown savana': '#8b6914',
   java: '#5a3825', 'washed natural': '#ede8d0', 'off white': '#f8f5f0',
   'sweet cream heather': '#f5f0e8', hemp: '#8c7b6b',
-
-  // Greys & Blacks
   charcoal: '#4b5563', graphite: '#6b7280', granite: '#808080',
   'sport grey': '#a8aaad', 'athletic grey': '#a8aaad', 'athletic heather': '#b0adb0',
   ash: '#b2bec3', smoke: '#9ca3af', 'vintage smoke': '#a0a0a0',
@@ -81,8 +66,6 @@ const COLOR_MAP = {
   'dark grey heather': '#4a4a4a', 'deep heather': '#5a5a5a', titanium: '#878681',
   'vintage black': '#2a2a2a', storm: '#708090', strobe: '#c8c8c8',
   'granite heather': '#909090', 'mineral black': '#1a1a1a', 'mineral grey': '#7a7a7a',
-
-  // Special
   saltwater: '#4a9ead', heather: '#b0a8b9', teal: '#14b8a6', turquoise: '#40e0d0',
   'spider turquoise': '#40c0b0', seafoam: '#9fe2bf', aqua: '#00bcd4',
   'heather dark teal': '#2a7f7f', 'island reef': '#00b4d8',
@@ -136,6 +119,20 @@ const ShieldIcon = () => (
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinejoin="round"/>
   </svg>
 );
+const GiftIcon = () => (
+  <svg width="16" height="16" fill="none" stroke="#c084a0" strokeWidth="2" viewBox="0 0 24 24">
+    <polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/>
+    <line x1="12" y1="22" x2="12" y2="7"/>
+    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+  </svg>
+);
+const ClockIcon = () => (
+  <svg width="15" height="15" fill="none" stroke="#c084a0" strokeWidth="2" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 6v6l4 2" strokeLinecap="round"/>
+  </svg>
+);
 
 export default function ProductPage() {
   const { handle } = useParams();
@@ -151,6 +148,11 @@ export default function ProductPage() {
   const [openSection, setOpenSection] = useState('description');
   const [quantity, setQuantity] = useState(1);
   const [sizeError, setSizeError] = useState(false);
+
+  // ── Gift card personalization state ──
+  const isGiftCard = handle?.includes('gift-card') || false;
+  const [recipientName, setRecipientName] = useState('');
+  const [giftMessage, setGiftMessage] = useState('');
 
   const handleOptionChange = (optionName, val) => {
     setSelectedOptions((o) => ({ ...o, [optionName]: val }));
@@ -201,6 +203,22 @@ export default function ProductPage() {
   const canAdd = variant?.id && !variant.id.startsWith('dummy');
   const wishlisted = isWishlisted(product?.id || handle);
 
+  // ── Gift card computed values ──
+  // Valid Until: always 30 days from today (displayed as estimated; exact date locked at purchase)
+  const validUntilDate = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 30);
+    return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }, []);
+
+  // Voucher Value: auto-pulled from the selected Denominations option
+  const voucherValue = useMemo(() => {
+    const denomEntry = Object.entries(selectedOptions).find(([k]) => /denomination/i.test(k));
+    if (denomEntry) return denomEntry[1]; // e.g. "$10.00"
+    if (price?.amount) return `$${parseFloat(price.amount).toFixed(2)}`;
+    return '';
+  }, [selectedOptions, price]);
+
   const handleAddToCart = async () => {
     const sizeOption = product?.options?.find(o => /size/i.test(o.name));
     if (sizeOption && !selectedOptions[sizeOption.name]) {
@@ -209,9 +227,19 @@ export default function ProductPage() {
       return;
     }
     if (!variant?.id || cartLoading) return;
+
+    // Build line-item attributes for gift cards
+    // NOTE: CartContext.addItem needs to accept (variantId, attributes) — see comment below
+    const giftAttrs = isGiftCard ? [
+      { key: 'Voucher Value', value: voucherValue },
+      ...(recipientName.trim() ? [{ key: 'Recipient Name', value: recipientName.trim() }] : []),
+      ...(giftMessage.trim() ? [{ key: 'Gift Message', value: giftMessage.trim() }] : []),
+      { key: 'Valid Until', value: validUntilDate },
+    ] : undefined;
+
     try {
       for (let i = 0; i < quantity; i++) {
-        await addItem(variant.id);
+        await addItem(variant.id, giftAttrs);
       }
       setAdded(true);
       setTimeout(() => setAdded(false), 1800);
@@ -299,7 +327,7 @@ export default function ProductPage() {
             <AnimatePresence mode="wait">
               <motion.img
                 key={selectedImg}
-                style={product.title?.toLowerCase().includes('gift') ? { objectFit: 'contain', background: '#fff' } : undefined}
+                style={isGiftCard ? { objectFit: 'contain', background: '#fff' } : undefined}
                 src={imageFailed[selectedImg] ? getFallbackImage(handle) : images[selectedImg]?.url}
                 alt={images[selectedImg]?.altText || product.title}
                 onError={() => setImageFailed(f => ({ ...f, [selectedImg]: true }))}
@@ -314,18 +342,10 @@ export default function ProductPage() {
             {/* Prev / Next arrows */}
             {images.length > 1 && (
               <>
-                <button
-                  onClick={prevImg}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white"
-                  aria-label="Previous image"
-                >
+                <button onClick={prevImg} className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white" aria-label="Previous image">
                   <ChevronLeft />
                 </button>
-                <button
-                  onClick={nextImg}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white"
-                  aria-label="Next image"
-                >
+                <button onClick={nextImg} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 p-1.5 shadow hover:bg-white" aria-label="Next image">
                   <ChevronRight />
                 </button>
               </>
@@ -335,11 +355,7 @@ export default function ProductPage() {
             {images.length > 1 && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 lg:hidden">
                 {images.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedImg(i)}
-                    className={`h-1.5 rounded-full transition-all ${selectedImg === i ? 'w-5 bg-[#c084a0]' : 'w-1.5 bg-white/70'}`}
-                  />
+                  <button key={i} onClick={() => setSelectedImg(i)} className={`h-1.5 rounded-full transition-all ${selectedImg === i ? 'w-5 bg-[#c084a0]' : 'w-1.5 bg-white/70'}`} />
                 ))}
               </div>
             )}
@@ -348,19 +364,8 @@ export default function ProductPage() {
             {images.length > 1 && (
               <div className="mt-3 flex gap-2 overflow-x-auto px-1 pb-1 lg:hidden">
                 {images.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedImg(i)}
-                    className={`flex-shrink-0 overflow-hidden rounded border-2 transition-all ${
-                      selectedImg === i ? 'border-[#c084a0]' : 'border-transparent'
-                    }`}
-                  >
-                    <img
-                      src={imageFailed[i] ? getFallbackImage(handle) : img.url}
-                      alt={`View ${i + 1}`}
-                      onError={() => setImageFailed(f => ({ ...f, [i]: true }))}
-                      className="h-14 w-14 object-cover"
-                    />
+                  <button key={i} onClick={() => setSelectedImg(i)} className={`flex-shrink-0 overflow-hidden rounded border-2 transition-all ${selectedImg === i ? 'border-[#c084a0]' : 'border-transparent'}`}>
+                    <img src={imageFailed[i] ? getFallbackImage(handle) : img.url} alt={`View ${i + 1}`} onError={() => setImageFailed(f => ({ ...f, [i]: true }))} className="h-14 w-14 object-cover" />
                   </button>
                 ))}
               </div>
@@ -399,7 +404,7 @@ export default function ProductPage() {
 
           <hr className="border-gray-100" />
 
-          {/* Options (size, color, etc.) */}
+          {/* Options (size, color, denomination, etc.) */}
           {product.options?.filter((o) => o.values.length > 1).map((option) => (
             <div key={option.name}>
               <p className="mb-2.5 text-sm font-semibold uppercase tracking-widest text-gray-700">
@@ -412,7 +417,6 @@ export default function ProductPage() {
               </p>
 
               {isColorOption(option.name) ? (
-                /* Color swatches */
                 <div className="flex flex-wrap gap-2">
                   {option.values.map((val) => {
                     const hex = getColorHex(val);
@@ -422,9 +426,7 @@ export default function ProductPage() {
                         key={val}
                         title={val}
                         onClick={() => handleOptionChange(option.name, val)}
-                        className={`h-8 w-8 rounded-full border-2 transition-all ${
-                          active ? 'border-[#c084a0] scale-110 shadow-md' : 'border-gray-200 hover:border-gray-400'
-                        }`}
+                        className={`h-8 w-8 rounded-full border-2 transition-all ${active ? 'border-[#c084a0] scale-110 shadow-md' : 'border-gray-200 hover:border-gray-400'}`}
                         style={hex ? {
                           backgroundColor: hex,
                           boxShadow: active ? `0 0 0 2px white, 0 0 0 4px ${hex}` : undefined,
@@ -436,7 +438,6 @@ export default function ProductPage() {
                   })}
                 </div>
               ) : (
-                /* Size / other buttons */
                 <div className="flex flex-wrap gap-2">
                   {option.values.map((val) => {
                     const active = selectedOptions[option.name] === val;
@@ -458,6 +459,61 @@ export default function ProductPage() {
               )}
             </div>
           ))}
+
+          {/* ── Gift Card Personalization ── */}
+          {isGiftCard && (
+            <div className="space-y-4 rounded-xl border border-pink-100 bg-[#fff8fb] p-5">
+              <div className="flex items-center gap-2">
+                <GiftIcon />
+                <p className="text-sm font-semibold uppercase tracking-widest text-gray-700">Personalize Your Gift Card</p>
+              </div>
+
+              {/* Voucher Value — auto-filled from denomination selection above */}
+              <div>
+                <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-gray-500">Voucher Value</p>
+                <div className="flex items-center gap-2.5 rounded-md border border-gray-200 bg-white px-3 py-2.5">
+                  <span className="text-base font-bold text-[#c084a0]">{voucherValue || '—'}</span>
+                  <span className="text-xs text-gray-400">· auto-filled from denomination above</span>
+                </div>
+              </div>
+
+              {/* Recipient Name */}
+              <div>
+                <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-gray-500">Recipient Name</p>
+                <input
+                  type="text"
+                  value={recipientName}
+                  onChange={e => setRecipientName(e.target.value)}
+                  placeholder="e.g. Sarah Johnson"
+                  className="w-full rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-[#c084a0] focus:outline-none focus:ring-2 focus:ring-[#c084a0]/20"
+                />
+              </div>
+
+              {/* Gift Message */}
+              <div>
+                <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-gray-500">
+                  Gift Message{' '}
+                  <span className="font-normal normal-case text-gray-400">(optional)</span>
+                </p>
+                <textarea
+                  value={giftMessage}
+                  onChange={e => setGiftMessage(e.target.value)}
+                  placeholder="Write a heartfelt message for the recipient..."
+                  rows={3}
+                  className="w-full resize-none rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-[#c084a0] focus:outline-none focus:ring-2 focus:ring-[#c084a0]/20"
+                />
+              </div>
+
+              {/* Valid Until — auto-calculated */}
+              <div className="flex items-center gap-2 rounded-md bg-pink-50 px-3 py-2.5">
+                <ClockIcon />
+                <span className="text-sm text-gray-600">
+                  Valid Until:{' '}
+                  <strong className="text-gray-800">{validUntilDate}</strong>
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Quantity selector */}
           <div className="flex flex-col gap-2">
@@ -499,11 +555,10 @@ export default function ProductPage() {
               }`}
             >
               {added ? '✓ Added to Bag!' : cartLoading ? 'Adding...' : canAdd
-    ? ('Add to Cart' + (selectedOptions['Color'] ? ' — ' + selectedOptions['Color'] : '') + (selectedOptions['Size'] ? ' / ' + selectedOptions['Size'] : ''))
-    : 'Select options'}
+                ? ('Add to Cart' + (selectedOptions['Color'] ? ' — ' + selectedOptions['Color'] : '') + (selectedOptions['Size'] ? ' / ' + selectedOptions['Size'] : ''))
+                : 'Select options'}
             </button>
 
-            {/* Wishlist heart button */}
             <button
               onClick={() => toggle(product.id || handle)}
               className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-lg border-2 transition-all active:scale-95 ${
