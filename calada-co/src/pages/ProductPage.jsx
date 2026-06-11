@@ -299,6 +299,7 @@ export default function ProductPage() {
             <AnimatePresence mode="wait">
               <motion.img
                 key={selectedImg}
+                style={product.title?.toLowerCase().includes('gift') ? { objectFit: 'contain', background: '#fff' } : undefined}
                 src={imageFailed[selectedImg] ? getFallbackImage(handle) : images[selectedImg]?.url}
                 alt={images[selectedImg]?.altText || product.title}
                 onError={() => setImageFailed(f => ({ ...f, [selectedImg]: true }))}

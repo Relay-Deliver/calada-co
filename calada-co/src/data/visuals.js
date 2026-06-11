@@ -196,18 +196,19 @@ export const NAV_MENUS = {
     to: '/about',
     cards: [
       {
-        title: 'Our Story',
-        caption: 'Meet CalAda & Co',
-        to: '/about',
-        image: '/assets/family.png',
-      },
-      {
         title: 'Gift Cards',
         caption: 'The perfect gift for any occasion',
         to: '/products/calada-co-gift-card',
         image: '/assets/gift-card-front.png',
         cta: 'Shop gift cards',
       },
+      {
+        title: 'Our Story',
+        caption: 'Meet CalAda & Co',
+        to: '/about',
+        image: '/assets/family.png',
+      },
+      
       {
         title: 'Contact Us',
         caption: 'Questions, sizing, and support',

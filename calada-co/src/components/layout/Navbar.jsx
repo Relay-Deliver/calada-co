@@ -253,7 +253,8 @@ export default function Navbar() {
               </div>
             ) : (
               // Standard card layout
-              <div className="mx-auto grid max-w-screen-2xl grid-cols-[0.8fr_1.5fr] gap-8 px-8 py-7">
+              <div className={`mx-auto grid max-w-screen-2xl ${activeMenu?.key === 'more' ? 'grid-cols-1' : 'grid-cols-[0.8fr_1.5fr]'} gap-8 px-8 py-7`}>
+                {activeMenu?.key !== 'more' && (
                 <div className="max-w-sm">
                   <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#c084a0]">Explore</p>
                   <h3 className="mt-2 font-serif text-3xl font-semibold text-navy">{activeMenu.label}</h3>
@@ -268,6 +269,7 @@ export default function Navbar() {
                     {activeMenu?.key === 'more' ? 'Learn more' : 'Shop now'}
                   </Link>
                 </div>
+                )}
                 <div className="grid grid-cols-2 gap-4">
                   {activeMenu.cards?.map(card => (
                     <Link
