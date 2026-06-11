@@ -455,47 +455,47 @@ export default function ProductPage() {
                     The card image already has "Voucher Value :", "Recipient Name :", "Valid Until :"
                     printed on it. These divs fill in the blank lines that follow each label.
                     ⚠ Tune top/left % in DevTools until each value sits on its blank line. ── */}
-                {isShowingBack && (
-                  <div className="absolute inset-0 pointer-events-none">
+               {isShowingBack && (
+  <div className="absolute inset-0 pointer-events-none">
 
-                    {/* Voucher value — on the blank line after "Voucher Value :" */}
-                    <div style={{ position:'absolute', left:'20%', top:'41%', width:'36%' }}>
-                      <p style={{
-                        fontSize:'14px', fontWeight:600, margin:0, lineHeight:1,
-                        color: voucherValue ? '#1A2744' : '#bbb',
-                        transition:'color 0.35s',
-                      }}>
-                        {voucherValue || ''}
-                      </p>
-                    </div>
+    {/* Voucher value — pushed right past the "Voucher Value :" label, up onto the line */}
+    <div style={{ position:'absolute', left:'28%', top:'36%', width:'30%' }}>
+      <p style={{
+        fontSize:'13px', fontWeight:600, margin:0, lineHeight:1,
+        color: voucherValue ? '#1A2744' : '#bbb',
+        transition:'color 0.35s',
+      }}>
+        {voucherValue || ''}
+      </p>
+    </div>
 
-                    {/* Recipient name — on the blank line after "Recipient Name :" */}
-                    <div style={{ position:'absolute', left:'20%', top:'50%', width:'36%' }}>
-                      <p style={{
-                        fontSize:'12px', margin:0, lineHeight:1,
-                        color: recipientName ? '#1A2744' : '#aaa',
-                        fontStyle: recipientName ? 'normal' : 'italic',
-                        backgroundColor: recipientName ? 'rgba(255,255,255,0.65)' : 'transparent',
-                        borderRadius:'2px',
-                        padding: recipientName ? '1px 3px' : '0',
-                        display:'inline-block',
-                        maxWidth:'100%',
-                        wordBreak:'break-word',
-                        transition:'color 0.2s',
-                      }}>
-                        {recipientName || ''}
-                      </p>
-                    </div>
+    {/* Recipient name — pushed right past the "Recipient Name :" label, up onto the line */}
+    <div style={{ position:'absolute', left:'28%', top:'46%', width:'30%' }}>
+      <p style={{
+        fontSize:'12px', margin:0, lineHeight:1,
+        color: recipientName ? '#1A2744' : '#aaa',
+        fontStyle: recipientName ? 'normal' : 'italic',
+        backgroundColor: recipientName ? 'rgba(255,255,255,0.65)' : 'transparent',
+        borderRadius:'2px',
+        padding: recipientName ? '1px 3px' : '0',
+        display:'inline-block',
+        maxWidth:'100%',
+        wordBreak:'break-word',
+        transition:'color 0.2s',
+      }}>
+        {recipientName || ''}
+      </p>
+    </div>
 
-                    {/* Valid until — on the blank line after "Valid Until :" */}
-                    <div style={{ position:'absolute', left:'20%', top:'60%', width:'36%' }}>
-                      <p style={{ fontSize:'11px', color:'#555', margin:0, lineHeight:1 }}>
-                        {validUntilDate}
-                      </p>
-                    </div>
+    {/* Valid until — stays roughly where it was */}
+    <div style={{ position:'absolute', left:'20%', top:'60%', width:'36%' }}>
+      <p style={{ fontSize:'11px', color:'#555', margin:0, lineHeight:1 }}>
+        {validUntilDate}
+      </p>
+    </div>
 
-                  </div>
-                )}
+  </div>
+)}
 
                 {/* Hint on front card */}
                 {!isShowingBack && (
