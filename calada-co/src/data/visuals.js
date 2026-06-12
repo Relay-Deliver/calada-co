@@ -208,12 +208,11 @@ export const NAV_MENUS = {
         to: '/about',
         image: '/assets/family.png',
       },
-      
       {
         title: 'Contact Us',
         caption: 'Questions, sizing, and support',
         to: '/contact',
-        image: '/assets/hero/flower-market.png',
+        image: '/assets/contact-us.png',
       },
     ],
   },

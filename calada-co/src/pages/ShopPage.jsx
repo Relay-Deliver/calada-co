@@ -15,6 +15,9 @@ const SORT_OPTIONS = [
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', 'YS', 'YM', 'YL', '2T', '3T', '4T'];
 const AGE_GROUPS = ['Adults', 'Teens', 'Kids', 'Toddlers', 'Babies'];
 
+// Products fetched per request — Shopify Storefront API max is 250
+const PAGE_SIZE = 100;
+
 function getFallbackProducts(handle, query) {
   let products = [...DUMMY_PRODUCTS];
   if (handle) {
@@ -155,12 +158,12 @@ export default function ShopPage() {
     setCursor(null);
     const q = searchParams.get('q') || '';
     const request = handle
-      ? getCollectionByHandle(handle, 24).then((col) => {
+      ? getCollectionByHandle(handle, PAGE_SIZE).then((col) => {
           if (!col) throw new Error('not found');
           setPageTitle(col.title);
           return col.products;
         })
-      : getProducts({ first: 24, query: q }).then((data) => {
+      : getProducts({ first: PAGE_SIZE, query: q }).then((data) => {
           setPageTitle('Shop All');
           return data;
         });
@@ -168,7 +171,7 @@ export default function ShopPage() {
     request
       .then((data) => {
         setProducts(data.edges.map((e) => e.node));
-        setHasMore(!handle && data.pageInfo.hasNextPage);
+        setHasMore(data.pageInfo.hasNextPage);
         setCursor(data.pageInfo.endCursor);
       })
       .catch(() => {
@@ -181,7 +184,7 @@ export default function ShopPage() {
 
   const loadMore = () => {
     const q = searchParams.get('q') || '';
-    getProducts({ first: 24, after: cursor, query: q })
+    getProducts({ first: PAGE_SIZE, after: cursor, query: q })
       .then((data) => {
         setProducts((prev) => [...prev, ...data.edges.map((e) => e.node)]);
         setHasMore(data.pageInfo.hasNextPage);

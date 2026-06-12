@@ -40,12 +40,10 @@ function throwOnUserErrors(result, label = 'Shopify request') {
 }
 
 // ─── Shared cart fields ───────────────────────────────────────────────────────
-// Single source of truth for what we fetch on every cart operation.
-// attributes { key value } powers gift card personalization in the cart drawer.
 const CART_FIELDS = `
   id checkoutUrl
   cost { totalAmount { amount currencyCode } subtotalAmount { amount currencyCode } }
-  lines(first: 20) {
+  lines(first: 100) {
     edges {
       node {
         id
@@ -68,7 +66,8 @@ const CART_FIELDS = `
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 
-export async function getProducts({ first = 12, after = null, query = '' } = {}) {
+// first raised 12 → 100 (Shopify max is 250 per page)
+export async function getProducts({ first = 100, after = null, query = '' } = {}) {
   const data = await shopifyFetch(`
     query GetProducts($first: Int!, $after: String, $query: String) {
       products(first: $first, after: $after, query: $query) {
@@ -79,7 +78,7 @@ export async function getProducts({ first = 12, after = null, query = '' } = {})
             priceRange { minVariantPrice { amount currencyCode } }
             compareAtPriceRange { minVariantPrice { amount currencyCode } }
             tags
-            images(first: 2) {
+            images(first: 4) {
               edges { node { url altText } }
             }
             variants(first: 1) {
@@ -107,10 +106,10 @@ export async function getProductByHandle(handle) {
         tags
         priceRange { minVariantPrice { amount currencyCode } }
         compareAtPriceRange { minVariantPrice { amount currencyCode } }
-        images(first: 10) {
+        images(first: 50) {
           edges { node { url altText } }
         }
-        variants(first: 50) {
+        variants(first: 100) {
           edges {
             node {
               id title availableForSale
@@ -129,7 +128,8 @@ export async function getProductByHandle(handle) {
 
 // ─── Collections ─────────────────────────────────────────────────────────────
 
-export async function getCollections(first = 10) {
+// first raised 10 → 50 collections
+export async function getCollections(first = 50) {
   const data = await shopifyFetch(`
     query GetCollections($first: Int!) {
       collections(first: $first) {
@@ -146,7 +146,8 @@ export async function getCollections(first = 10) {
   return data.collections.edges.map(e => e.node);
 }
 
-export async function getCollectionByHandle(handle, first = 12) {
+// first raised 12 → 100 products per collection
+export async function getCollectionByHandle(handle, first = 100) {
   const data = await shopifyFetch(`
     query GetCollection($handle: String!, $first: Int!) {
       collectionByHandle(handle: $handle) {
@@ -159,7 +160,7 @@ export async function getCollectionByHandle(handle, first = 12) {
               id handle title tags
               priceRange { minVariantPrice { amount currencyCode } }
               compareAtPriceRange { minVariantPrice { amount currencyCode } }
-              images(first: 2) {
+              images(first: 4) {
                 edges { node { url altText } }
               }
               variants(first: 1) {
@@ -209,7 +210,7 @@ export async function addToCart(cartId, variantId, quantity = 1, attributes = []
     lines: [{
       merchandiseId: variantId,
       quantity,
-      attributes,           // ← gift card personalization flows through here
+      attributes,
     }],
   });
   throwOnUserErrors(data.cartLinesAdd, 'Add to cart');

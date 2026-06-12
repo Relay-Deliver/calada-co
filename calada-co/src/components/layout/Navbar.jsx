@@ -135,24 +135,55 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* MOBILE BAR */}
-        <div className="relative flex h-[74px] items-center justify-between px-3 sm:h-[80px] sm:px-5 xl:hidden">
-          <button className="relative z-10 grid h-10 w-10 place-items-center text-navy" onClick={() => setMobileOpen(o => !o)} aria-label="Menu" aria-expanded={mobileOpen}>
+        {/* MOBILE BAR — flex layout, logo flexes between hamburger and icons, nothing overflows */}
+        <div className="relative flex h-[64px] items-center justify-between overflow-hidden px-1.5 sm:h-[80px] sm:px-5 xl:hidden">
+
+          {/* Hamburger */}
+          <button
+            className="relative z-10 grid h-9 w-9 flex-shrink-0 place-items-center text-navy"
+            onClick={() => setMobileOpen(o => !o)}
+            aria-label="Menu"
+            aria-expanded={mobileOpen}
+          >
             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
-          <Link to="/" className="absolute left-[40%] top-1/2 flex h-10 w-28 -translate-x-1/2 -translate-y-1/2 items-center justify-start sm:left-1/2 sm:h-14 sm:w-44" onClick={closeMobile}>
-            <LogoMark className="h-full w-full" />
+
+          {/* Logo — fills remaining space, object-contain prevents overflow */}
+          <Link
+            to="/"
+            className="flex h-9 min-w-0 flex-1 items-center justify-center overflow-hidden px-1 sm:h-14"
+            onClick={closeMobile}
+          >
+            <img
+              src="/assets/cal.png"
+              alt="CalAda & Co."
+              className="h-full w-auto max-w-full object-contain"
+            />
           </Link>
-          <div className="relative z-10 flex items-center justify-end gap-0 text-navy sm:gap-1">
-            <Link to="/account/wishlist" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Wishlist">
+
+          {/* Icons */}
+          <div className="relative z-10 flex flex-shrink-0 items-center text-navy">
+            <Link to="/account/wishlist" className="relative grid h-8 w-8 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Wishlist">
               <HeartIcon filled={wishlistCount > 0} />
-              {wishlistCount > 0 && <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">{wishlistCount > 99 ? '99+' : wishlistCount}</span>}
+              {wishlistCount > 0 && (
+                <span className="absolute right-0 top-0 flex h-[15px] min-w-[15px] items-center justify-center bg-[#c084a0] px-0.5 text-[8px] font-bold leading-none text-white">
+                  {wishlistCount > 99 ? '99+' : wishlistCount}
+                </span>
+              )}
             </Link>
-            <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={() => setSearchOpen(o => !o)} aria-label="Search"><SearchIcon /></button>
-            <Link to="/account" className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Account"><AccountIcon /></Link>
-            <button className="relative grid h-9 w-9 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={openCart} aria-label="Cart">
+            <button className="relative grid h-8 w-8 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={() => setSearchOpen(o => !o)} aria-label="Search">
+              <SearchIcon />
+            </button>
+            <Link to="/account" className="relative grid h-8 w-8 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" aria-label="Account">
+              <AccountIcon />
+            </Link>
+            <button className="relative grid h-8 w-8 place-items-center transition-colors hover:text-[#c084a0] sm:h-10 sm:w-10" onClick={openCart} aria-label="Cart">
               <CartIcon />
-              {itemCount > 0 && <span className="absolute right-0 top-0 flex h-[17px] min-w-[17px] items-center justify-center bg-[#c084a0] px-1 text-[9px] font-bold leading-none text-white">{itemCount > 99 ? '99+' : itemCount}</span>}
+              {itemCount > 0 && (
+                <span className="absolute right-0 top-0 flex h-[15px] min-w-[15px] items-center justify-center bg-[#c084a0] px-0.5 text-[8px] font-bold leading-none text-white">
+                  {itemCount > 99 ? '99+' : itemCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -230,7 +261,7 @@ export default function Navbar() {
 
         {/* MOBILE MENU DRAWER */}
         {mobileOpen && (
-          <div className="max-h-[calc(100vh-74px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg sm:max-h-[calc(100vh-80px)] xl:hidden">
+          <div className="max-h-[calc(100vh-64px)] overflow-y-auto border-t border-gray-100 bg-white px-4 py-4 shadow-lg sm:max-h-[calc(100vh-80px)] xl:hidden">
             <ul className="grid gap-1">
               {HEADER_NAV.map((menu) => (
                 <li key={menu.key}>
