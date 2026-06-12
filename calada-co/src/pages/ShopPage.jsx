@@ -17,6 +17,23 @@ const AGE_GROUPS = ['Adults', 'Teens', 'Kids', 'Toddlers', 'Babies'];
 // Products fetched per request — Shopify Storefront API max is 250
 const PAGE_SIZE = 100;
 
+// Special handles that map to specific tags rather than word search
+const HANDLE_TAG_MAP = {
+  'new-arrivals': ['new', 'new-arrival', 'new-arrivals'],
+  'best-sellers': ['best-seller', 'bestseller', 'best-sellers'],
+};
+
+// Build a broad OR search from a collection handle:
+// "christmas-winter" → tag:christmas-winter OR tag:christmas OR title:christmas OR tag:winter OR title:winter
+function buildFallbackQuery(handle) {
+  const mapped = HANDLE_TAG_MAP[handle];
+  if (mapped) return mapped.map(t => `tag:${t}`).join(' OR ');
+  const words = handle.split('-').filter(w => w.length > 1);
+  const parts = [`tag:${handle}`];
+  words.forEach(w => { parts.push(`tag:${w}`, `title:${w}`); });
+  return parts.join(' OR ');
+}
+
 const GridIcon = ({ cols }) => {
   if (cols === 2) return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
@@ -147,7 +164,7 @@ export default function ShopPage() {
 
     const load = async () => {
       if (handle) {
-        // 1) Try the real Shopify collection first
+        // 1) Try the real Shopify collection
         try {
           const col = await getCollectionByHandle(handle, PAGE_SIZE);
           if (col && col.products?.edges?.length > 0) {
@@ -159,12 +176,19 @@ export default function ShopPage() {
         } catch {
           setPageTitle(handleTerm);
         }
-        // 2) Collection missing or empty → search backend products
-        //    by tag and title matching the collection name
-        const data = await getProducts({
+
+        // 2) Collection missing/empty → broad backend search:
+        //    every word in the handle matched against tags AND titles
+        let data = await getProducts({
           first: PAGE_SIZE,
-          query: `tag:${handle} OR ${handleTerm}`,
+          query: buildFallbackQuery(handle),
         });
+
+        // 3) Still nothing → show ALL products so the page is never empty
+        if (!data.edges.length) {
+          data = await getProducts({ first: PAGE_SIZE });
+        }
+
         applyData(data);
       } else {
         // Shop All / search
@@ -441,12 +465,13 @@ export default function ShopPage() {
                 )}
               </>
             ) : (
+              /* Only reachable if filters exclude everything or the API is down */
               <div className="text-center py-24 px-5">
                 <div className="mx-auto max-w-md">
                   <img src="/assets/calada-logo.png" alt="" style={{ height: 80, width: 'auto', margin: '0 auto', opacity: 0.3 }} />
-                  <h2 className="font-serif text-2xl font-semibold text-navy mt-6 mb-3">Coming Soon</h2>
+                  <h2 className="font-serif text-2xl font-semibold text-navy mt-6 mb-3">No matches found</h2>
                   <p className="text-slate-500 text-sm leading-7 mb-6">
-                    We are working on adding beautiful pieces to this collection. Check back soon!
+                    Try adjusting your filters or browse the full collection.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <a href="/shop" className="inline-flex items-center justify-center py-3 px-6 rounded-full text-sm font-medium bg-pink text-white hover:bg-pink-dark transition-colors">
@@ -454,9 +479,9 @@ export default function ShopPage() {
                     </a>
                     <button
                       className="inline-flex items-center justify-center py-3 px-6 rounded-full text-sm font-medium border-[1.5px] border-navy text-navy hover:bg-navy hover:text-white transition-colors"
-                      onClick={() => { setSearch(''); setSearchParams({}); }}
+                      onClick={() => { setSearch(''); setSearchParams({}); clearFilters(); }}
                     >
-                      Clear Search
+                      Clear Filters
                     </button>
                   </div>
                 </div>
