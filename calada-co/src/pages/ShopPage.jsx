@@ -3,7 +3,6 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getCollectionByHandle, getProducts } from '../services/shopify';
 import ProductCard from '../components/product/ProductCard';
-import { DUMMY_PRODUCTS } from '../data/dummyProducts';
 
 const SORT_OPTIONS = [
   { label: 'Featured',    value: '' },
@@ -17,25 +16,6 @@ const AGE_GROUPS = ['Adults', 'Teens', 'Kids', 'Toddlers', 'Babies'];
 
 // Products fetched per request — Shopify Storefront API max is 250
 const PAGE_SIZE = 100;
-
-function getFallbackProducts(handle, query) {
-  let products = [...DUMMY_PRODUCTS];
-  if (handle) {
-    products = products.filter((p) => {
-      if (handle === 'new-arrivals') return p.tags?.includes('new');
-      if (handle === 'best-sellers') return p.tags?.includes('best-seller');
-      if (handle === 'sale') return p.compareAtPriceRange?.minVariantPrice;
-      return p.tags?.includes(handle) || p.handle?.includes(handle);
-    });
-  }
-  if (query) {
-    const s = query.toLowerCase();
-    products = products.filter((p) =>
-      [p.title, p.handle, ...(p.tags || [])].join(' ').toLowerCase().includes(s)
-    );
-  }
-  return products.length > 0 ? products : DUMMY_PRODUCTS;
-}
 
 const GridIcon = ({ cols }) => {
   if (cols === 2) return (
@@ -157,26 +137,47 @@ export default function ShopPage() {
     setProducts([]);
     setCursor(null);
     const q = searchParams.get('q') || '';
-    const request = handle
-      ? getCollectionByHandle(handle, PAGE_SIZE).then((col) => {
-          if (!col) throw new Error('not found');
-          setPageTitle(col.title);
-          return col.products;
-        })
-      : getProducts({ first: PAGE_SIZE, query: q }).then((data) => {
-          setPageTitle('Shop All');
-          return data;
-        });
+    const handleTerm = handle ? handle.replaceAll('-', ' ') : '';
 
-    request
-      .then((data) => {
-        setProducts(data.edges.map((e) => e.node));
-        setHasMore(data.pageInfo.hasNextPage);
-        setCursor(data.pageInfo.endCursor);
-      })
+    const applyData = (data) => {
+      setProducts(data.edges.map((e) => e.node));
+      setHasMore(data.pageInfo.hasNextPage);
+      setCursor(data.pageInfo.endCursor);
+    };
+
+    const load = async () => {
+      if (handle) {
+        // 1) Try the real Shopify collection first
+        try {
+          const col = await getCollectionByHandle(handle, PAGE_SIZE);
+          if (col && col.products?.edges?.length > 0) {
+            setPageTitle(col.title);
+            applyData(col.products);
+            return;
+          }
+          setPageTitle(col?.title || handleTerm);
+        } catch {
+          setPageTitle(handleTerm);
+        }
+        // 2) Collection missing or empty → search backend products
+        //    by tag and title matching the collection name
+        const data = await getProducts({
+          first: PAGE_SIZE,
+          query: `tag:${handle} OR ${handleTerm}`,
+        });
+        applyData(data);
+      } else {
+        // Shop All / search
+        const data = await getProducts({ first: PAGE_SIZE, query: q });
+        setPageTitle('Shop All');
+        applyData(data);
+      }
+    };
+
+    load()
       .catch(() => {
         setPageTitle(handle ? handle.replaceAll('-', ' ') : 'Shop All');
-        setProducts(getFallbackProducts(handle, q));
+        setProducts([]);
         setHasMore(false);
       })
       .finally(() => setLoading(false));
