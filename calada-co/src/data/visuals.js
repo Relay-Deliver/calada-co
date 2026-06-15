@@ -59,7 +59,7 @@ export const CATEGORY_TILES = [
 ];
 
 export const NAV_MENUS = {
-  bundles: {
+ bundles: {
     label: 'Bundles (Up to 30% Off)',
     to: '/bundles',
     cards: [
@@ -67,14 +67,14 @@ export const NAV_MENUS = {
         title: 'Coffee Lovers Bundle',
         caption: 'Save up to 30%',
         to: '/bundles/coffee-lovers',
-        image: '/assets/hero/flower-market.png',
+        image: '/assets/CoffeeandDoodles.png',
         cta: 'Build bundle',
       },
       {
         title: 'Fall Bundle',
         caption: 'Save up to 30%',
         to: '/bundles/fall',
-        image: '/assets/hero/porch-family.png',
+        image: '/assets/SideChick.png',
         cta: 'Build bundle',
       },
     ],

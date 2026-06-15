@@ -6,7 +6,7 @@ export const BUNDLES = {
     title: 'Coffee Lovers Bundle',
     tagline: 'Save up to 30%',
     description: 'Build your perfect coffee-lover set — mix mama favorites with cozy staples and save more the more you add.',
-    heroImage: '/assets/hero/flower-market.png',
+    heroImage: '/assets/CoffeeandDoodles.png',
     sourceCollections: ['coffee-lovers', 'moms'],
   },
   'fall': {
@@ -14,7 +14,7 @@ export const BUNDLES = {
     title: 'Fall Bundle',
     tagline: 'Save up to 30%',
     description: 'Cozy up the whole family for fall — pair kids and seasonal pieces to build your bundle.',
-    heroImage: '/assets/hero/porch-family.png',
+    heroImage: '/assets/SideChick.png',
     sourceCollections: ['fall', 'kids'],
   },
 };
