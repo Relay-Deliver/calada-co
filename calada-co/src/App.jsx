@@ -13,6 +13,8 @@ import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import CartPage from './pages/CartPage';
 import ProductPage from './pages/ProductPage';
+import BundlesPage from './pages/BundlesPage';
+import BundleBuilderPage from './pages/BundleBuilderPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import ShippingPage from './pages/ShippingPage';
@@ -95,6 +97,8 @@ export default function App() {
                   <Route path="/collections"          element={<ShopPage />} />
                   <Route path="/collections/:handle"  element={<ShopPage />} />
                   <Route path="/products/:handle"     element={<ProductPage />} />
+                  <Route path="/bundles"              element={<BundlesPage />} />
+                  <Route path="/bundles/:handle"      element={<BundleBuilderPage />} />
                   <Route path="/about"                element={<AboutPage />} />
                   <Route path="/contact"              element={<ContactPage />} />
                   <Route path="/shipping"             element={<ShippingPage />} />

@@ -61,19 +61,21 @@ export const CATEGORY_TILES = [
 export const NAV_MENUS = {
   bundles: {
     label: 'Bundles (Up to 30% Off)',
-    to: '/collections/family-sets',
+    to: '/bundles',
     cards: [
       {
-        title: 'Mama + Mini Bundle',
+        title: 'Coffee Lovers Bundle',
         caption: 'Save up to 30%',
-        to: '/collections/family-sets',
+        to: '/bundles/coffee-lovers',
         image: '/assets/hero/flower-market.png',
+        cta: 'Build bundle',
       },
       {
-        title: 'Family Weekend Set',
-        caption: 'Soft matching favorites',
-        to: '/collections/family-sets',
-        image: '/assets/family.png',
+        title: 'Fall Bundle',
+        caption: 'Save up to 30%',
+        to: '/bundles/fall',
+        image: '/assets/hero/porch-family.png',
+        cta: 'Build bundle',
       },
     ],
   },
@@ -293,6 +295,6 @@ export const navMenus = [
   },
   {
     label: 'Bundles',
-    href: '/collections/family-sets',
+    href: '/bundles',
   },
 ];
