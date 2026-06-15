@@ -17,6 +17,7 @@ export default function BundleBuilderPage() {
   const [heroImg, setHeroImg] = useState(null);
   const [adding, setAdding] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [recentlyAdded, setRecentlyAdded] = useState(null);
 
   // Load products from the bundle's source collections
   useEffect(() => {
@@ -253,6 +254,7 @@ export default function BundleBuilderPage() {
               {suggestions.map((p) => {
                 const img = p.images?.edges?.[0]?.node?.url || getFallbackImage(p.handle);
                 const v = firstVariant(p);
+                const justAdded = recentlyAdded === p.id;
                 return (
                   <div key={p.id} className="group overflow-hidden rounded-lg border border-slate-100">
                     <Link to={`/products/${p.handle}`} className="block aspect-square overflow-hidden bg-gray-50">
@@ -263,12 +265,19 @@ export default function BundleBuilderPage() {
                       <p className="text-sm text-gray-500">
                         {formatPrice(p.priceRange?.minVariantPrice?.amount, p.priceRange?.minVariantPrice?.currencyCode)}
                       </p>
-                      {v && (
-                        <button onClick={() => addToBundle(p)}
-                          className="mt-2 w-full rounded-md border border-gray-200 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#c084a0] hover:text-[#c084a0]">
-                          Add to bundle
-                        </button>
-                      )}
+                      <button
+                        onClick={() => { addToBundle(p); setRecentlyAdded(p.id); setTimeout(() => setRecentlyAdded(null), 1500); }}
+                        disabled={!v}
+                        className={`mt-2 w-full rounded-md border py-1.5 text-xs font-semibold transition-all ${
+                          justAdded
+                            ? 'border-green-500 bg-green-50 text-green-600'
+                            : v
+                            ? 'border-gray-200 text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0]'
+                            : 'border-gray-100 text-gray-300 cursor-not-allowed'
+                        }`}
+                      >
+                        {justAdded ? '✓ Added to bundle' : v ? 'Add to bundle' : 'Unavailable'}
+                      </button>
                     </div>
                   </div>
                 );
