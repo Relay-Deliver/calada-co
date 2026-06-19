@@ -34,13 +34,15 @@ const HANDLE_TAG_MAP = {
     'red-white-blue', 'seasons',
   ],
 };
-
+// Strict: only match products carrying the exact collection tag.
+// Multi-word handles also accept each word as a tag (e.g. "tennis-pickleball"
+// matches tag:tennis or tag:pickleball), but NEVER title matches —
+// so untagged products never get borrowed into the wrong collection.
 function buildFallbackQuery(handle) {
   const mapped = HANDLE_TAG_MAP[handle];
   if (mapped) return mapped.map(t => `tag:${t}`).join(' OR ');
   const words = handle.split('-').filter(w => w.length > 1);
-  const parts = [`tag:${handle}`];
-  words.forEach(w => { parts.push(`tag:${w}`, `title:${w}`); });
+  const parts = [`tag:${handle}`, ...words.map(w => `tag:${w}`)];
   return parts.join(' OR ');
 }
 
