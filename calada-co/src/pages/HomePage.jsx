@@ -351,7 +351,7 @@ export default function HomePage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mx-auto grid max-w-[1800px] grid-cols-2 gap-4 px-5 sm:px-8 lg:grid-cols-4 lg:gap-6"
+          className="mx-auto grid max-w-[1800px] grid-cols-2 gap-4 px-4 sm:px-6 lg:grid-cols-4 lg:gap-6"
         >
           {PERKS.map((perk) => (
             <motion.div key={perk.title} variants={fadeUp} transition={springReveal} whileHover={{ y: -3 }} className="flex items-start gap-3">
@@ -367,7 +367,7 @@ export default function HomePage() {
 
       {/* CATEGORY TILES */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -410,7 +410,7 @@ export default function HomePage() {
 
       {/* PINK PRODUCT SHOWCASE */}
       <section className="bg-[#f6bfd6] py-12 sm:py-16">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink-dark">Fresh picks</p>
@@ -473,7 +473,7 @@ export default function HomePage() {
 
       {/* 3-COLUMN BANNER GRID */}
       <section className="py-10 sm:py-12">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
             {BANNER_GRID.map((banner) => (
               <Link
@@ -505,7 +505,7 @@ export default function HomePage() {
 
       {/* NEW ARRIVALS CAROUSEL */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <div className="mb-8 flex items-end justify-between gap-6 sm:mb-10">
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Just landed</p>
@@ -527,7 +527,7 @@ export default function HomePage() {
 
       {/* FAN FAVORITES */}
       <section className="bg-[#fdf8f5] py-14 sm:py-20">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <div className="mb-8 flex items-end justify-between gap-6 sm:mb-12">
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Customer picks</p>
@@ -570,7 +570,7 @@ export default function HomePage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="mx-auto grid max-w-[1800px] grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16"
+          className="mx-auto grid max-w-[1800px] grid-cols-1 gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16"
         >
           <motion.div variants={fadeUp} transition={springReveal}>
             <p className="mb-4 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-5">Our Story</p>
@@ -595,7 +595,7 @@ export default function HomePage() {
 
       {/* WHY CALADA */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -632,7 +632,7 @@ export default function HomePage() {
 
       {/* REVIEWS */}
       <section className="bg-[#fdf8f5] py-14 sm:py-20">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -668,7 +668,7 @@ export default function HomePage() {
 
       {/* INSTAGRAM PLACEHOLDER */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <div className="mb-8 text-center sm:mb-10">
             <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Follow along</p>
             <h2 className="font-serif text-3xl font-semibold text-navy sm:text-4xl">Shop Our Instagram</h2>
@@ -764,4 +764,5 @@ export default function HomePage() {
     </div>
   );
 }
+
 
