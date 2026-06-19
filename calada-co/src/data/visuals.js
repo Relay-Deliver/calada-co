@@ -6,7 +6,7 @@ export const HERO_SLIDES = [
     subtitle: 'Shine with fresh pieces for mothers, families, and little ones.',
     cta: 'Shop Spring / Summer',
     to: '/shop',
-    image: '/assets/hero/boutique-rack.png',
+    image: '/assets/mama-mini.png',
     align: 'center',
   },
   {
@@ -26,11 +26,10 @@ export const HERO_SLIDES = [
     subtitle: 'Easy, polished styles for photos, outings, gifting, and play.',
     cta: 'Explore Best Sellers',
     to: '/collections/best-sellers',
-    image: '/assets/hero/boutique-rack.png',
+    image: '/assets/mama-mini.png',
     align: 'right',
   },
 ];
-
 export const CATEGORY_TILES = [
   {
     label: 'Browse All',
@@ -59,7 +58,7 @@ export const CATEGORY_TILES = [
 ];
 
 export const NAV_MENUS = {
- bundles: {
+  bundles: {
     label: 'Bundles (Up to 30% Off)',
     to: '/bundles',
     cards: [
@@ -87,13 +86,13 @@ export const NAV_MENUS = {
         title: 'Shop All',
         caption: 'Fresh arrivals and fan favorites',
         to: '/shop',
-        image: '/assets/hero/boutique-rack.png',
+        image: '/assets/shop-all.png',
       },
       {
-        title: 'Gift Ready',
-        caption: 'Thoughtful pieces for every family',
-        to: '/collections/gifts',
-        image: '/assets/hero/flower-market.png',
+        title: 'Mama & Mini',
+        caption: 'Little & Lovely, just like Mama',
+        to: '/collections/family-sets',
+        image: '/assets/mama-mini.png',
       },
     ],
   },
@@ -162,16 +161,16 @@ export const NAV_MENUS = {
     to: '/collections/new-arrivals',
     cards: [
       {
-        title: 'Spring Refresh',
+        title: 'Fall in Love',
         caption: 'New styles just landed',
         to: '/collections/new-arrivals',
-        image: '/assets/hero/porch-family.png',
+        image: '/assets/fall-in-love.png',
       },
       {
-        title: 'Soft Florals',
-        caption: 'Lightweight pieces for warm days',
+        title: 'Summer Refresh',
+        caption: 'Pieces for warm days',
         to: '/collections/summer',
-        image: '/assets/hero/boutique-rack.png',
+        image: '/assets/summer-refresh.png',
       },
     ],
   },
@@ -183,13 +182,13 @@ export const NAV_MENUS = {
         title: 'Most Loved',
         caption: 'Customer favorites this week',
         to: '/collections/best-sellers',
-        image: '/assets/hero/boutique-rack.png',
+        image: '/assets/most-loved.png',
       },
       {
         title: 'Little Favorites',
         caption: 'Top picks for children',
         to: '/collections/kids',
-        image: '/assets/hero/porch-family.png',
+        image: '/assets/little-favorites.png',
       },
     ],
   },

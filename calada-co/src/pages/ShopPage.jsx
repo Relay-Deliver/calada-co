@@ -17,14 +17,24 @@ const AGE_GROUPS = ['Adults', 'Teens', 'Kids', 'Toddlers', 'Babies'];
 // Products fetched per request — Shopify Storefront API max is 250
 const PAGE_SIZE = 100;
 
-// Special handles that map to specific tags rather than word search
+// Special handles that map to specific tags rather than word search.
+// These are "virtual" collections (tag-based), so they always use the tag fallback.
+// Special handles that map to specific tags rather than word search.
+// all-sports / all-seasons pull EVERY product tagged in those categories.
 const HANDLE_TAG_MAP = {
   'new-arrivals': ['new', 'new-arrival', 'new-arrivals'],
   'best-sellers': ['best-seller', 'bestseller', 'best-sellers'],
+  'all-sports': [
+    'baseball', 'softball', 'football', 'basketball', 'cheer',
+    'tennis', 'pickleball', 'soccer', 'gymnastics', '4h', 'golf', 'sports',
+  ],
+  'all-seasons': [
+    'summer', 'fall', 'thanksgiving', 'halloween', 'christmas', 'winter',
+    'spring', 'easter', 'valentines', 'valentine', 'st-pats', 'st-patricks',
+    'red-white-blue', 'seasons',
+  ],
 };
 
-// Build a broad OR search from a collection handle:
-// "christmas-winter" → tag:christmas-winter OR tag:christmas OR title:christmas OR tag:winter OR title:winter
 function buildFallbackQuery(handle) {
   const mapped = HANDLE_TAG_MAP[handle];
   if (mapped) return mapped.map(t => `tag:${t}`).join(' OR ');
@@ -80,6 +90,7 @@ export default function ShopPage() {
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState(null);
+  const [isEmptyCollection, setIsEmptyCollection] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get('q') || '');
   const [gridCols, setGridCols] = useState(3);
@@ -153,6 +164,7 @@ export default function ShopPage() {
     setLoading(true);
     setProducts([]);
     setCursor(null);
+    setIsEmptyCollection(false);
     const q = searchParams.get('q') || '';
     const handleTerm = handle ? handle.replaceAll('-', ' ') : '';
 
@@ -164,7 +176,7 @@ export default function ShopPage() {
 
     const load = async () => {
       if (handle) {
-        // 1) Try the real Shopify collection
+        // 1) Try the real Shopify collection first
         try {
           const col = await getCollectionByHandle(handle, PAGE_SIZE);
           if (col && col.products?.edges?.length > 0) {
@@ -177,19 +189,16 @@ export default function ShopPage() {
           setPageTitle(handleTerm);
         }
 
-        // 2) Collection missing/empty → broad backend search:
-        //    every word in the handle matched against tags AND titles
-        let data = await getProducts({
+        // 2) Virtual collections (new-arrivals, best-sellers) use tag search.
+        //    Other empty collections also try a tag/title search.
+        const data = await getProducts({
           first: PAGE_SIZE,
           query: buildFallbackQuery(handle),
         });
 
-        // 3) Still nothing → show ALL products so the page is never empty
-        if (!data.edges.length) {
-          data = await getProducts({ first: PAGE_SIZE });
-        }
-
+        // 3) Still nothing → show "Coming Soon" (no fallback to all products)
         applyData(data);
+        if (!data.edges.length) setIsEmptyCollection(true);
       } else {
         // Shop All / search
         const data = await getProducts({ first: PAGE_SIZE, query: q });
@@ -203,6 +212,7 @@ export default function ShopPage() {
         setPageTitle(handle ? handle.replaceAll('-', ' ') : 'Shop All');
         setProducts([]);
         setHasMore(false);
+        if (handle) setIsEmptyCollection(true);
       })
       .finally(() => setLoading(false));
   }, [handle, searchParams]);
@@ -327,81 +337,83 @@ export default function ShopPage() {
         <h1 className="font-serif text-3xl font-semibold capitalize text-navy sm:text-4xl">
           {collectionTitle}
         </h1>
-        {handle && (
+        {handle && !isEmptyCollection && (
           <p className="mt-2 text-sm text-slate-500">Shop our {collectionTitle.toLowerCase()} collection</p>
         )}
       </div>
 
       <div className="max-w-[1380px] mx-auto px-4 sm:px-6 py-8">
 
-        {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#eeeeee]">
-          <div className="flex items-center gap-3">
-            {/* Desktop sidebar toggle */}
-            <button
-              onClick={() => setSidebarOpen(o => !o)}
-              className="hidden md:flex items-center gap-2 rounded-full border-[1.5px] border-[#eeeeee] px-4 py-2 text-[13px] font-semibold text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
-            >
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
-              </svg>
-              {sidebarOpen ? 'Hide Filters' : 'Show Filters'}
-              {activeFilterCount > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#c084a0] text-[10px] font-bold text-white">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-
-            {/* Mobile filter button */}
-            <button
-              onClick={() => setMobileSidebarOpen(true)}
-              className="flex md:hidden items-center gap-2 rounded-full border-[1.5px] border-[#eeeeee] px-4 py-2 text-[13px] font-semibold text-navy"
-            >
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-                <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
-              </svg>
-              Filter {activeFilterCount > 0 && `(${activeFilterCount})`}
-            </button>
-
-            <p className="text-[13px] text-[#888888]">{sortedProducts.length} products</p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <form onSubmit={handleSearch} className="hidden sm:flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-44 rounded-full px-3.5 py-2 border-[1.5px] border-[#eeeeee] text-sm outline-none focus:border-pink"
-              />
-            </form>
-            <div className="flex items-center gap-1 text-[13px]">
-              <span className="hidden sm:block text-[#888888] mr-1">Sort by</span>
-              <select
-                className="px-3 py-2 border-[1.5px] border-[#eeeeee] rounded-[6px] text-[13px] outline-none cursor-pointer"
-                value={sort}
-                onChange={handleSort}
+        {/* Toolbar — hidden when a collection is empty (Coming Soon) */}
+        {!isEmptyCollection && (
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#eeeeee]">
+            <div className="flex items-center gap-3">
+              {/* Desktop sidebar toggle */}
+              <button
+                onClick={() => setSidebarOpen(o => !o)}
+                className="hidden md:flex items-center gap-2 rounded-full border-[1.5px] border-[#eeeeee] px-4 py-2 text-[13px] font-semibold text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
               >
-                {SORT_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
-              </select>
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                  <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+                </svg>
+                {sidebarOpen ? 'Hide Filters' : 'Show Filters'}
+                {activeFilterCount > 0 && (
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#c084a0] text-[10px] font-bold text-white">
+                    {activeFilterCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Mobile filter button */}
+              <button
+                onClick={() => setMobileSidebarOpen(true)}
+                className="flex md:hidden items-center gap-2 rounded-full border-[1.5px] border-[#eeeeee] px-4 py-2 text-[13px] font-semibold text-navy"
+              >
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                  <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/>
+                </svg>
+                Filter {activeFilterCount > 0 && `(${activeFilterCount})`}
+              </button>
+
+              <p className="text-[13px] text-[#888888]">{sortedProducts.length} products</p>
             </div>
-            <div className="hidden sm:flex items-center gap-1 border-[1.5px] border-[#eeeeee] rounded-[6px] p-1">
-              {[2, 3, 4].map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setGridCols(n)}
-                  className={`p-1.5 rounded transition-colors ${gridCols === n ? 'bg-navy text-white' : 'text-slate-400 hover:text-navy'}`}
+
+            <div className="flex items-center gap-3">
+              <form onSubmit={handleSearch} className="hidden sm:flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-44 rounded-full px-3.5 py-2 border-[1.5px] border-[#eeeeee] text-sm outline-none focus:border-pink"
+                />
+              </form>
+              <div className="flex items-center gap-1 text-[13px]">
+                <span className="hidden sm:block text-[#888888] mr-1">Sort by</span>
+                <select
+                  className="px-3 py-2 border-[1.5px] border-[#eeeeee] rounded-[6px] text-[13px] outline-none cursor-pointer"
+                  value={sort}
+                  onChange={handleSort}
                 >
-                  <GridIcon cols={n} />
-                </button>
-              ))}
+                  {SORT_OPTIONS.map((o) => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="hidden sm:flex items-center gap-1 border-[1.5px] border-[#eeeeee] rounded-[6px] p-1">
+                {[2, 3, 4].map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setGridCols(n)}
+                    className={`p-1.5 rounded transition-colors ${gridCols === n ? 'bg-navy text-white' : 'text-slate-400 hover:text-navy'}`}
+                  >
+                    <GridIcon cols={n} />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Mobile filter drawer */}
         {mobileSidebarOpen && (
@@ -427,68 +439,84 @@ export default function ShopPage() {
           </div>
         )}
 
-        {/* Main layout */}
-        <div className="flex gap-8">
-
-          {/* Desktop Sidebar */}
-          {sidebarOpen && (
-            <div className="hidden md:block w-56 shrink-0">
-              <Sidebar />
+        {/* Coming Soon — empty collection */}
+        {isEmptyCollection ? (
+          <div className="text-center py-24 px-5">
+            <div className="mx-auto max-w-md">
+              <img src="/assets/calada-logo.png" alt="" style={{ height: 80, width: 'auto', margin: '0 auto', opacity: 0.3 }} />
+              <h2 className="font-serif text-2xl font-semibold text-navy mt-6 mb-3">Coming Soon</h2>
+              <p className="text-slate-500 text-sm leading-7 mb-6">
+                We're adding beautiful pieces to this collection. Check back soon!
+              </p>
+              <a href="/shop" className="inline-flex items-center justify-center py-3 px-6 rounded-full text-sm font-medium bg-pink text-white hover:bg-pink-dark transition-colors">
+                Browse All Products
+              </a>
             </div>
-          )}
+          </div>
+        ) : (
+          /* Main layout */
+          <div className="flex gap-8">
 
-          {/* Products */}
-          <div className="flex-1 min-w-0">
-            {loading ? (
-              <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="w-6 h-6 border-2 border-[#FBEAF0] border-t-pink rounded-full animate-spin" />
-              </div>
-            ) : sortedProducts.length > 0 ? (
-              <>
-                <motion.div
-                  className={`grid ${gridClass} gap-4 md:gap-5`}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ staggerChildren: 0.06 }}
-                >
-                  {sortedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
-                </motion.div>
-                {hasMore && (
-                  <div className="text-center mt-12">
-                    <button
-                      className="inline-flex items-center justify-center gap-2 py-3 px-8 rounded-full text-sm font-medium transition-colors bg-transparent text-navy border-[1.5px] border-navy hover:bg-navy hover:text-white"
-                      onClick={loadMore}
-                    >
-                      Load More
-                    </button>
-                  </div>
-                )}
-              </>
-            ) : (
-              /* Only reachable if filters exclude everything or the API is down */
-              <div className="text-center py-24 px-5">
-                <div className="mx-auto max-w-md">
-                  <img src="/assets/calada-logo.png" alt="" style={{ height: 80, width: 'auto', margin: '0 auto', opacity: 0.3 }} />
-                  <h2 className="font-serif text-2xl font-semibold text-navy mt-6 mb-3">No matches found</h2>
-                  <p className="text-slate-500 text-sm leading-7 mb-6">
-                    Try adjusting your filters or browse the full collection.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <a href="/shop" className="inline-flex items-center justify-center py-3 px-6 rounded-full text-sm font-medium bg-pink text-white hover:bg-pink-dark transition-colors">
-                      Browse All Products
-                    </a>
-                    <button
-                      className="inline-flex items-center justify-center py-3 px-6 rounded-full text-sm font-medium border-[1.5px] border-navy text-navy hover:bg-navy hover:text-white transition-colors"
-                      onClick={() => { setSearch(''); setSearchParams({}); clearFilters(); }}
-                    >
-                      Clear Filters
-                    </button>
-                  </div>
-                </div>
+            {/* Desktop Sidebar */}
+            {sidebarOpen && (
+              <div className="hidden md:block w-56 shrink-0">
+                <Sidebar />
               </div>
             )}
+
+            {/* Products */}
+            <div className="flex-1 min-w-0">
+              {loading ? (
+                <div className="flex items-center justify-center min-h-[50vh]">
+                  <div className="w-6 h-6 border-2 border-[#FBEAF0] border-t-pink rounded-full animate-spin" />
+                </div>
+              ) : sortedProducts.length > 0 ? (
+                <>
+                  <motion.div
+                    className={`grid ${gridClass} gap-4 md:gap-5`}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ staggerChildren: 0.06 }}
+                  >
+                    {sortedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
+                  </motion.div>
+                  {hasMore && (
+                    <div className="text-center mt-12">
+                      <button
+                        className="inline-flex items-center justify-center gap-2 py-3 px-8 rounded-full text-sm font-medium transition-colors bg-transparent text-navy border-[1.5px] border-navy hover:bg-navy hover:text-white"
+                        onClick={loadMore}
+                      >
+                        Load More
+                      </button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                /* Filters excluded everything */
+                <div className="text-center py-24 px-5">
+                  <div className="mx-auto max-w-md">
+                    <img src="/assets/calada-logo.png" alt="" style={{ height: 80, width: 'auto', margin: '0 auto', opacity: 0.3 }} />
+                    <h2 className="font-serif text-2xl font-semibold text-navy mt-6 mb-3">No matches found</h2>
+                    <p className="text-slate-500 text-sm leading-7 mb-6">
+                      Try adjusting your filters or browse the full collection.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <a href="/shop" className="inline-flex items-center justify-center py-3 px-6 rounded-full text-sm font-medium bg-pink text-white hover:bg-pink-dark transition-colors">
+                        Browse All Products
+                      </a>
+                      <button
+                        className="inline-flex items-center justify-center py-3 px-6 rounded-full text-sm font-medium border-[1.5px] border-navy text-navy hover:bg-navy hover:text-white transition-colors"
+                        onClick={() => { setSearch(''); setSearchParams({}); clearFilters(); }}
+                      >
+                        Clear Filters
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

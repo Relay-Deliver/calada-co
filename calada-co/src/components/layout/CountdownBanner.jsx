@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 
 try { localStorage.removeItem('calada_countdown_target'); } catch(e) {}
-const TARGET = new Date('2026-07-01T00:00:00');
+const TARGET = new Date('2026-07-15T00:00:00');
 
 
 function pad(n) { return String(n).padStart(2, '0'); }
 
 export default function CountdownBanner() {
-  
+
   const [time, setTime] = useState({ days: '30', hours: '00', mins: '00', secs: '00' });
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export default function CountdownBanner() {
     return () => clearInterval(id);
   }, []);
 
-  
+
 
   return (
     <div className="relative flex flex-col items-center justify-center gap-3 border-b border-[#e8b4c8] bg-[linear-gradient(135deg,#fdf0f5_0%,#fff8fb_50%,#f8f0fd_100%)] px-10 py-3 text-center sm:flex-row sm:gap-6 sm:px-8 sm:py-4">
@@ -59,7 +59,7 @@ export default function CountdownBanner() {
         ))}
       </div>
 
-      
+
     </div>
   );
 }

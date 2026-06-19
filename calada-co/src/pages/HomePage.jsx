@@ -31,22 +31,22 @@ const BANNER_GRID = [
   {
     title: 'Sports',
     subtitle: 'Rep your team in style',
-    to: '/collections/baseball-softball',
-    image: '/assets/hero/porch-family.png',
+    to: '/collections/all-sports',
+    image: '/assets/sports.png',
     align: 'left',
   },
   {
     title: 'Seasons',
     subtitle: 'Dressed for every holiday',
-    to: '/collections/summer',
-    image: '/assets/hero/flower-market.png',
+    to: '/collections/all-seasons',
+    image: '/assets/seasons.png',
     align: 'center',
   },
   {
     title: 'Michigan Made',
     subtitle: 'Small town, big style',
     to: '/collections/michigan-made',
-    image: '/assets/hero/boutique-rack.png',
+    image: '/assets/michigan-made.png',
     align: 'right',
   },
 ];
@@ -702,7 +702,8 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-6 text-center">
-            <a
+            
+<a
               href="https://instagram.com"
               target="_blank"
               rel="noreferrer"

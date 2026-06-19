@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const ITEMS = [
-  { text: '20% off site wide spring sale', to: '/collections/sale' },
   { text: 'Free shipping on orders $65+', to: '/shop' },
   { text: 'New customers save extra 15% with code WELCOME15', to: '/account/register' },
   { text: 'Fresh family sets just landed', to: '/collections/family-sets' },

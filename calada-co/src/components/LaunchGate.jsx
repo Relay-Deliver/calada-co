@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const GRAND_OPENING   = new Date('2026-07-01T00:00:00');
+const GRAND_OPENING = new Date('2026-07-15T00:00:00');
 const STORAGE_KEY     = 'calada_launch_entered';
 const CONFETTI_COLORS = ['#D4537E','#c084a0','#1A2744','#f0c8d8','#ffffff','#ffd700'];
 
@@ -156,7 +156,7 @@ export default function LaunchGate({ children, ready = true }) {
                 fontSize: '10px', fontWeight: 800, letterSpacing: '0.22em',
                 color: '#c084a0', textTransform: 'uppercase', margin: '0 0 10px',
               }}>
-                Grand Opening · July 1, 2026
+                Grand Opening · July 15, 2026
               </p>
 
               {/* Headline */}
