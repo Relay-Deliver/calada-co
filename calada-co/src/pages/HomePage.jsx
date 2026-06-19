@@ -355,7 +355,11 @@ export default function HomePage() {
         >
           {PERKS.map((perk) => (
             <motion.div key={perk.title} variants={fadeUp} transition={springReveal} whileHover={{ y: -3 }} className="flex items-start gap-3">
-              <span className="mt-0.5 text-lg leading-none text-pink">âœ¦</span>
+              <span className="mt-0.5 flex-shrink-0 text-pink">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2l1.6 6.8L20 12l-6.4 3.2L12 22l-1.6-6.8L4 12l6.4-3.2z"/>
+  </svg>
+</span>
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.1em] text-navy sm:text-[12px]">{perk.title}</p>
                 <p className="mt-0.5 text-[11px] leading-5 text-gray-500">{perk.desc}</p>
