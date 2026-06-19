@@ -272,7 +272,7 @@ export default function HomePage() {
             key={slide.id}
             src={slide.image}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover object-top"
+            className="absolute inset-0 h-full w-full object-contain object-center"
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
