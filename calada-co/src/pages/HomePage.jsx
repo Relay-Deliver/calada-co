@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, animate, motion, useInView, useMotionValue, useTransform } from 'framer-motion';
 import { getProducts } from '../services/shopify';
@@ -281,7 +281,7 @@ export default function HomePage() {
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-white/50"/>
 
-        <div className="relative z-10 mx-auto flex min-h-[560px] max-w-screen-2xl items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100vh-132px)] sm:px-8">
+        <div className="relative z-10 mx-auto flex min-h-[560px] max-w-[1800px] items-center justify-center px-5 py-16 text-center sm:min-h-[calc(100vh-132px)] sm:px-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={slide.id}
@@ -351,11 +351,11 @@ export default function HomePage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mx-auto grid max-w-screen-2xl grid-cols-2 gap-4 px-5 sm:px-8 lg:grid-cols-4 lg:gap-6"
+          className="mx-auto grid max-w-[1800px] grid-cols-2 gap-4 px-5 sm:px-8 lg:grid-cols-4 lg:gap-6"
         >
           {PERKS.map((perk) => (
             <motion.div key={perk.title} variants={fadeUp} transition={springReveal} whileHover={{ y: -3 }} className="flex items-start gap-3">
-              <span className="mt-0.5 text-lg leading-none text-pink">✦</span>
+              <span className="mt-0.5 text-lg leading-none text-pink">âœ¦</span>
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.1em] text-navy sm:text-[12px]">{perk.title}</p>
                 <p className="mt-0.5 text-[11px] leading-5 text-gray-500">{perk.desc}</p>
@@ -367,7 +367,7 @@ export default function HomePage() {
 
       {/* CATEGORY TILES */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -410,7 +410,7 @@ export default function HomePage() {
 
       {/* PINK PRODUCT SHOWCASE */}
       <section className="bg-[#f6bfd6] py-12 sm:py-16">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <div className="mb-8 flex flex-col gap-3 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink-dark">Fresh picks</p>
@@ -473,7 +473,7 @@ export default function HomePage() {
 
       {/* 3-COLUMN BANNER GRID */}
       <section className="py-10 sm:py-12">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
             {BANNER_GRID.map((banner) => (
               <Link
@@ -505,7 +505,7 @@ export default function HomePage() {
 
       {/* NEW ARRIVALS CAROUSEL */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <div className="mb-8 flex items-end justify-between gap-6 sm:mb-10">
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Just landed</p>
@@ -527,7 +527,7 @@ export default function HomePage() {
 
       {/* FAN FAVORITES */}
       <section className="bg-[#fdf8f5] py-14 sm:py-20">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <div className="mb-8 flex items-end justify-between gap-6 sm:mb-12">
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Customer picks</p>
@@ -570,7 +570,7 @@ export default function HomePage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="mx-auto grid max-w-screen-2xl grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16"
+          className="mx-auto grid max-w-[1800px] grid-cols-1 gap-12 px-5 sm:px-8 lg:grid-cols-2 lg:items-center lg:gap-16"
         >
           <motion.div variants={fadeUp} transition={springReveal}>
             <p className="mb-4 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-5">Our Story</p>
@@ -595,7 +595,7 @@ export default function HomePage() {
 
       {/* WHY CALADA */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -615,9 +615,9 @@ export default function HomePage() {
             className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4"
           >
             {[
-              { num: '01', title: 'Made to Order', desc: 'Every garment is made specifically for your family — no mass production, no warehouse stock.' },
+              { num: '01', title: 'Made to Order', desc: 'Every garment is made specifically for your family â€” no mass production, no warehouse stock.' },
               { num: '02', title: 'Best Value', desc: 'Boutique quality at accessible prices. Beautiful pieces that last season after season.' },
-              { num: '03', title: 'New Styles Always', desc: 'Fresh drops every season — curated with real families in mind, from newborns to mamas.' },
+              { num: '03', title: 'New Styles Always', desc: 'Fresh drops every season â€” curated with real families in mind, from newborns to mamas.' },
               { num: '04', title: 'Quality You Feel', desc: 'Softer fabrics, elevated details, and care that shows in every single stitch.' },
             ].map((item, i) => (
               <motion.div key={item.num} variants={fadeUp} transition={{ ...springReveal, delay: i * 0.04 }} whileHover={{ y: -6 }} className="group border-t-2 border-pink/30 pt-6 transition-colors hover:border-pink sm:pt-7">
@@ -632,7 +632,7 @@ export default function HomePage() {
 
       {/* REVIEWS */}
       <section className="bg-[#fdf8f5] py-14 sm:py-20">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <motion.div
             variants={fadeUp}
             initial="hidden"
@@ -668,7 +668,7 @@ export default function HomePage() {
 
       {/* INSTAGRAM PLACEHOLDER */}
       <section className="py-14 sm:py-20">
-        <div className="mx-auto max-w-screen-2xl px-5 sm:px-8">
+        <div className="mx-auto max-w-[1800px] px-5 sm:px-8">
           <div className="mb-8 text-center sm:mb-10">
             <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-3">Follow along</p>
             <h2 className="font-serif text-3xl font-semibold text-navy sm:text-4xl">Shop Our Instagram</h2>
@@ -764,3 +764,4 @@ export default function HomePage() {
     </div>
   );
 }
+
