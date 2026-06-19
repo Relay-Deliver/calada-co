@@ -6,7 +6,7 @@ export const HERO_SLIDES = [
     subtitle: 'Shine with fresh pieces for mothers, families, and little ones.',
     cta: 'Shop Spring / Summer',
     to: '/shop',
-    image: '/assets/mama-mini.png',
+    image: '/assets/hero/boutique-rack.png',
     align: 'center',
   },
   {
@@ -26,7 +26,7 @@ export const HERO_SLIDES = [
     subtitle: 'Easy, polished styles for photos, outings, gifting, and play.',
     cta: 'Explore Best Sellers',
     to: '/collections/best-sellers',
-    image: '/assets/mama-mini.png',
+    image: '/assets/hero/boutique-rack.png',
     align: 'right',
   },
 ];
