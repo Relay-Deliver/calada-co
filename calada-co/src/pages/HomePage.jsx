@@ -731,7 +731,7 @@ export default function HomePage() {
         >
           <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-4">Join the family</p>
           <h2 className="font-serif text-3xl font-semibold text-navy sm:text-5xl">
-            Get 20% off<br/>your first order
+            Get lots of discounts <br/> on your first order
           </h2>
           <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-slate-500 sm:mt-4">
             Plus early access to new arrivals and exclusive members-only offers.
@@ -739,7 +739,7 @@ export default function HomePage() {
           {emailSent ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 sm:mt-10">
               <p className="text-lg font-semibold text-pink">You're in!</p>
-              <p className="mt-2 text-sm text-slate-500">Check your inbox for your 20% off discount code.</p>
+              <p className="mt-2 text-sm text-slate-500">Check your inbox for your discounts.</p>
             </motion.div>
           ) : (
             <>
@@ -757,7 +757,7 @@ export default function HomePage() {
                   disabled={emailLoading}
                   className="rounded-full bg-navy px-7 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-pink disabled:opacity-60 sm:px-8 sm:py-4"
                 >
-                  {emailLoading ? 'Subscribing...' : 'Get 20% Off'}
+                  {emailLoading ? 'Subscribing...' : 'Get Discounts'}
                 </button>
               </form>
               {emailError && <p className="mt-3 text-sm text-red-400">{emailError}</p>}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getCollectionByHandle, getProducts } from '../services/shopify';
@@ -14,13 +14,9 @@ const SORT_OPTIONS = [
 const SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', 'YS', 'YM', 'YL', '2T', '3T', '4T'];
 const AGE_GROUPS = ['Adults', 'Teens', 'Kids', 'Toddlers', 'Babies'];
 
-// Products fetched per request — Shopify Storefront API max is 250
-const PAGE_SIZE = 100;
+// Load 25 at a time, fetch all via infinite scroll
+const PAGE_SIZE = 25;
 
-// Special handles that map to specific tags rather than word search.
-// These are "virtual" collections (tag-based), so they always use the tag fallback.
-// Special handles that map to specific tags rather than word search.
-// all-sports / all-seasons pull EVERY product tagged in those categories.
 const HANDLE_TAG_MAP = {
   'new-arrivals': ['new', 'new-arrival', 'new-arrivals'],
   'best-sellers': ['best-seller', 'bestseller', 'best-sellers'],
@@ -34,16 +30,19 @@ const HANDLE_TAG_MAP = {
     'red-white-blue', 'seasons',
   ],
 };
-// Strict: only match products carrying the exact collection tag.
-// Multi-word handles also accept each word as a tag (e.g. "tennis-pickleball"
-// matches tag:tennis or tag:pickleball), but NEVER title matches —
-// so untagged products never get borrowed into the wrong collection.
+
+// Strict: tag-only matching, never title — untagged products never get borrowed
 function buildFallbackQuery(handle) {
   const mapped = HANDLE_TAG_MAP[handle];
   if (mapped) return mapped.map(t => `tag:${t}`).join(' OR ');
   const words = handle.split('-').filter(w => w.length > 1);
   const parts = [`tag:${handle}`, ...words.map(w => `tag:${w}`)];
   return parts.join(' OR ');
+}
+
+// Hide gift cards from listings (any product whose handle contains gift-card)
+function isGiftCard(p) {
+  return p.handle?.toLowerCase().includes('gift-card');
 }
 
 const GridIcon = ({ cols }) => {
@@ -90,6 +89,7 @@ export default function ShopPage() {
   const [products, setProducts] = useState([]);
   const [pageTitle, setPageTitle] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [cursor, setCursor] = useState(null);
   const [isEmptyCollection, setIsEmptyCollection] = useState(false);
@@ -98,6 +98,9 @@ export default function ShopPage() {
   const [gridCols, setGridCols] = useState(3);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // What kind of fetch backs "load more": 'all' (shop), 'search', or 'tag' (collection fallback)
+  const loadModeRef = useRef({ mode: 'all', query: '' });
 
   // Filter state
   const [selectedSizes, setSelectedSizes] = useState([]);
@@ -115,7 +118,9 @@ export default function ShopPage() {
   const clearFilters = () => { setSelectedSizes([]); setSelectedAgeGroups([]); setMinPrice(0); setMaxPrice(200); };
 
   const sortedProducts = useMemo(() => {
-    let next = [...products];
+    // Gift cards never appear in any listing
+    let next = products.filter(p => !isGiftCard(p));
+
     if (sort === 'price asc' || sort === 'price desc') {
       next.sort((a, b) => {
         const aP = Number(a.priceRange?.minVariantPrice?.amount || 0);
@@ -123,13 +128,11 @@ export default function ShopPage() {
         return sort === 'price asc' ? aP - bP : bP - aP;
       });
     }
-    // Price filter
     next = next.filter(p => {
       const price = Number(p.priceRange?.minVariantPrice?.amount || 0);
       return price >= minPrice && price <= maxPrice;
     });
 
-    // Size filter
     if (selectedSizes.length > 0) {
       next = next.filter(p => {
         const variants = p.variants?.edges?.map(e => e.node) || [];
@@ -142,7 +145,6 @@ export default function ShopPage() {
       });
     }
 
-    // Age group filter
     if (selectedAgeGroups.length > 0) {
       next = next.filter(p => {
         const tags = (p.tags || []).map(t => t.toLowerCase());
@@ -166,24 +168,26 @@ export default function ShopPage() {
     setLoading(true);
     setProducts([]);
     setCursor(null);
+    setHasMore(false);
     setIsEmptyCollection(false);
     const q = searchParams.get('q') || '';
     const handleTerm = handle ? handle.replaceAll('-', ' ') : '';
 
-    const applyData = (data) => {
+    const applyData = (data, mode, query = '') => {
       setProducts(data.edges.map((e) => e.node));
       setHasMore(data.pageInfo.hasNextPage);
       setCursor(data.pageInfo.endCursor);
+      loadModeRef.current = { mode, query };
     };
 
     const load = async () => {
       if (handle) {
-        // 1) Try the real Shopify collection first
         try {
           const col = await getCollectionByHandle(handle, PAGE_SIZE);
           if (col && col.products?.edges?.length > 0) {
             setPageTitle(col.title);
-            applyData(col.products);
+            // Collections page through Storefront supports pagination too
+            applyData(col.products, 'collection', handle);
             return;
           }
           setPageTitle(col?.title || handleTerm);
@@ -191,21 +195,20 @@ export default function ShopPage() {
           setPageTitle(handleTerm);
         }
 
-        // 2) Virtual collections (new-arrivals, best-sellers) use tag search.
-        //    Other empty collections also try a tag/title search.
-        const data = await getProducts({
-          first: PAGE_SIZE,
-          query: buildFallbackQuery(handle),
-        });
-
-        // 3) Still nothing → show "Coming Soon" (no fallback to all products)
-        applyData(data);
+        const fallbackQuery = buildFallbackQuery(handle);
+        const data = await getProducts({ first: PAGE_SIZE, query: fallbackQuery });
+        applyData(data, 'search', fallbackQuery);
         if (!data.edges.length) setIsEmptyCollection(true);
       } else {
-        // Shop All / search
-        const data = await getProducts({ first: PAGE_SIZE, query: q });
-        setPageTitle('Shop All');
-        applyData(data);
+        if (q) {
+          const data = await getProducts({ first: PAGE_SIZE, query: q });
+          setPageTitle(`Search: ${q}`);
+          applyData(data, 'search', q);
+        } else {
+          const data = await getProducts({ first: PAGE_SIZE });
+          setPageTitle('Shop All');
+          applyData(data, 'all', '');
+        }
       }
     };
 
@@ -219,16 +222,41 @@ export default function ShopPage() {
       .finally(() => setLoading(false));
   }, [handle, searchParams]);
 
-  const loadMore = () => {
-    const q = searchParams.get('q') || '';
-    getProducts({ first: PAGE_SIZE, after: cursor, query: q })
+  const loadMore = useCallback(() => {
+    if (loadingMore || !hasMore || !cursor) return;
+    setLoadingMore(true);
+    const { mode, query } = loadModeRef.current;
+
+    // Collection pagination requires a different call; for collection mode we
+    // page through getCollectionByHandle is not cursor-friendly here, so we
+    // rely on getProducts for 'all'/'search' which is the common case.
+    const fetcher = (mode === 'all')
+      ? getProducts({ first: PAGE_SIZE, after: cursor })
+      : getProducts({ first: PAGE_SIZE, after: cursor, query });
+
+    fetcher
       .then((data) => {
         setProducts((prev) => [...prev, ...data.edges.map((e) => e.node)]);
         setHasMore(data.pageInfo.hasNextPage);
         setCursor(data.pageInfo.endCursor);
       })
-      .catch(() => setHasMore(false));
-  };
+      .catch(() => setHasMore(false))
+      .finally(() => setLoadingMore(false));
+  }, [loadingMore, hasMore, cursor]);
+
+  // Infinite scroll sentinel
+  const sentinelRef = useRef(null);
+  useEffect(() => {
+    if (!hasMore) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) loadMore(); },
+      { rootMargin: '600px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -346,11 +374,10 @@ export default function ShopPage() {
 
       <div className="max-w-[1380px] mx-auto px-4 sm:px-6 py-8">
 
-        {/* Toolbar — hidden when a collection is empty (Coming Soon) */}
+        {/* Toolbar */}
         {!isEmptyCollection && (
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-[#eeeeee]">
             <div className="flex items-center gap-3">
-              {/* Desktop sidebar toggle */}
               <button
                 onClick={() => setSidebarOpen(o => !o)}
                 className="hidden md:flex items-center gap-2 rounded-full border-[1.5px] border-[#eeeeee] px-4 py-2 text-[13px] font-semibold text-navy transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
@@ -366,7 +393,6 @@ export default function ShopPage() {
                 )}
               </button>
 
-              {/* Mobile filter button */}
               <button
                 onClick={() => setMobileSidebarOpen(true)}
                 className="flex md:hidden items-center gap-2 rounded-full border-[1.5px] border-[#eeeeee] px-4 py-2 text-[13px] font-semibold text-navy"
@@ -456,17 +482,13 @@ export default function ShopPage() {
             </div>
           </div>
         ) : (
-          /* Main layout */
           <div className="flex gap-8">
-
-            {/* Desktop Sidebar */}
             {sidebarOpen && (
               <div className="hidden md:block w-56 shrink-0">
                 <Sidebar />
               </div>
             )}
 
-            {/* Products */}
             <div className="flex-1 min-w-0">
               {loading ? (
                 <div className="flex items-center justify-center min-h-[50vh]">
@@ -478,23 +500,21 @@ export default function ShopPage() {
                     className={`grid ${gridClass} gap-4 md:gap-5`}
                     initial="hidden"
                     animate="visible"
-                    transition={{ staggerChildren: 0.06 }}
+                    transition={{ staggerChildren: 0.04 }}
                   >
                     {sortedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
                   </motion.div>
+
+                  {/* Infinite scroll sentinel + spinner */}
                   {hasMore && (
-                    <div className="text-center mt-12">
-                      <button
-                        className="inline-flex items-center justify-center gap-2 py-3 px-8 rounded-full text-sm font-medium transition-colors bg-transparent text-navy border-[1.5px] border-navy hover:bg-navy hover:text-white"
-                        onClick={loadMore}
-                      >
-                        Load More
-                      </button>
+                    <div ref={sentinelRef} className="flex items-center justify-center py-10">
+                      {loadingMore && (
+                        <div className="w-6 h-6 border-2 border-[#FBEAF0] border-t-pink rounded-full animate-spin" />
+                      )}
                     </div>
                   )}
                 </>
               ) : (
-                /* Filters excluded everything */
                 <div className="text-center py-24 px-5">
                   <div className="mx-auto max-w-md">
                     <img src="/assets/calada-logo.png" alt="" style={{ height: 80, width: 'auto', margin: '0 auto', opacity: 0.3 }} />
