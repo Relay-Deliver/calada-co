@@ -129,10 +129,19 @@ export default function ShopPage() {
         return sort === 'price asc' ? aP - bP : bP - aP;
       });
     }
-    next = next.filter(p => {
-      const price = Number(p.priceRange?.minVariantPrice?.amount || 0);
-      return price >= minPrice && price <= maxPrice;
-    });
+    // Only apply the price filter when narrowed from the default range.
+    // Read price defensively from priceRange or the first variant.
+    if (minPrice > 0 || maxPrice < 200) {
+      next = next.filter(p => {
+        const raw =
+          p.priceRange?.minVariantPrice?.amount ??
+          p.variants?.edges?.[0]?.node?.price?.amount ??
+          0;
+        const price = parseFloat(raw);
+        if (Number.isNaN(price)) return true; // don't hide products with no price
+        return price >= minPrice && price <= maxPrice;
+      });
+    }
 
     if (selectedSizes.length > 0) {
       next = next.filter(p => {
