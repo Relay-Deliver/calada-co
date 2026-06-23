@@ -331,3 +331,25 @@ export function isBestSeller(product) {
 export function isNew(product) {
   return product.tags?.includes('new') || product.tags?.includes('new-arrival');
 }
+// Count all products (IDs only — lightweight) for "Showing X of Y" labels
+export async function getProductCount(query = '') {
+  let count = 0;
+  let after = null;
+  let hasNext = true;
+  while (hasNext) {
+    const data = await shopifyFetch(`
+      query CountProducts($first: Int!, $after: String, $query: String) {
+        products(first: $first, after: $after, query: $query) {
+          pageInfo { hasNextPage endCursor }
+          edges { node { id handle } }
+        }
+      }
+    `, { first: 250, after, query });
+    count += data.products.edges.filter(
+      e => !e.node.handle?.toLowerCase().includes('gift-card')
+    ).length;
+    hasNext = data.products.pageInfo.hasNextPage;
+    after = data.products.pageInfo.endCursor;
+  }
+  return count;
+}

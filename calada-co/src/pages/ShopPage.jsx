@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { getCollectionByHandle, getProducts } from '../services/shopify';
+import { getCollectionByHandle, getProducts, getProductCount } from '../services/shopify';
 import ProductCard from '../components/product/ProductCard';
 
 const SORT_OPTIONS = [
@@ -87,6 +87,7 @@ function FilterSection({ title, open, onToggle, children }) {
 export default function ShopPage() {
   const { handle } = useParams();
   const [products, setProducts] = useState([]);
+  const [totalCount, setTotalCount] = useState(null);
   const [pageTitle, setPageTitle] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -99,7 +100,7 @@ export default function ShopPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // What kind of fetch backs "load more": 'all' (shop), 'search', or 'tag' (collection fallback)
+  // What kind of fetch backs "load more": 'all' (shop), 'search', or 'collection'
   const loadModeRef = useRef({ mode: 'all', query: '' });
 
   // Filter state
@@ -170,6 +171,7 @@ export default function ShopPage() {
     setCursor(null);
     setHasMore(false);
     setIsEmptyCollection(false);
+    setTotalCount(null);
     const q = searchParams.get('q') || '';
     const handleTerm = handle ? handle.replaceAll('-', ' ') : '';
 
@@ -186,7 +188,6 @@ export default function ShopPage() {
           const col = await getCollectionByHandle(handle, PAGE_SIZE);
           if (col && col.products?.edges?.length > 0) {
             setPageTitle(col.title);
-            // Collections page through Storefront supports pagination too
             applyData(col.products, 'collection', handle);
             return;
           }
@@ -199,15 +200,18 @@ export default function ShopPage() {
         const data = await getProducts({ first: PAGE_SIZE, query: fallbackQuery });
         applyData(data, 'search', fallbackQuery);
         if (!data.edges.length) setIsEmptyCollection(true);
+        else getProductCount(fallbackQuery).then(setTotalCount).catch(() => {});
       } else {
         if (q) {
           const data = await getProducts({ first: PAGE_SIZE, query: q });
           setPageTitle(`Search: ${q}`);
           applyData(data, 'search', q);
+          getProductCount(q).then(setTotalCount).catch(() => {});
         } else {
           const data = await getProducts({ first: PAGE_SIZE });
           setPageTitle('Shop All');
           applyData(data, 'all', '');
+          getProductCount('').then(setTotalCount).catch(() => {});
         }
       }
     };
@@ -227,9 +231,6 @@ export default function ShopPage() {
     setLoadingMore(true);
     const { mode, query } = loadModeRef.current;
 
-    // Collection pagination requires a different call; for collection mode we
-    // page through getCollectionByHandle is not cursor-friendly here, so we
-    // rely on getProducts for 'all'/'search' which is the common case.
     const fetcher = (mode === 'all')
       ? getProducts({ first: PAGE_SIZE, after: cursor })
       : getProducts({ first: PAGE_SIZE, after: cursor, query });
@@ -403,7 +404,11 @@ export default function ShopPage() {
                 Filter {activeFilterCount > 0 && `(${activeFilterCount})`}
               </button>
 
-              <p className="text-[13px] text-[#888888]">{sortedProducts.length} products</p>
+              <p className="text-[13px] text-[#888888]">
+                {totalCount != null
+                  ? `Showing ${sortedProducts.length} of ${totalCount}`
+                  : `${sortedProducts.length} products`}
+              </p>
             </div>
 
             <div className="flex items-center gap-3">
