@@ -181,6 +181,67 @@ export async function getCollectionByHandle(handle, first = 100) {
   return data.collectionByHandle;
 }
 
+// Bundle builder needs ALL variants + their options (size, color) per product.
+// Separate from getCollectionByHandle which only pulls 1 variant for speed.
+export async function getCollectionForBundle(handle, first = 50) {
+  const data = await shopifyFetch(`
+    query GetCollectionBundle($handle: String!, $first: Int!) {
+      collectionByHandle(handle: $handle) {
+        id handle title
+        products(first: $first) {
+          edges {
+            node {
+              id handle title tags
+              options { name values }
+              priceRange { minVariantPrice { amount currencyCode } }
+              images(first: 1) { edges { node { url altText } } }
+              variants(first: 100) {
+                edges {
+                  node {
+                    id title availableForSale
+                    selectedOptions { name value }
+                    price { amount currencyCode }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `, { handle, first });
+  return data.collectionByHandle;
+}
+
+// Same shape as getCollectionForBundle, but via tag/title search
+// (fallback used when a bundle's source collection is empty)
+export async function getProductsForBundle({ first = 50, query = '' } = {}) {
+  const data = await shopifyFetch(`
+    query GetProductsBundle($first: Int!, $query: String) {
+      products(first: $first, query: $query) {
+        edges {
+          node {
+            id handle title tags
+            options { name values }
+            priceRange { minVariantPrice { amount currencyCode } }
+            images(first: 1) { edges { node { url altText } } }
+            variants(first: 100) {
+              edges {
+                node {
+                  id title availableForSale
+                  selectedOptions { name value }
+                  price { amount currencyCode }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `, { first, query });
+  return data.products;
+}
+
 // ─── Cart ─────────────────────────────────────────────────────────────────────
 
 export async function createCart() {
@@ -331,6 +392,7 @@ export function isBestSeller(product) {
 export function isNew(product) {
   return product.tags?.includes('new') || product.tags?.includes('new-arrival');
 }
+
 // Count all products (IDs only — lightweight) for "Showing X of Y" labels
 export async function getProductCount(query = '') {
   let count = 0;

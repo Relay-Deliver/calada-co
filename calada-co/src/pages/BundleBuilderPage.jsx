@@ -1,10 +1,26 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getCollectionByHandle, getProducts, formatPrice } from '../services/shopify';
+import {
+  getCollectionForBundle,
+  getProductsForBundle,
+  getProducts,
+  formatPrice,
+} from '../services/shopify';
 import { useCart } from '../context/CartContext';
 import { BUNDLES, BUNDLE_TIERS, getTierForCount } from '../data/bundles';
 import { getFallbackImage } from '../data/visuals';
+
+// Find the variant matching a set of chosen options, e.g. { Size: 'M', Color: 'Blossom' }
+function findVariant(product, chosen) {
+  const variants = product.variants?.edges?.map(e => e.node) || [];
+  const optionNames = (product.options || []).map(o => o.name);
+  return variants.find(v => {
+    const map = {};
+    v.selectedOptions?.forEach(o => { map[o.name] = o.value; });
+    return optionNames.every(name => chosen[name] && map[name] === chosen[name]);
+  });
+}
 
 export default function BundleBuilderPage() {
   const { handle } = useParams();
@@ -13,13 +29,14 @@ export default function BundleBuilderPage() {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState({});
+  const [selected, setSelected] = useState({});      // variantId -> { product, variant, qty }
+  const [choices, setChoices] = useState({});         // productId -> { OptionName: value }
   const [heroImg, setHeroImg] = useState(null);
   const [adding, setAdding] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [recentlyAdded, setRecentlyAdded] = useState(null);
 
-  // Load products from the bundle's source collections
+  // Load products (with full variants/options) from the bundle's source collections
   useEffect(() => {
     if (!bundle) { setLoading(false); return; }
     let active = true;
@@ -28,11 +45,13 @@ export default function BundleBuilderPage() {
       const map = new Map();
       for (const colHandle of bundle.sourceCollections) {
         try {
-          const col = await getCollectionByHandle(colHandle, 50);
-          const nodes = col?.products?.edges?.map(e => e.node) || [];
-          let list = nodes;
+          const col = await getCollectionForBundle(colHandle, 50);
+          let list = col?.products?.edges?.map(e => e.node) || [];
           if (!list.length) {
-            const data = await getProducts({ first: 50, query: `tag:${colHandle} OR ${colHandle.replaceAll('-', ' ')}` });
+            const data = await getProductsForBundle({
+              first: 50,
+              query: `tag:${colHandle} OR tag:${colHandle.replaceAll('-', ' ')}`,
+            });
             list = data.edges.map(e => e.node);
           }
           list.forEach(p => map.set(p.id, p));
@@ -48,26 +67,49 @@ export default function BundleBuilderPage() {
     return () => { active = false; };
   }, [handle]);
 
-  // "You may also like"
+  // "You may also like" — simple products (first variant is fine here)
   useEffect(() => {
     let active = true;
     (async () => {
       try {
         const data = await getProducts({ first: 8 });
-        if (active) setSuggestions(data.edges.map(e => e.node).slice(0, 4));
+        if (active) setSuggestions(
+          data.edges.map(e => e.node).filter(p => !p.handle?.includes('gift-card')).slice(0, 4)
+        );
       } catch {}
     })();
     return () => { active = false; };
   }, [handle]);
 
-  const firstVariant = (p) => p?.variants?.edges?.[0]?.node;
+  const setChoice = (productId, optionName, value) => {
+    setChoices(prev => ({
+      ...prev,
+      [productId]: { ...(prev[productId] || {}), [optionName]: value },
+    }));
+  };
+
+  // A product is ready to add when every one of its options has a chosen value
+  const isReady = (product) => {
+    const opts = product.options || [];
+    // Products with a single default option ("Title: Default Title") need no picking
+    if (opts.length === 1 && opts[0].values?.length === 1) return true;
+    const chosen = choices[product.id] || {};
+    return opts.every(o => chosen[o.name]);
+  };
 
   const addToBundle = (product) => {
-    const v = firstVariant(product);
-    if (!v) return;
+    let variant;
+    const opts = product.options || [];
+    if (opts.length === 1 && opts[0].values?.length === 1) {
+      variant = product.variants?.edges?.[0]?.node;
+    } else {
+      variant = findVariant(product, choices[product.id] || {});
+    }
+    if (!variant) return;
+
     setSelected(prev => {
-      const existing = prev[v.id];
-      return { ...prev, [v.id]: { product, variant: v, qty: (existing?.qty || 0) + 1 } };
+      const existing = prev[variant.id];
+      return { ...prev, [variant.id]: { product, variant, qty: (existing?.qty || 0) + 1 } };
     });
     const img = product.images?.edges?.[0]?.node?.url;
     if (img) setHeroImg(img);
@@ -100,7 +142,12 @@ export default function BundleBuilderPage() {
     try {
       for (const entry of selectedList) {
         for (let i = 0; i < entry.qty; i++) {
-          await addItem(entry.variant.id, [{ key: 'Bundle', value: bundle.title }]);
+          await addItem(entry.variant.id, [
+            { key: 'Bundle', value: bundle.title },
+            ...(entry.variant.title && entry.variant.title !== 'Default Title'
+              ? [{ key: 'Options', value: entry.variant.title }]
+              : []),
+          ]);
         }
       }
       openCart();
@@ -176,39 +223,73 @@ export default function BundleBuilderPage() {
               <p className="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
                 Add items to your bundle
               </p>
-              <div className="max-h-[420px] overflow-y-auto">
+              <div className="max-h-[460px] overflow-y-auto">
                 {loading ? (
                   <div className="flex items-center justify-center py-16">
                     <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#FBEAF0] border-t-[#c084a0]" />
                   </div>
                 ) : products.length ? (
                   products.map((p) => {
-                    const v = firstVariant(p);
                     const img = p.images?.edges?.[0]?.node?.url || getFallbackImage(p.handle);
-                    const inBundle = selected[v?.id]?.qty || 0;
+                    const opts = p.options || [];
+                    const hasRealOptions = !(opts.length === 1 && opts[0].values?.length === 1);
+                    const ready = isReady(p);
+                    const chosen = choices[p.id] || {};
+                    // Count how many of this product are already in the bundle (any variant)
+                    const inBundleQty = Object.values(selected)
+                      .filter(e => e.product.id === p.id)
+                      .reduce((s, e) => s + e.qty, 0);
+
                     return (
-                      <div key={p.id} className="flex items-center gap-3 border-b border-gray-50 px-4 py-3 last:border-0">
-                        <img src={img} alt={p.title} className="h-14 w-14 flex-shrink-0 rounded-md object-cover bg-gray-50" />
-                        <div className="min-w-0 flex-1">
-                          <Link to={`/products/${p.handle}`} className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[#c084a0]">
-                            {p.title}
-                          </Link>
-                          <p className="text-sm text-gray-500">
-                            {formatPrice(p.priceRange?.minVariantPrice?.amount, p.priceRange?.minVariantPrice?.currencyCode)}
-                          </p>
-                        </div>
-                        {inBundle > 0 ? (
-                          <div className="flex items-center gap-2">
-                            <button onClick={() => decFromBundle(v.id)} className="grid h-7 w-7 place-items-center rounded-full border border-gray-200 text-gray-600 hover:border-[#c084a0] hover:text-[#c084a0]">-</button>
-                            <span className="w-5 text-center text-sm font-semibold">{inBundle}</span>
-                            <button onClick={() => addToBundle(p)} className="grid h-7 w-7 place-items-center rounded-full border border-gray-200 text-gray-600 hover:border-[#c084a0] hover:text-[#c084a0]">+</button>
+                      <div key={p.id} className="border-b border-gray-50 px-4 py-3 last:border-0">
+                        <div className="flex items-center gap-3">
+                          <img src={img} alt={p.title} className="h-14 w-14 flex-shrink-0 rounded-md object-cover bg-gray-50" />
+                          <div className="min-w-0 flex-1">
+                            <Link to={`/products/${p.handle}`} className="line-clamp-2 text-sm font-medium text-gray-800 hover:text-[#c084a0]">
+                              {p.title}
+                            </Link>
+                            <p className="text-sm text-gray-500">
+                              {formatPrice(p.priceRange?.minVariantPrice?.amount, p.priceRange?.minVariantPrice?.currencyCode)}
+                            </p>
                           </div>
-                        ) : (
-                          <button onClick={() => addToBundle(p)}
-                            className="flex-shrink-0 rounded-md bg-gray-900 px-4 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#c084a0]">
-                            Add
-                          </button>
+                          {inBundleQty > 0 && (
+                            <span className="flex-shrink-0 rounded-full bg-pink-50 px-2 py-0.5 text-[11px] font-semibold text-[#c084a0]">
+                              {inBundleQty} in bundle
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Option dropdowns (Size, Color, etc.) */}
+                        {hasRealOptions && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {opts.map((opt) => (
+                              <select
+                                key={opt.name}
+                                value={chosen[opt.name] || ''}
+                                onChange={(e) => setChoice(p.id, opt.name, e.target.value)}
+                                className="min-w-[110px] flex-1 rounded-md border border-gray-200 px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-[#c084a0]"
+                              >
+                                <option value="">{opt.name}</option>
+                                {opt.values.map((val) => (
+                                  <option key={val} value={val}>{val}</option>
+                                ))}
+                              </select>
+                            ))}
+                          </div>
                         )}
+
+                        {/* Add button — disabled until options chosen */}
+                        <button
+                          onClick={() => addToBundle(p)}
+                          disabled={!ready}
+                          className={`mt-3 w-full rounded-md py-2 text-xs font-semibold transition-colors ${
+                            ready
+                              ? 'bg-gray-900 text-white hover:bg-[#c084a0]'
+                              : 'cursor-not-allowed bg-gray-100 text-gray-400'
+                          }`}
+                        >
+                          {ready ? 'Add to bundle' : 'Select options'}
+                        </button>
                       </div>
                     );
                   })
@@ -217,6 +298,35 @@ export default function BundleBuilderPage() {
                 )}
               </div>
             </div>
+
+            {/* Selected items list */}
+            {selectedList.length > 0 && (
+              <div className="rounded-xl border border-gray-100">
+                <p className="border-b border-gray-100 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-gray-500">
+                  Your bundle ({itemCount})
+                </p>
+                <div className="max-h-[220px] overflow-y-auto">
+                  {selectedList.map((entry) => (
+                    <div key={entry.variant.id} className="flex items-center gap-3 border-b border-gray-50 px-4 py-2.5 last:border-0">
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-1 text-sm font-medium text-gray-800">{entry.product.title}</p>
+                        {entry.variant.title && entry.variant.title !== 'Default Title' && (
+                          <p className="text-xs text-gray-400">{entry.variant.title}</p>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {formatPrice(entry.variant.price.amount, entry.variant.price.currencyCode)}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => decFromBundle(entry.variant.id)} className="grid h-7 w-7 place-items-center rounded-full border border-gray-200 text-gray-600 hover:border-[#c084a0] hover:text-[#c084a0]">-</button>
+                        <span className="w-5 text-center text-sm font-semibold">{entry.qty}</span>
+                        <button onClick={() => addToBundle(entry.product)} className="grid h-7 w-7 place-items-center rounded-full border border-gray-200 text-gray-600 hover:border-[#c084a0] hover:text-[#c084a0]">+</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Running total */}
             <div className="rounded-xl bg-[#fff8fb] border border-pink-100 p-4">
@@ -253,7 +363,6 @@ export default function BundleBuilderPage() {
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               {suggestions.map((p) => {
                 const img = p.images?.edges?.[0]?.node?.url || getFallbackImage(p.handle);
-                const v = firstVariant(p);
                 const justAdded = recentlyAdded === p.id;
                 return (
                   <div key={p.id} className="group overflow-hidden rounded-lg border border-slate-100">
@@ -265,19 +374,12 @@ export default function BundleBuilderPage() {
                       <p className="text-sm text-gray-500">
                         {formatPrice(p.priceRange?.minVariantPrice?.amount, p.priceRange?.minVariantPrice?.currencyCode)}
                       </p>
-                      <button
-                        onClick={() => { addToBundle(p); setRecentlyAdded(p.id); setTimeout(() => setRecentlyAdded(null), 1500); }}
-                        disabled={!v}
-                        className={`mt-2 w-full rounded-md border py-1.5 text-xs font-semibold transition-all ${
-                          justAdded
-                            ? 'border-green-500 bg-green-50 text-green-600'
-                            : v
-                            ? 'border-gray-200 text-gray-700 hover:border-[#c084a0] hover:text-[#c084a0]'
-                            : 'border-gray-100 text-gray-300 cursor-not-allowed'
-                        }`}
+                      <Link
+                        to={`/products/${p.handle}`}
+                        className="mt-2 block w-full rounded-md border border-gray-200 py-1.5 text-center text-xs font-semibold text-gray-700 transition-colors hover:border-[#c084a0] hover:text-[#c084a0]"
                       >
-                        {justAdded ? '✓ Added to bundle' : v ? 'Add to bundle' : 'Unavailable'}
-                      </button>
+                        View product
+                      </Link>
                     </div>
                   </div>
                 );
