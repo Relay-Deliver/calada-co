@@ -686,7 +686,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* INSTAGRAM PLACEHOLDER */}
+     {/* INSTAGRAM PLACEHOLDER */}
       <section className="py-14 sm:py-20">
         <div className="mx-auto max-w-[1800px] px-4 sm:px-6">
           <div className="mb-8 text-center sm:mb-10">
@@ -723,7 +723,6 @@ export default function HomePage() {
           </div>
           <div className="mt-6 text-center">
             
-
               href="https://instagram.com"
               target="_blank"
               rel="noreferrer"
