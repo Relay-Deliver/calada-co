@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 const ITEMS = [
-const ITEMS = [
   { text: 'Free shipping on orders $65+', to: '/shop' },
   { text: 'Fresh family sets just landed', to: '/collections/family-sets' },
 ];
