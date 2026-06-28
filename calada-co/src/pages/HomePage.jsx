@@ -80,6 +80,19 @@ function Stars({ count = 5 }) {
   );
 }
 
+function GoArrow({ className = '' }) {
+  return (
+    <span
+      className={`grid h-10 w-10 place-items-center rounded-full bg-white text-navy shadow-md transition-all group-hover:bg-navy group-hover:text-white ${className}`}
+      aria-hidden="true"
+    >
+      <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="m9 18 6-6-6-6"/>
+      </svg>
+    </span>
+  );
+}
+
 function AnimatedStat({ value, suffix = '', label, delay = 0 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-80px' });
@@ -397,6 +410,7 @@ export default function HomePage() {
                 <Link to={cat.to} className="group relative block overflow-hidden rounded-xl bg-gray-100 sm:rounded-2xl" style={{ aspectRatio: '3/4' }}>
                   <img src={cat.image} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"/>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent"/>
+                  <GoArrow className="absolute right-3 top-3 z-10" />
                   <div className="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-6">
                     <p className="text-[9px] font-bold uppercase tracking-[0.22em] text-white/60 sm:text-[10px]">{cat.desc}</p>
                     <h3 className="mt-1 font-serif text-lg font-semibold sm:mt-1.5 sm:text-2xl">{cat.label}</h3>
@@ -438,6 +452,7 @@ export default function HomePage() {
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent" />
+              <GoArrow className="absolute right-4 top-4 z-10" />
               <div className="absolute bottom-0 left-0 right-0 p-5 text-white sm:p-7">
                 <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/65">Coordinated looks</p>
                 <h3 className="mt-2 font-serif text-3xl font-semibold sm:text-4xl">Family Sets</h3>
@@ -492,6 +507,7 @@ export default function HomePage() {
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/30 transition-colors group-hover:bg-black/40" />
+                <GoArrow className="absolute right-4 top-4 z-10" />
                 <div className={`absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white ${
                   banner.align === 'center' ? 'text-center' : banner.align === 'right' ? 'text-right' : 'text-left'
                 }`}>
@@ -619,9 +635,9 @@ export default function HomePage() {
             className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-4"
           >
             {[
-              { num: '01', title: 'Made to Order', desc: 'Every garment is made specifically for your family â€” no mass production, no warehouse stock.' },
+              { num: '01', title: 'Made to Order', desc: 'Every garment is made specifically for your family - no mass production, no warehouse stock.' },
               { num: '02', title: 'Best Value', desc: 'Boutique quality at accessible prices. Beautiful pieces that last season after season.' },
-              { num: '03', title: 'New Styles Always', desc: 'Fresh drops every season â€” curated with real families in mind, from newborns to mamas.' },
+              { num: '03', title: 'New Styles Always', desc: 'Fresh drops every season - curated with real families in mind, from newborns to mamas.' },
               { num: '04', title: 'Quality You Feel', desc: 'Softer fabrics, elevated details, and care that shows in every single stitch.' },
             ].map((item, i) => (
               <motion.div key={item.num} variants={fadeUp} transition={{ ...springReveal, delay: i * 0.04 }} whileHover={{ y: -6 }} className="group border-t-2 border-pink/30 pt-6 transition-colors hover:border-pink sm:pt-7">
@@ -707,7 +723,7 @@ export default function HomePage() {
           </div>
           <div className="mt-6 text-center">
             
-<a
+
               href="https://instagram.com"
               target="_blank"
               rel="noreferrer"
@@ -769,5 +785,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-
