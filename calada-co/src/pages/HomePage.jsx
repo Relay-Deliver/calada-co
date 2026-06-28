@@ -419,7 +419,7 @@ export default function HomePage() {
             <div>
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.28em] text-pink-dark">Fresh picks</p>
               <h2 className="max-w-2xl font-serif text-3xl font-semibold leading-tight text-navy sm:text-5xl">
-                Go-to family pieces for sunny days ahead
+               Go-to family pieces for<br/>memories made together
               </h2>
             </div>
             <Link to="/collections/new-arrivals" className="hidden shrink-0 border-b-2 border-navy pb-1 text-[11px] font-black uppercase tracking-[0.18em] text-navy transition-colors hover:border-pink-dark hover:text-pink-dark sm:inline-flex">
@@ -432,8 +432,8 @@ export default function HomePage() {
               to="/collections/family-sets"
               className="group relative block min-h-[320px] overflow-hidden rounded-lg bg-navy sm:min-h-[420px]"
             >
-              <img
-                src="/assets/hero/family-picnic.png"
+             <img
+                src="/assets/Family-Set2.png"
                 alt="Family clothing favorites"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
@@ -692,7 +692,7 @@ export default function HomePage() {
               >
                 <img
                   src={[
-                    '/assets/hero/porch-family.png',
+                    '/assets/Family-Set2.png',
                     '/assets/hero/flower-market.png',
                     '/assets/hero/boutique-rack.png',
                     '/assets/hero/porch-family.png',
