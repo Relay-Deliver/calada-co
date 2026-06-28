@@ -708,7 +708,7 @@ export default function HomePage() {
               >
                 <img
                   src={[
-                    '/assets/Family-Set2.png',
+                    '/assets/hero/porch-family.png',
                     '/assets/hero/flower-market.png',
                     '/assets/hero/boutique-rack.png',
                     '/assets/hero/porch-family.png',
