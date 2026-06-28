@@ -721,7 +721,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          <div className="mt-6 text-center">
+       <div className="mt-6 text-center">
             
               href="https://instagram.com"
               target="_blank"
