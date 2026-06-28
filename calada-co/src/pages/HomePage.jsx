@@ -729,12 +729,12 @@ export default function HomePage() {
           transition={springReveal}
           className="relative mx-auto max-w-xl px-5 text-center sm:px-8"
         >
-          <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-4">Join the family</p>
+       <p className="mb-3 text-[10px] font-black uppercase tracking-[0.28em] text-pink sm:mb-4">Join the CalAda &amp; Co. Family</p>
           <h2 className="font-serif text-3xl font-semibold text-navy sm:text-5xl">
-            Get lots of discounts <br/> on your first order
+            Your First Order Deserves<br/>a Little Extra Love
           </h2>
-          <p className="mx-auto mt-3 max-w-sm text-sm leading-7 text-slate-500 sm:mt-4">
-            Plus early access to new arrivals and exclusive members-only offers.
+          <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-slate-500 sm:mt-4">
+            Sign up and receive a special discount plus access to exclusive member perks.
           </p>
           {emailSent ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-8 sm:mt-10">
