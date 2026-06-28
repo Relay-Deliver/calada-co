@@ -722,7 +722,7 @@ export default function HomePage() {
             ))}
           </div>
        <div className="mt-6 text-center">
-            
+            <a
               href="https://instagram.com"
               target="_blank"
               rel="noreferrer"
