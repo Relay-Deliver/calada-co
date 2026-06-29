@@ -161,6 +161,7 @@ export default function ProductPage() {
   const isGiftCard = handle?.includes('gift-card');
   const [recipientName, setRecipientName] = useState('');
   const [giftMessage, setGiftMessage]     = useState('');
+  const [deliveryDate, setDeliveryDate]   = useState('');
   const [voucherBouncing, setVoucherBouncing] = useState(false);
   const [denomPopping, setDenomPopping]   = useState(null);
 
@@ -352,6 +353,7 @@ export default function ProductPage() {
     const giftAttrs = isGiftCard ? [
       { key: 'Voucher Value', value: voucherValue },
       ...(recipientName.trim() ? [{ key: 'Recipient Name', value: recipientName.trim() }] : []),
+      ...(deliveryDate ? [{ key: 'Delivery Date', value: deliveryDate }] : []),
       ...(giftMessage.trim()   ? [{ key: 'Gift Message',   value: giftMessage.trim()   }] : []),
       { key: 'Valid Until', value: validUntilDate },
     ] : undefined;
@@ -455,53 +457,53 @@ export default function ProductPage() {
                     The card image already has "Voucher Value :", "Recipient Name :", "Valid Until :"
                     printed on it. These divs fill in the blank lines that follow each label.
                     ⚠ Tune top/left % in DevTools until each value sits on its blank line. ── */}
-{isShowingBack && (
-  <div className="absolute inset-0 pointer-events-none">
+                {isShowingBack && (
+                  <div className="absolute inset-0 pointer-events-none">
 
-    {/* Voucher value */}
-    <div style={{ position:'absolute', left:'28%', top:'36%', width:'42%' }}>
-      <p style={{
-        fontSize:'clamp(11px, 2.6vw, 14px)', fontWeight:600, margin:0, lineHeight:1,
-        color: voucherValue ? '#1A2744' : '#bbb',
-        whiteSpace:'nowrap',
-        transition:'color 0.35s',
-      }}>
-        {voucherValue || ''}
-      </p>
-    </div>
+                    {/* Voucher value */}
+                    <div style={{ position:'absolute', left:'28%', top:'36%', width:'42%' }}>
+                      <p style={{
+                        fontSize:'clamp(11px, 2.6vw, 14px)', fontWeight:600, margin:0, lineHeight:1,
+                        color: voucherValue ? '#1A2744' : '#bbb',
+                        whiteSpace:'nowrap',
+                        transition:'color 0.35s',
+                      }}>
+                        {voucherValue || ''}
+                      </p>
+                    </div>
 
-    {/* Recipient name — wider container + responsive font so it never clips on mobile */}
-    <div style={{ position:'absolute', left:'28%', top:'46%', width:'48%' }}>
-      <p style={{
-        fontSize:'clamp(10px, 2.4vw, 13px)', margin:0, lineHeight:1.15,
-        color: recipientName ? '#1A2744' : '#aaa',
-        fontStyle: recipientName ? 'normal' : 'italic',
-        backgroundColor: recipientName ? 'rgba(255,255,255,0.65)' : 'transparent',
-        borderRadius:'2px',
-        padding: recipientName ? '1px 3px' : '0',
-        display:'inline-block',
-        maxWidth:'100%',
-        overflow:'hidden',
-        textOverflow:'ellipsis',
-        whiteSpace:'nowrap',
-        transition:'color 0.2s',
-      }}>
-        {recipientName || ''}
-      </p>
-    </div>
+                    {/* Recipient name — wider container + responsive font so it never clips on mobile */}
+                    <div style={{ position:'absolute', left:'28%', top:'46%', width:'48%' }}>
+                      <p style={{
+                        fontSize:'clamp(10px, 2.4vw, 13px)', margin:0, lineHeight:1.15,
+                        color: recipientName ? '#1A2744' : '#aaa',
+                        fontStyle: recipientName ? 'normal' : 'italic',
+                        backgroundColor: recipientName ? 'rgba(255,255,255,0.65)' : 'transparent',
+                        borderRadius:'2px',
+                        padding: recipientName ? '1px 3px' : '0',
+                        display:'inline-block',
+                        maxWidth:'100%',
+                        overflow:'hidden',
+                        textOverflow:'ellipsis',
+                        whiteSpace:'nowrap',
+                        transition:'color 0.2s',
+                      }}>
+                        {recipientName || ''}
+                      </p>
+                    </div>
 
-    {/* Valid until */}
-    <div style={{ position:'absolute', left:'20%', top:'60%', width:'42%' }}>
-      <p style={{
-        fontSize:'clamp(9px, 2vw, 11px)', color:'#555', margin:0, lineHeight:1,
-        whiteSpace:'nowrap',
-      }}>
-        {validUntilDate}
-      </p>
-    </div>
+                    {/* Valid until */}
+                    <div style={{ position:'absolute', left:'20%', top:'60%', width:'42%' }}>
+                      <p style={{
+                        fontSize:'clamp(9px, 2vw, 11px)', color:'#555', margin:0, lineHeight:1,
+                        whiteSpace:'nowrap',
+                      }}>
+                        {validUntilDate}
+                      </p>
+                    </div>
 
-  </div>
-)}
+                  </div>
+                )}
 
                 {/* Hint on front card */}
                 {!isShowingBack && (
@@ -714,6 +716,16 @@ export default function ProductPage() {
                 <input type="text" value={recipientName} onChange={e => setRecipientName(e.target.value)}
                   placeholder="e.g. Sarah Johnson"
                   className="w-full rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-[#c084a0] focus:outline-none focus:ring-2 focus:ring-[#c084a0]/20"/>
+              </div>
+
+              <div>
+                <p className="mb-1.5 text-xs font-semibold uppercase tracking-widest text-gray-500">
+                  Delivery Date <span className="font-normal normal-case text-gray-400">(optional)</span>
+                </p>
+                <input type="date" value={deliveryDate} onChange={e => setDeliveryDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full rounded-md border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-800 placeholder:text-gray-300 focus:border-[#c084a0] focus:outline-none focus:ring-2 focus:ring-[#c084a0]/20"/>
+                <p className="mt-1 text-[11px] text-gray-400">When should we send this gift card?</p>
               </div>
 
               <div>
