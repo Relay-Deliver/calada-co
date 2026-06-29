@@ -131,7 +131,7 @@ export const NAV_MENUS = {
           { label: 'Moms', to: '/collections/moms' },
           { label: 'Coffee Lovers', to: '/collections/coffee-lovers' },
           { label: 'Michigan Made', to: '/collections/michigan-made' },
-          { label: 'Reading', to: '/collections/reading' },
+  { label: 'Bookworms', to: '/collections/reading' },
           { label: 'Teacher / School', to: '/collections/teacher-school' },
           { label: 'Kids', to: '/collections/kids' },
           { label: 'Homestead', to: '/collections/homestead' },

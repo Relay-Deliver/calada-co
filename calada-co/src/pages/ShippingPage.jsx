@@ -15,7 +15,7 @@ export default function ShippingPage() {
             <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#c084a0]">Shipping over $65</p>
           </div>
           <div className="rounded-2xl bg-[#fdf4f7] border border-[#f0d6e4] p-6 text-center">
-            <p className="text-2xl font-bold text-navy mb-1">14 Days</p>
+            <p className="text-2xl font-bold text-navy mb-1">30 Days</p>
             <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#c084a0]">Easy returns</p>
           </div>
           <div className="rounded-2xl bg-[#fdf4f7] border border-[#f0d6e4] p-6 text-center">
@@ -33,13 +33,14 @@ export default function ShippingPage() {
               <p>Free standard shipping is available on all orders over $65.</p>
               <p>We currently ship within the United States. International shipping is not available at this time.</p>
               <p>CalAda &amp; Co. is not responsible for delays caused by carriers, weather, or incorrect addresses. Please double-check your shipping address before placing your order.</p>
+              <p>CalAda &amp; Co. is not responsible for lost or damaged items marked delivered by the carrier.</p>
             </div>
           </section>
 
           <section className="rounded-2xl border border-[#eeeeee] p-7 sm:p-9">
             <h2 className="font-serif text-xl font-semibold text-navy mb-5">Return Policy</h2>
             <div className="space-y-3 text-sm text-slate-600 leading-7">
-              <p>We accept returns within 14 days of delivery for items that are unworn, unwashed, and in their original condition with tags attached.</p>
+              <p>We accept returns within 30 days of delivery for items that are unworn, unwashed, and in their original condition with tags attached.</p>
               <p>To start a return, email us at <a href="mailto:support@caladaco.com" className="text-[#c084a0] font-medium hover:underline">support@caladaco.com</a> with your order number and reason for return.</p>
               <p>Sale items, custom orders, and intimates are final sale and not eligible for return.</p>
               <p>Original shipping charges are non-refundable. Return shipping costs are the responsibility of the customer unless the item arrived damaged or defective.</p>
