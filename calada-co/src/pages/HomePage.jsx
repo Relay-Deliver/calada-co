@@ -447,7 +447,7 @@ export default function HomePage() {
               className="group relative block min-h-[320px] overflow-hidden rounded-lg bg-navy sm:min-h-[420px]"
             >
              <img
-                src="/assets/Family-Set2.png"
+                src="/assets/fam.png"
                 alt="Family clothing favorites"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
